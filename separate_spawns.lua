@@ -1,4 +1,3 @@
--- separate_spawns.lua
 -- Nov 2016
 --
 -- Code that handles everything regarding giving each player a separate spawn
@@ -29,20 +28,11 @@ end
 
 
 
-
-
--- This is the main function that creates the spawn area
--- Provides resources, land and a safe zone
-function SeparateSpawnsGenerateChunk(event)
+function GenerateSpawnChunk( event, spawnPos)
     local surface = event.surface
     if surface.name ~= "nauvis" then return end
     local chunkArea = event.area
-    
-    -- This handles chunk generation near player spawns
-    -- If it is near a player spawn, it does a few things like make the area
-    -- safe and provide a guaranteed area of land and water tiles.
-    for name,spawnPos in pairs(global.playerSpawns) do
-
+		
         local landArea = {left_top=
                             {x=spawnPos.x-ENFORCE_LAND_AREA_TILE_DIST,
                              y=spawnPos.y-ENFORCE_LAND_AREA_TILE_DIST},
@@ -104,25 +94,30 @@ function SeparateSpawnsGenerateChunk(event)
                     entity.destroy()
                 end
             end
-
-            CreateCropCircle(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
+            CreateCropSquare(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
+            CreateWaterStrip( surface, spawnPos, ENFORCE_LAND_AREA_TILE_DIST*3/4 )
+            if not spawnPos.generated then
+              spawnPos.generated = true;
+              GenerateStartingResources( surface, spawnPos);
+            end
         end
+end
 
-        -- Provide a guaranteed spot of water to use for power generation
-        -- A desert biome will shrink the water area!!
-        if CheckIfInArea(spawnPos,chunkArea) then
-            local waterTiles = {{name = "water", position ={spawnPos.x+0,spawnPos.y-30}},
-                                {name = "water", position ={spawnPos.x+1,spawnPos.y-30}},
-                                {name = "water", position ={spawnPos.x+2,spawnPos.y-30}},
-                                {name = "water", position ={spawnPos.x+3,spawnPos.y-30}},
-                                {name = "water", position ={spawnPos.x+4,spawnPos.y-30}},
-                                {name = "water", position ={spawnPos.x+5,spawnPos.y-30}},
-                                {name = "water", position ={spawnPos.x+6,spawnPos.y-30}},
-                                {name = "water", position ={spawnPos.x+7,spawnPos.y-30}},
-                                {name = "water", position ={spawnPos.x+8,spawnPos.y-30}}}
-            -- DebugPrint("Setting water tiles in this chunk! " .. chunkArea.left_top.x .. "," .. chunkArea.left_top.y)
-            surface.set_tiles(waterTiles)
-        end
+
+-- This is the main function that creates the spawn area
+-- Provides resources, land and a safe zone
+function SeparateSpawnsGenerateChunk(event)
+    local surface = event.surface
+    if surface.name ~= "nauvis" then return end
+    local chunkArea = event.area
+    -- This handles chunk generation near player spawns
+    -- If it is near a player spawn, it does a few things like make the area
+    -- safe and provide a guaranteed area of land and water tiles.
+    for name,spawnPos in pairs(global.uniqueSpawns) do
+		  GenerateSpawnChunk(event, spawnPos)
+    end
+    for name,spawnPos in pairs(global.unusedSpawns) do
+  		GenerateSpawnChunk(event, spawnPos)
     end
 end
 
@@ -163,9 +158,42 @@ end
 -- NON-EVENT RELATED FUNCTIONS
 -- These should be local functions where possible!
 --------------------------------------------------------------------------------
+function HexPoint(kangle, rad)
+      local degreesToRadians = math.pi / 180;
+      local angle = kangle * 2*math.pi / 6 + 10 * degreesToRadians; 
+      return { x= rad * math.sin(angle), y = rad * math.cos(angle) }
+end
+
+function lerp( r, a, b)
+  return{ x = a.x + r * (b.x-a.x), y= a.y + r * (b.y-a.y) }
+end
+  
+function HexRowPoint(kangle, rad, item, itemlen)
+  local first = HexPoint(kangle, rad)
+  local last = HexPoint(kangle+1, rad)
+  if itemlen==0 then
+    return first
+  end
+  return lerp( (1.0*item)/itemlen, first, last)
+end
+  
+function CenterInChunk(a)
+	return { x = a.x-math.fmod(a.x, 32)+16, y=a.y-math.fmod(a.y, 32)+16 }
+end
+
+function InitSpawnPoint(k, kangle, j)
+   a = HexRowPoint(kangle, k*HEXSPACING, j, k)
+   local spawn = CenterInChunk(a);
+   spawn.generated = false;
+   spawn.used = false;
+   spawn.radius = k
+   spawn.sector = kangle
+   spawn.seq = j
+   table.insert(global.unusedSpawns, spawn );
+end
 
 function InitSpawnGlobalsAndForces()
-    -- Containes an array of all player spawns
+    -- Contains an array of all player spawns
     -- A secondary array tracks whether the character will respawn there.
     if (global.playerSpawns == nil) then
         global.playerSpawns = {}
@@ -178,6 +206,21 @@ function InitSpawnGlobalsAndForces()
     end
     if (global.unusedSpawns == nil) then
         global.unusedSpawns = {}
+        InitSpawnPoint( 0, 0, 0);
+        for rad = 1,HEXRINGS do
+          for kangle=0,5 do
+            for j=0,rad-1 do
+              InitSpawnPoint( rad, kangle, j)
+            end        			
+          end
+        end
+--        for rad = 1,HEXRINGS do
+--          for kangle=0,0 do
+--            for j=0,0 do
+--              InitSpawnPoint( rad, kangle, j)
+--            end             
+--          end
+--        end
     end
     if (global.playerCooldowns == nil) then
         global.playerCooldowns = {}
@@ -188,36 +231,36 @@ function InitSpawnGlobalsAndForces()
     SetCeaseFireBetweenAllForces()
 end
 
-function GenerateStartingResources(player)
-    local surface = player.surface
+function GenerateStartingResources(surface, spawnPos)
+    --local surface = player.surface
 
     -- Generate stone
-    local stonePos = {x=player.position.x-25,
-                  y=player.position.y-31}
+    local stonePos = {x=spawnPos.x-25,
+                  y=spawnPos.y-31}
 
     -- Generate coal
-    local coalPos = {x=player.position.x-25,
-                  y=player.position.y-16}
+    local coalPos = {x=spawnPos.x-25,
+                  y=spawnPos.y-16}
 
     -- Generate copper ore
-    local copperOrePos = {x=player.position.x-25,
-                  y=player.position.y+0}
+    local copperOrePos = {x=spawnPos.x-25,
+                  y=spawnPos.y+0}
                   
     -- Generate iron ore
-    local ironOrePos = {x=player.position.x-25,
-                  y=player.position.y+15}
+    local ironOrePos = {x=spawnPos.x-25,
+                  y=spawnPos.y+15}
 
     -- Tree generation is taken care of in chunk generation
 
     -- Generate oil patches
     surface.create_entity({name="crude-oil", amount=START_OIL_AMOUNT,
-                    position={player.position.x-30, player.position.y-2}})
+                    position={spawnPos.x-30, spawnPos.y-2}})
     surface.create_entity({name="crude-oil", amount=START_OIL_AMOUNT,
-                    position={player.position.x-30, player.position.y+2}})
+                    position={spawnPos.x-30, spawnPos.y+2}})
 
     for y=0, 15 do
-        for x=0, 15 do
-            if ((x-7)^2 + (y - 7)^2 < 7^2) then
+        for x=0, 20 do
+            if ((x-10)^2/10^2 + (y - 7)^2/7^2 < 1) then
                 surface.create_entity({name="iron-ore", amount=START_IRON_AMOUNT,
                     position={ironOrePos.x+x, ironOrePos.y+y}})
                 surface.create_entity({name="copper-ore", amount=START_COPPER_AMOUNT,
@@ -249,12 +292,11 @@ function SendPlayerToNewSpawnAndCreateIt(player, spawn)
     player.teleport(spawn)
     GivePlayerStarterItems(player)
     ChartArea(player.force, player.position, 4)
+--    ClearNearbyEnemies(player.surface, spawn, SAFE_AREA_TILE_DIST)
 
     -- If we get a valid spawn point, setup the area
     if ((spawn.x ~= 0) and (spawn.y ~= 0)) then
         global.uniqueSpawns[player.name] = spawn
-        GenerateStartingResources(player)
-        ClearNearbyEnemies(player, SAFE_AREA_TILE_DIST)
     else      
         DebugPrint("THIS SHOULD NOT EVER HAPPEN! Spawn failed!")
         SendBroadcastMsg("Failed to create spawn point for: " .. player.name)

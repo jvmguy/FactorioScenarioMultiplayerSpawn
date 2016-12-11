@@ -1,23 +1,30 @@
 -- config.lua
 -- Configuration Options
 
+if not scenario then scenario = {} end
+if not scenario.config then scenario.config = {} end
+
+scenario.config.mapsettings = scenario.config.mapsettings or {}
+
 --------------------------------------------------------------------------------
 -- Messages
 --------------------------------------------------------------------------------
 
-WELCOME_MSG = "Welcome to Oarc's server! Follow @_Oarc_ for server updates."
+WELCOME_MSG = "Welcome to jvmguy's server."
 GAME_MODE_MSG = "In the current game mode, a satellite must be launched from the rocket silo to the far east to win!"
 -- GAME_MODE_MSG = "The current game mode is just basic vanilla!"
 MODULES_ENABLED = "Mods Enabled: Separate Spawns, RSO, Gravestone Chests"
 -- MODULES_ENABLED = "Mods Enabled: Gravestone-Chests"
 
 
+WELCOME_MSG0 = "This scenario is a variant of a scenario created by Oarc"
 WELCOME_MSG1 = "Rules: Be polite. Ask before changing other players's stuff. Have fun!"
 WELCOME_MSG2 = "This server is running a custom scenario that changes spawn locations."
 WELCOME_MSG3 = "Due to the way this scenario works, it may take some time for the land"
 WELCOME_MSG4 = "around your new spawn area to generate..."
 WELCOME_MSG5 = "Please wait for 10-20 seconds when you select your first spawn."
-WELCOME_MSG6 = "Contact: SteamID:Oarc | Twitter:@_Oarc_ | oarcinae@gmail.com"
+WELCOME_MSG6 = "Oarc contact: SteamID:Oarc | Twitter:@_Oarc_ | oarcinae@gmail.com"
+WELCOME_MSG7 = "jvmguy contact: SteamID:jvmguy | Discorc:@jvmguy | jvmgiu@gmail.com"
 
 
 SPAWN_MSG1 = "Current Spawn Mode: HARDCORE WILDERNESS"
@@ -85,13 +92,18 @@ SAFE_AREA_TILE_DIST = CHUNK_SIZE*8
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
-WARNING_AREA_TILE_DIST = CHUNK_SIZE*16
+WARNING_AREA_TILE_DIST = CHUNK_SIZE*14
 
 -- 1 : X (spawners alive : spawners destroyed) in this area
 WARN_AREA_REDUCTION_RATIO = 15
 
 -- Create a circle of land area for the spawn
-ENFORCE_LAND_AREA_TILE_DIST = 40
+ENFORCE_LAND_AREA_TILE_DIST = 48
+
+HEXSPACING = 1024 -- distance between spawns (tiles)
+HEXRINGS = 3  -- number of rings of start spawns
+HEX_FAR_SPACING = HEXSPACING * 2 -- the outermost 2 rings
+
 
 
 ---------------------------------------
@@ -106,7 +118,7 @@ ENFORCE_LAND_AREA_TILE_DIST = 40
 MAIN_FORCE = "main_force"
 
 -- Enable if people can spawn at the main base
-ENABLE_DEFAULT_SPAWN = true
+ENABLE_DEFAULT_SPAWN = false
 
 
 ---------------------------------------
@@ -135,9 +147,9 @@ ENEMY_DESTROY_FACTOR_DIVISOR = 5
 -- Frontier Rocket Silo Options
 --------------------------------------------------------------------------------
 
-SILO_CHUNK_DISTANCE_X = 250
-SILO_DISTANCE_X = SILO_CHUNK_DISTANCE_X*CHUNK_SIZE + CHUNK_SIZE/2
-SILO_DISTANCE_Y = 16
+SILO_DISTANCE = 4 * HEXSPACING
+SILO_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE)* CHUNK_SIZE + CHUNK_SIZE/2
+SILO_DISTANCE_Y = CHUNK_SIZE/2
 
 -- Should be in the middle of a chunk
 SILO_POSITION = {x = SILO_DISTANCE_X, y = SILO_DISTANCE_Y}
@@ -153,3 +165,4 @@ SILO_POSITION = {x = SILO_DISTANCE_X, y = SILO_DISTANCE_Y}
 
 -- DEBUG prints for me
 global.oarcDebugEnabled = false
+global.jvmguyDebugEnabled = false

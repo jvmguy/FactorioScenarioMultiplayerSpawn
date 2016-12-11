@@ -2,6 +2,7 @@
 -- Nov 2016
 
 -- Oarc's Separated Spawn Scenario
+-- modified by jvmguy. where "I" is used below, that's Oarc, not jvmguy.
 -- 
 -- I wanted to create a scenario that allows you to spawn in separate locations
 -- From there, I ended up adding a bunch of other minor/major features

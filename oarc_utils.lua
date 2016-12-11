@@ -186,15 +186,15 @@ function IsChunkAreaUngenerated(chunkPos, chunkDist)
 end
 
 -- Clear out enemies around an area with a certain distance
-function ClearNearbyEnemies(player, safeDist)
+function ClearNearbyEnemies(surface, position, safeDist)
     local safeArea = {left_top=
-                    {x=player.position.x-safeDist,
-                     y=player.position.y-safeDist},
+                    {x=position.x-safeDist,
+                     y=position.y-safeDist},
                   right_bottom=
-                    {x=player.position.x+safeDist,
-                     y=player.position.y+safeDist}}
+                    {x=position.x+safeDist,
+                     y=position.y+safeDist}}
 
-    for _, entity in pairs(player.surface.find_entities_filtered{area = safeArea, force = "enemy"}) do
+    for _, entity in pairs(surface.find_entities_filtered{area = safeArea, force = "enemy"}) do
         entity.destroy()
     end
 end
@@ -368,6 +368,50 @@ function CreateCropCircle(surface, centerPos, chunkArea, tileRadius)
 
 
     surface.set_tiles(dirtTiles)
+end
+
+-- Enforce a square of land, with a tree border
+function CreateCropSquare(surface, centerPos, chunkArea, tileRadius)
+
+    local dirtTiles = {}
+    for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
+        for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
+
+            local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
+            local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
+            local distVar = math.max(distVar1, distVar2 * 0.707);
+
+            -- Fill in all unexpected water in a circle
+            if (distVar < tileRadius) then
+                if (surface.get_tile(i,j).collides_with("water-tile")) then
+                    table.insert(dirtTiles, {name = "grass", position ={i,j}})
+                end
+            end
+
+            -- Create a ring
+            if ((distVar < tileRadius) and 
+                (distVar > tileRadius-1.9)) then
+                surface.create_entity({name="tree-01", amount=1, position={i, j}})
+            end
+        end
+    end
+
+
+    surface.set_tiles(dirtTiles)
+end
+
+function CreateWaterStrip(surface, spawnPos, tileRadius)
+    local waterTiles = {{name = "water", position ={spawnPos.x+0,spawnPos.y-tileRadius}},
+                        {name = "water", position ={spawnPos.x+1,spawnPos.y-tileRadius}},
+                        {name = "water", position ={spawnPos.x+2,spawnPos.y-tileRadius}},
+                        {name = "water", position ={spawnPos.x+3,spawnPos.y-tileRadius}},
+                        {name = "water", position ={spawnPos.x+4,spawnPos.y-tileRadius}},
+                        {name = "water", position ={spawnPos.x+5,spawnPos.y-tileRadius}},
+                        {name = "water", position ={spawnPos.x+6,spawnPos.y-tileRadius}},
+                        {name = "water", position ={spawnPos.x+7,spawnPos.y-tileRadius}},
+                        {name = "water", position ={spawnPos.x+8,spawnPos.y-tileRadius}}}
+    -- DebugPrint("Setting water tiles in this chunk! " .. chunkArea.left_top.x .. "," .. chunkArea.left_top.y)
+    surface.set_tiles(waterTiles)
 end
 
 -- Adjust alien params

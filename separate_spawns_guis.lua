@@ -19,7 +19,7 @@ function DisplayWelcomeTextGui(player)
     player.gui.center.add{name = "welcome_msg",
                             type = "frame",
                             direction = "vertical",
-                            caption="Welcome to Oarc's Server"}
+                            caption="Welcome to Jvmguy's Server"}
     local wGui = player.gui.center.welcome_msg
 
     wGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
@@ -27,6 +27,8 @@ function DisplayWelcomeTextGui(player)
 
 
 
+    wGui.add{name = "welcome_msg_lbl0", type = "label",
+                    caption=WELCOME_MSG0}
     wGui.add{name = "welcome_msg_lbl1", type = "label",
                     caption=WELCOME_MSG1}
     wGui.add{name = "welcome_msg_lbl2", type = "label",
@@ -34,6 +36,7 @@ function DisplayWelcomeTextGui(player)
     wGui.add{name = "welcome_msg_spacer1", type = "label",
                     caption=" "}
 
+    ApplyStyle(wGui.welcome_msg_lbl0, my_label_style)
     ApplyStyle(wGui.welcome_msg_lbl1, my_label_style)
     ApplyStyle(wGui.welcome_msg_lbl2, my_label_style)
     ApplyStyle(wGui.welcome_msg_spacer1, my_spacer_style)
@@ -47,6 +50,8 @@ function DisplayWelcomeTextGui(player)
                     caption=WELCOME_MSG5}
     wGui.add{name = "welcome_msg_lbl6", type = "label",
                     caption=WELCOME_MSG6}
+    wGui.add{name = "welcome_msg_lbl7", type = "label",
+                    caption=WELCOME_MSG7}
     wGui.add{name = "welcome_msg_spacer2", type = "label",
                     caption=" "}
 
@@ -54,6 +59,7 @@ function DisplayWelcomeTextGui(player)
     ApplyStyle(wGui.welcome_msg_lbl4, my_warning_style)
     ApplyStyle(wGui.welcome_msg_lbl5, my_warning_style)
     ApplyStyle(wGui.welcome_msg_lbl6, my_label_style)
+    ApplyStyle(wGui.welcome_msg_lbl7, my_label_style)
     ApplyStyle(wGui.welcome_msg_spacer2, my_spacer_style)
 
 
@@ -188,16 +194,16 @@ function DisplaySpawnOptions(player)
                     caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
     sGui.add{name = "note_spacer2", type = "label",
                     caption=" "}
-    sGui.add{name = "note_lbl1", type = "label",
-                    caption="Near spawn is between " .. NEAR_MIN_DIST*CHUNK_SIZE .. "-" .. NEAR_MAX_DIST*CHUNK_SIZE ..  " tiles away from the center of the map."}
-    sGui.add{name = "note_lbl2", type = "label",
-                    caption="Far spawn is between " .. FAR_MIN_DIST*CHUNK_SIZE .. "-" .. FAR_MAX_DIST*CHUNK_SIZE ..  " tiles away from the center of the map."}
+--    sGui.add{name = "note_lbl1", type = "label",
+--                    caption="Near spawn is between " .. NEAR_MIN_DIST*CHUNK_SIZE .. "-" .. NEAR_MAX_DIST*CHUNK_SIZE ..  " tiles away from the center of the map."}
+--    sGui.add{name = "note_lbl2", type = "label",
+--                    caption="Far spawn is between " .. FAR_MIN_DIST*CHUNK_SIZE .. "-" .. FAR_MAX_DIST*CHUNK_SIZE ..  " tiles away from the center of the map."}
     sGui.add{name = "note_lbl3", type = "label",
                     caption="Solo spawns are dangerous! Expect a fight to reach other players."}
     sGui.add{name = "note_spacer3", type = "label",
                     caption=" "}
-    ApplyStyle(sGui.note_lbl1, my_note_style)
-    ApplyStyle(sGui.note_lbl2, my_note_style)
+--    ApplyStyle(sGui.note_lbl1, my_note_style)
+--    ApplyStyle(sGui.note_lbl2, my_note_style)
     ApplyStyle(sGui.note_lbl3, my_note_style)
     ApplyStyle(sGui.note_spacer1, my_spacer_style)
     ApplyStyle(sGui.note_spacer2, my_spacer_style)
@@ -223,7 +229,6 @@ function SpawnOptsGuiClick(event)
         if (player.gui.center.spawn_opts ~= nil) then
             player.gui.center.spawn_opts.destroy()
         end
-
     end
 
     if (buttonClicked == "default_spawn_btn") then
@@ -232,53 +237,33 @@ function SpawnOptsGuiClick(event)
         ChangePlayerSpawn(player, player.force.get_spawn_position("nauvis"))
         SendBroadcastMsg(player.name .. " joined the main force!")
         ChartArea(player.force, player.position, 4)
-
     elseif ((buttonClicked == "isolated_spawn_near") or (buttonClicked == "isolated_spawn_far")) then
         CreateSpawnCtrlGui(player)
 
         -- Create a new spawn point
-        local newSpawn = {x=0,y=0}
-
-        -- Re-used abandoned spawns...
-        if (#global.unusedSpawns >= 1) then
-            newSpawn = table.remove(global.unusedSpawns)
-            global.uniqueSpawns[player.name] = newSpawn
+        local newSpawn = PickRandomSpawn( global.unusedSpawns, buttonClicked == "isolated_spawn_far");
+        GivePlayerStarterItems(player)
+        if newSpawn ~= nil then
+          local used = newSpawn.used;
+          newSpawn.used = true;
+          newSpawn = table.remove(global.unusedSpawns)
+          global.uniqueSpawns[player.name] = newSpawn
+  
+          if used then
+            ChangePlayerSpawn(player, newSpawn)
             player.print("Sorry! You have been assigned to an abandoned base! This is done to keep map size small.")
-            ChangePlayerSpawn(player, newSpawn)
-            SendPlayerToSpawn(player)
-            GivePlayerStarterItems(player)
             SendBroadcastMsg(player.name .. " joined an abandoned base!")
-        else
-
-            -- Find coordinates of a good place to spawn
-            if (buttonClicked == "isolated_spawn_far") then
-                newSpawn = FindUngeneratedCoordinates(FAR_MIN_DIST,FAR_MAX_DIST)
-            elseif (buttonClicked == "isolated_spawn_near") then
-                newSpawn = FindUngeneratedCoordinates(NEAR_MIN_DIST,NEAR_MAX_DIST)
-            end
-
-            -- If that fails, find a random map edge in a rand direction.
-            if ((newSpawn.x == 0) and (newSpawn.x == 0)) then
-                newSpawn = FindMapEdge(GetRandomVector())
-                DebugPrint("Resorting to find map edge! x=" .. newSpawn.x .. ",y=" .. newSpawn.y)
-            end
-
-            -- Create that spawn in the global vars
-            ChangePlayerSpawn(player, newSpawn)
-            
-            -- Send the player there
+          else
             SendPlayerToNewSpawnAndCreateIt(player, newSpawn)
-            if (buttonClicked == "isolated_spawn_near") then
-                SendBroadcastMsg(player.name .. " joined the main force from a distance!")
-            elseif (buttonClicked == "isolated_spawn_far") then
-                SendBroadcastMsg(player.name .. " joined the main force from a great distance!")
-            end
-
             player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!")
-            player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!!")
-            player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!!!")
+            SendBroadcastMsg(player.name .. " joined a new base!")
+            ChartArea(player.force, player.position, 4)
+          end
+        else
+          ChangePlayerSpawn(player, player.force.get_spawn_position("nauvis"))
+          SendBroadcastMsg(player.name .. " joined the main force!")
+          ChartArea(player.force, player.position, 4)
         end
-
     elseif (buttonClicked == "join_other_spawn") then
         DisplaySharedSpawnOptions(player)
     
@@ -289,6 +274,44 @@ function SpawnOptsGuiClick(event)
     end
 end
 
+function boolToString( b )
+  if b then
+    return "true"
+  else
+    return "false";
+  end
+end
+
+function SpawnIsCompatible( spawnPos, far )
+  local distSqr = spawnPos.x^2 + spawnPos.y^2;
+  local dist = math.sqrt(distSqr);
+  local isFar = distSqr > (HEX_FAR_SPACING-CHUNK_SIZE)^2;
+  local compatible = (isFar == far);
+  local player = game.players[1];
+  
+  -- player.print("Spawn " .. spawnPos.x .. ", " .. spawnPos.y .. " dist" .. dist .. " is far = " .. boolToString(isFar) .. " compatible=" .. boolToString(compatible) .. " req far " .. boolToString(far)  );
+  return compatible;
+end
+
+function PickRandomSpawn( t, far )
+  local candidates = {}
+  for key, spawnPos in pairs(t) do
+    if spawnPos ~= nil and SpawnIsCompatible( spawnPos, far ) then
+        spawnPos.key = key;
+        table.insert( candidates, spawnPos );
+    end
+  end
+  local ncandidates = TableLength(candidates)
+  local player = game.players[1];
+  -- player.print("choosing a spawn from " .. ncandidates .. " candidates");
+  if ncandidates > 0 then
+    local pick = math.random(1,ncandidates)
+    spawnPos = candidates[pick];
+    t[spawnPos.key] = nil;
+    return spawnPos;
+  end
+  return nil;
+end
 
 -- Display the spawn options and explanation
 function DisplaySharedSpawnOptions(player)
