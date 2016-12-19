@@ -9,9 +9,19 @@ local SPAWN_GUI_MAX_WIDTH = 450
 local SPAWN_GUI_MAX_HEIGHT = 650
 
 -- Use this for testing shared spawns...
--- /c global.sharedSpawns = {TESTNAME1={x=50,y=50},
---                         TESTNAME2={x=-50,y=-50},
---                         TESTNAME3={x=-50,y=50}}
+-- local sharedSpawnExample1 = {openAccess=true,
+--                             position={x=50,y=50},
+--                             players={"ABC", "DEF"}}
+-- local sharedSpawnExample2 = {openAccess=false,
+--                             position={x=200,y=200},
+--                             players={"ABC", "DEF"}}
+-- local sharedSpawnExample3 = {openAccess=true,
+--                             owner="testName1",
+--                             players={"A", "B", "C", "D"}}
+-- global.sharedSpawns = {testName1=sharedSpawnExample1,
+--                        testName2=sharedSpawnExample2,
+--                        testName3=sharedSpawnExample3}
+
 
 -- A display gui message
 -- Meant to be display the first time a player joins.
@@ -229,6 +239,7 @@ function SpawnOptsGuiClick(event)
         if (player.gui.center.spawn_opts ~= nil) then
             player.gui.center.spawn_opts.destroy()
         end
+
     end
 
     if (buttonClicked == "default_spawn_btn") then
@@ -237,6 +248,7 @@ function SpawnOptsGuiClick(event)
         ChangePlayerSpawn(player, player.force.get_spawn_position("nauvis"))
         SendBroadcastMsg(player.name .. " joined the main force!")
         ChartArea(player.force, player.position, 4)
+
     elseif ((buttonClicked == "isolated_spawn_near") or (buttonClicked == "isolated_spawn_far")) then
         CreateSpawnCtrlGui(player)
 
@@ -328,10 +340,16 @@ function DisplaySharedSpawnOptions(player)
     shGui.horizontal_scroll_policy = "never"
 
 
-    for spawnName,_ in pairs(global.sharedSpawns) do
-        shGui.add{type="button", caption=spawnName, name=spawnName}
-        shGui.add{name = spawnName .. "spacer_lbl", type = "label", caption=" "}
-        ApplyStyle(shGui[spawnName .. "spacer_lbl"], my_spacer_style)
+    for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
+        if sharedSpawn.openAccess then
+            local spotsRemaining = MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN - GetOnlinePlayersAtSharedSpawn(spawnName)
+            if (spotsRemaining > 0) then
+                shGui.add{type="button", caption=spawnName .. " (" .. spotsRemaining .. " spots remaining)", name=spawnName}
+                shGui.add{name = spawnName .. "spacer_lbl", type = "label", caption=" "}
+                ApplyStyle(shGui[spawnName], my_small_button_style)
+                ApplyStyle(shGui[spawnName .. "spacer_lbl"], my_spacer_style)
+            end
+        end
     end
 
 
@@ -356,12 +374,13 @@ function SharedSpwnOptsGuiClick(event)
     -- Else check for which spawn was selected
     -- If a spawn is removed during this time, the button will not do anything
     else
-        for spawnName,spawnPos in pairs(global.sharedSpawns) do
+        for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
             if (buttonClicked == spawnName) then
                 CreateSpawnCtrlGui(player)
-                ChangePlayerSpawn(player,spawnPos)
+                ChangePlayerSpawn(player,sharedSpawn.position)
                 SendPlayerToSpawn(player)
                 GivePlayerStarterItems(player)
+                table.insert(sharedSpawn.players, player.name)
                 SendBroadcastMsg(player.name .. " joined " .. spawnName .. "'s base!")
                 if (player.gui.center.shared_spawn_opts ~= nil) then
                     player.gui.center.shared_spawn_opts.destroy()
@@ -381,7 +400,8 @@ end
 
 
 local function IsSharedSpawnActive(player)
-    if (global.sharedSpawns[player.name] == nil) then
+    if ((global.sharedSpawns[player.name] == nil) or
+        (global.sharedSpawns[player.name].openAccess == false)) then
         return false
     else
         return true
@@ -395,9 +415,9 @@ function GetRandomSpawnPoint()
     if (numSpawnPoints > 0) then
         local randSpawnNum = math.random(1,numSpawnPoints)
         local counter = 1
-        for _, spawnPos in pairs(global.sharedSpawns) do
+        for _,sharedSpawn in pairs(global.sharedSpawns) do
             if (randSpawnNum == counter) then
-                return spawnPos
+                return sharedSpawn.position
             end
             counter = counter + 1
         end
@@ -421,17 +441,17 @@ function ExpandSpawnCtrlGui(player, tick)
         spwnCtrls.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
         spwnCtrls.horizontal_scroll_policy = "never"
 
-
-        if (global.uniqueSpawns[player.name] ~= nil) then
-            -- This checkbox allows people to join your base when they first
-            -- start the game.
-            spwnCtrls.add{type="checkbox", name="accessToggle",
-                            caption="Allow others to join your base.",
-                            state=IsSharedSpawnActive(player)}
-            spwnCtrls["accessToggle"].style.top_padding = 10
-            spwnCtrls["accessToggle"].style.bottom_padding = 10
-            ApplyStyle(spwnCtrls["accessToggle"], my_fixed_width_style)
-
+        if ENABLE_SHARED_SPAWNS then
+            if (global.uniqueSpawns[player.name] ~= nil) then
+                -- This checkbox allows people to join your base when they first
+                -- start the game.
+                spwnCtrls.add{type="checkbox", name="accessToggle",
+                                caption="Allow others to join your base.",
+                                state=IsSharedSpawnActive(player)}
+                spwnCtrls["accessToggle"].style.top_padding = 10
+                spwnCtrls["accessToggle"].style.bottom_padding = 10
+                ApplyStyle(spwnCtrls["accessToggle"], my_fixed_width_style)
+            end
         end
 
 
@@ -473,12 +493,17 @@ function SpawnCtrlGuiClick(event)
     if (name == "accessToggle") then
         if event.element.state then
             if DoesPlayerHaveCustomSpawn(player) then
-                global.sharedSpawns[player.name] = global.playerSpawns[player.name]
+                if (global.sharedSpawns[player.name] == nil) then
+                    CreateNewSharedSpawn(player)
+                else
+                    global.sharedSpawns[player.name].openAccess = true
+                end
+                
                 SendBroadcastMsg("New players can now join " .. player.name ..  "'s base!")
             end
         else
             if (global.sharedSpawns[player.name] ~= nil) then
-                global.sharedSpawns[player.name] = nil
+                global.sharedSpawns[player.name].openAccess = false
                 SendBroadcastMsg("New players can no longer join " .. player.name ..  "'s base!")
             end
         end
@@ -494,5 +519,3 @@ function SpawnCtrlGuiClick(event)
         end
     end
 end
-
-

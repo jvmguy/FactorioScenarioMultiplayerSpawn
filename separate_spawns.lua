@@ -94,7 +94,11 @@ function GenerateSpawnChunk( event, spawnPos)
                     entity.destroy()
                 end
             end
-            CreateCropSquare(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
+			if (ENABLE_CROP_HEXAGON) then
+	            CreateCropHexagon(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
+			else
+	            CreateCropCircle(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
+			end
             CreateWaterStrip( surface, spawnPos, ENFORCE_LAND_AREA_TILE_DIST*3/4 )
             if not spawnPos.generated then
               spawnPos.generated = true;
@@ -128,6 +132,8 @@ function FindUnusedSpawns(event)
     local player = game.players[event.player_index]
     if (player.online_time < MIN_ONLINE_TIME) then
 
+        -- TODO dump items into a chest.
+
         -- Clear out global variables for that player???
         if (global.playerSpawns[player.name] ~= nil) then
             global.playerSpawns[player.name] = nil
@@ -140,18 +146,81 @@ function FindUnusedSpawns(event)
             SendBroadcastMsg(player.name .. " base was freed up because they left within 5 minutes of joining.")
         end
         
+        -- Remove from shared spawns
         if (global.sharedSpawns[player.name] ~= nil) then
             global.sharedSpawns[player.name] = nil
         end
 
+        -- remove that player's cooldown setting
         if (global.playerCooldowns[player.name] ~= nil) then
             global.playerCooldowns[player.name] = nil
         end
 
+        -- Remove from shared spawn player slots (need to search all)
+        for _,sharedSpawn in pairs(global.sharedSpawns) do
+            for key,playerName in pairs(sharedSpawn.players) do
+                if (player.name == playerName) then
+                    sharedSpawn.players[key] = nil;
+                end
+            end
+        end
+
+
+        -- Remove the character completely
         game.remove_offline_players({player})
     end
 end
 
+
+function CreateNewSharedSpawn(player)
+    global.sharedSpawns[player.name] = {openAccess=true,
+                                    position=global.playerSpawns[player.name],
+                                    players={}}
+end
+
+function GetOnlinePlayersAtSharedSpawn(ownerName)
+    if (global.sharedSpawns[ownerName] ~= nil) then
+
+        -- Does not count base owner
+        local count = 0
+
+        -- For each player in the shared spawn, check if online and add to count.
+        for _,player in pairs(game.connected_players) do
+            if (ownerName == player.name) then
+                count = count + 1
+            end
+
+            for _,playerName in pairs(global.sharedSpawns[ownerName].players) do
+            
+                if (playerName == player.name) then
+                    count = count + 1
+                end
+            end
+        end
+
+        return count
+    else
+        return 0
+    end
+end
+
+
+-- Get the number of currently available shared spawns
+-- This means the base owner has enabled access AND the number of online players
+-- is below the threshold.
+function GetNumberOfAvailableSharedSpawns()
+    local count = 0
+
+    for ownerName,sharedSpawn in pairs(global.sharedSpawns) do
+        if (sharedSpawn.openAccess) then
+            if (GetOnlinePlayersAtSharedSpawn(ownerName) < MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN) then
+                count = count+1
+            end
+        end
+    end
+
+    return count
+end
 
 
 --------------------------------------------------------------------------------
@@ -235,40 +304,48 @@ function GenerateStartingResources(surface, spawnPos)
     --local surface = player.surface
 
     -- Generate stone
-    local stonePos = {x=spawnPos.x-25,
-                  y=spawnPos.y-31}
+    local stonePos = {x=spawnPos.x+START_RESOURCE_STONE_POS_X,
+                  y=spawnPos.y+START_RESOURCE_STONE_POS_Y}
 
     -- Generate coal
-    local coalPos = {x=spawnPos.x-25,
-                  y=spawnPos.y-16}
+    local coalPos = {x=spawnPos.x+START_RESOURCE_COAL_POS_X,
+                  y=spawnPos.y+START_RESOURCE_COAL_POS_Y}
 
     -- Generate copper ore
-    local copperOrePos = {x=spawnPos.x-25,
-                  y=spawnPos.y+0}
+    local copperOrePos = {x=spawnPos.x+START_RESOURCE_COPPER_POS_X,
+                  y=spawnPos.y+START_RESOURCE_COPPER_POS_Y}
                   
     -- Generate iron ore
-    local ironOrePos = {x=spawnPos.x-25,
-                  y=spawnPos.y+15}
+    local ironOrePos = {x=spawnPos.x+START_RESOURCE_IRON_POS_X,
+                  y=spawnPos.y+START_RESOURCE_IRON_POS_Y}
 
     -- Tree generation is taken care of in chunk generation
 
     -- Generate oil patches
     surface.create_entity({name="crude-oil", amount=START_OIL_AMOUNT,
-                    position={spawnPos.x-30, spawnPos.y-2}})
+                    position={spawnPos.x+START_RESOURCE_OIL_POS_X, spawnPos.y+START_RESOURCE_OIL_POS_Y-2}})
     surface.create_entity({name="crude-oil", amount=START_OIL_AMOUNT,
-                    position={spawnPos.x-30, spawnPos.y+2}})
+                    position={spawnPos.x+START_RESOURCE_OIL_POS_X, spawnPos.y+START_RESOURCE_OIL_POS_Y+2}})
 
-    for y=0, 15 do
-        for x=0, 20 do
-            if ((x-10)^2/10^2 + (y - 7)^2/7^2 < 1) then
-                surface.create_entity({name="iron-ore", amount=START_IRON_AMOUNT,
-                    position={ironOrePos.x+x, ironOrePos.y+y}})
-                surface.create_entity({name="copper-ore", amount=START_COPPER_AMOUNT,
-                    position={copperOrePos.x+x, copperOrePos.y+y}})
-                surface.create_entity({name="stone", amount=START_STONE_AMOUNT,
-                    position={stonePos.x+x, stonePos.y+y}})
-                surface.create_entity({name="coal", amount=START_COAL_AMOUNT,
-                    position={coalPos.x+x, coalPos.y+y}})
+
+    CreateResources( surface, stonePos, START_RESOURCE_STONE_SIZE, START_STONE_AMOUNT, "stone" );
+    CreateResources( surface, coalPos, START_RESOURCE_COAL_SIZE, START_COAL_AMOUNT, "coal" );
+    CreateResources( surface, copperOrePos, START_RESOURCE_COPPER_SIZE, START_COPPER_AMOUNT, "copper-ore" );
+    CreateResources( surface, ironOrePos, START_RESOURCE_IRON_SIZE, START_IRON_AMOUNT, "iron-ore" );
+end
+
+function CreateResources( surface, pos, size, startAmount, resourceName )
+    local xsize = size * ELLIPSE_X_STRETCH
+    local ysize = size
+    local xRadiusSq = (xsize/2)^2;
+    local yRadiusSq = (ysize/2)^2;
+    local midPointY = math.floor(size/2)
+    local midPointX = math.floor(xsize/2)
+    for y=0, size do
+        for x=0, xsize do
+            if (((x-midPointX)^2/xRadiusSq + (y-midPointY)^2/yRadiusSq < 1) or not ENABLE_RESOURCE_SHAPE_CIRCLE) then
+                surface.create_entity({name=resourceName, amount=startAmount,
+                    position={pos.x+x, pos.y+y}})
             end
         end
     end
@@ -292,11 +369,11 @@ function SendPlayerToNewSpawnAndCreateIt(player, spawn)
     player.teleport(spawn)
     GivePlayerStarterItems(player)
     ChartArea(player.force, player.position, 4)
---    ClearNearbyEnemies(player.surface, spawn, SAFE_AREA_TILE_DIST)
 
     -- If we get a valid spawn point, setup the area
     if ((spawn.x ~= 0) and (spawn.y ~= 0)) then
         global.uniqueSpawns[player.name] = spawn
+        ClearNearbyEnemies(player.surface, spawn, SAFE_AREA_TILE_DIST)
     else      
         DebugPrint("THIS SHOULD NOT EVER HAPPEN! Spawn failed!")
         SendBroadcastMsg("Failed to create spawn point for: " .. player.name)

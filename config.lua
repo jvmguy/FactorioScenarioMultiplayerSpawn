@@ -37,10 +37,10 @@ SPAWN_MSG3 = "Resources are spread out far apart but are quite rich."
 -- will probably break the frontier rocket silo mode
 --------------------------------------------------------------------------------
 
--- Separate spawns
+-- Frontier style rocket silo mode
 FRONTIER_ROCKET_SILO_MODE = true
 
--- Frontier style rocket silo mode
+-- Separate spawns
 ENABLE_SEPARATE_SPAWNS = true
 
 -- Enable Scenario version of RSO
@@ -55,10 +55,16 @@ ENABLE_UNDECORATOR = true
 -- Enable Tags
 ENABLE_TAGS = true
 
+-- Enable Long Reach
+ENABLE_LONGREACH = true
+
+-- Enable Autofill
+ENABLE_AUTOFILL = true
+
 --------------------------------------------------------------------------------
 -- Spawn Options
 --------------------------------------------------------------------------------
-
+ENABLE_CROP_HEXAGON=true
 ---------------------------------------
 -- Distance Options
 ---------------------------------------
@@ -75,12 +81,38 @@ FAR_MAX_DIST = 200 --125
 ---------------------------------------
 
 -- Start resource amounts
-START_IRON_AMOUNT = 1500
+START_IRON_AMOUNT = 1800
 START_COPPER_AMOUNT = 1500
 START_STONE_AMOUNT = 1500
 START_COAL_AMOUNT = 1500
 START_OIL_AMOUNT = 30000
 
+-- Stat resource shape
+-- If this is true, it will be a circle or an ellipse
+-- If false, it will be a square
+ENABLE_RESOURCE_SHAPE_CIRCLE = true
+ELLIPSE_X_STRETCH=2.0	-- stretch the size horizontally (make it an ellipse)
+
+-- Start resource position and size
+-- Position is relative to player starting location
+START_RESOURCE_STONE_POS_X = -25
+START_RESOURCE_STONE_POS_Y = -31
+START_RESOURCE_STONE_SIZE = 14
+
+START_RESOURCE_COAL_POS_X = -25
+START_RESOURCE_COAL_POS_Y = -16
+START_RESOURCE_COAL_SIZE = 14
+
+START_RESOURCE_COPPER_POS_X = -25
+START_RESOURCE_COPPER_POS_Y = 0
+START_RESOURCE_COPPER_SIZE = 14
+
+START_RESOURCE_IRON_POS_X = -25
+START_RESOURCE_IRON_POS_Y = 15
+START_RESOURCE_IRON_SIZE = 14
+
+START_RESOURCE_OIL_POS_X = -32
+START_RESOURCE_OIL_POS_Y = 0
 
 ---------------------------------------
 -- Safe Spawn Area Options
@@ -88,7 +120,7 @@ START_OIL_AMOUNT = 30000
 
 -- Safe area has no aliens
 -- +/- this in x and y direction
-SAFE_AREA_TILE_DIST = CHUNK_SIZE*8
+SAFE_AREA_TILE_DIST = CHUNK_SIZE*10
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
@@ -120,15 +152,27 @@ MAIN_FORCE = "main_force"
 -- Enable if people can spawn at the main base
 ENABLE_DEFAULT_SPAWN = false
 
+-- Enable if people can allow others to join their base
+ENABLE_SHARED_SPAWNS = true
+MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 3
+
 
 ---------------------------------------
 -- Special Action Cooldowns
 ---------------------------------------
-RESPAWN_COOLDOWN_TICKS = TICKS_PER_SECOND * 60 * 60
+RESPAWN_COOLDOWN_IN_MINUTES = 60
+RESPAWN_COOLDOWN_TICKS = TICKS_PER_MINUTE * RESPAWN_COOLDOWN_IN_MINUTES
 
 -- Require playes to be online for at least 5 minutes
 -- Else their character is removed and their spawn point is freed up for use
-MIN_ONLINE_TIME = TICKS_PER_SECOND * 60 * 5
+MIN_ONLIME_TIME_IN_MINUTES = 5
+MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
+
+
+-- Allow players to choose another spawn in the first 10 minutes
+-- This does not allow creating a new spawn point. Only joining other players.
+-- SPAWN_CHANGE_GRACE_PERIOD_IN_MINUTES = 10
+-- SPAWN_GRACE_TIME = TICKS_PER_MINUTE * SPAWN_CHANGE_GRACE_PERIOD_IN_MINUTES
 
 
 --------------------------------------------------------------------------------
@@ -139,8 +183,8 @@ MIN_ONLINE_TIME = TICKS_PER_SECOND * 60 * 5
 ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
-ENEMY_POLLUTION_FACTOR_DIVISOR = 5
-ENEMY_DESTROY_FACTOR_DIVISOR = 5
+ENEMY_POLLUTION_FACTOR_DIVISOR = 20
+ENEMY_DESTROY_FACTOR_DIVISOR = 8
 
 
 --------------------------------------------------------------------------------
@@ -148,12 +192,29 @@ ENEMY_DESTROY_FACTOR_DIVISOR = 5
 --------------------------------------------------------------------------------
 
 SILO_DISTANCE = 4 * HEXSPACING
+SILO_CHUNK_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE);
 SILO_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE)* CHUNK_SIZE + CHUNK_SIZE/2
 SILO_DISTANCE_Y = CHUNK_SIZE/2
 
 -- Should be in the middle of a chunk
 SILO_POSITION = {x = SILO_DISTANCE_X, y = SILO_DISTANCE_Y}
 
+-- If this is enabled, the static position is ignored.
+ENABLE_RANDOM_SILO_POSITION = true
+
+--------------------------------------------------------------------------------
+-- Long Reach Options
+--------------------------------------------------------------------------------
+
+BUILD_DIST_BONUS = 15
+REACH_DIST_BONUS = BUILD_DIST_BONUS
+RESOURCE_DIST_BONUS = 2
+
+--------------------------------------------------------------------------------
+-- Autofill Options
+--------------------------------------------------------------------------------
+
+AUTOFILL_TURRET_AMMO_QUANTITY = 10
 
 --------------------------------------------------------------------------------
 -- Use rso_config and rso_resourece_config for RSO config settings

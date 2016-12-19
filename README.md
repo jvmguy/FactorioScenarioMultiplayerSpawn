@@ -23,4 +23,6 @@ Much needed.
 
 ## Credit
 Very little of this is my own creation. It's my spin on a scenario created by Oarc.
+See https://github.com/Oarcinae/FactorioScenarioMultiplayerSpawn
+
 
