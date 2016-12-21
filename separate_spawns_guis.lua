@@ -281,7 +281,7 @@ function SpawnOptsGuiClick(event)
         if newSpawn ~= nil then
           local used = newSpawn.used;
           newSpawn.used = true;
-          newSpawn = table.remove(global.unusedSpawns)
+          table.remove(global.unusedSpawns)
           global.uniqueSpawns[player.name] = newSpawn
   
           if used then
