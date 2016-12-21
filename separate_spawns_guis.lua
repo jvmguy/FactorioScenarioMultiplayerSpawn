@@ -266,6 +266,7 @@ function SpawnOptsGuiClick(event)
             player.print("Sorry! You have been assigned to an abandoned base! This is done to keep map size small.")
             SendBroadcastMsg(player.name .. " joined an abandoned base!")
           else
+            ChangePlayerSpawn(player, newSpawn)
             SendPlayerToNewSpawnAndCreateIt(player, newSpawn)
             player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!")
             SendBroadcastMsg(player.name .. " joined a new base!")
