@@ -367,7 +367,6 @@ end
 function SendPlayerToNewSpawnAndCreateIt(player, spawn)
     -- Send the player to that position
     player.teleport(spawn)
-    GivePlayerStarterItems(player)
     ChartArea(player.force, player.position, 4)
 
     -- If we get a valid spawn point, setup the area
