@@ -13,9 +13,12 @@ scenario.config.mapsettings = scenario.config.mapsettings or {}
 WELCOME_MSG = "Welcome to jvmguy's server."
 GAME_MODE_MSG = "In the current game mode, a satellite must be launched from the rocket silo to the far east to win!"
 -- GAME_MODE_MSG = "The current game mode is just basic vanilla!"
-MODULES_ENABLED = "Mods Enabled: Separate Spawns, RSO, Gravestone Chests"
+MODULES_ENABLED = "Mods Enabled: Separate Spawns, RSO, Gravestone Chests, Long-Reach, Autofill, Blueprint Strings"
 -- MODULES_ENABLED = "Mods Enabled: Gravestone-Chests"
 
+-- WELCOME_MSG_TITLE = "[INSERT SERVER OWNER MSG HERE!]"
+-- WELCOME_MSG_TITLE = "Welcome to Oarc's Server"
+WELCOME_MSG_TITLE = "Welcome to Jvmguy's Server"
 
 WELCOME_MSG0 = "This scenario is a variant of a scenario created by Oarc"
 WELCOME_MSG1 = "Rules: Be polite. Ask before changing other players's stuff. Have fun!"
@@ -60,6 +63,9 @@ ENABLE_LONGREACH = true
 
 -- Enable Autofill
 ENABLE_AUTOFILL = true
+
+-- Enable BPS
+ENABLE_BLUEPRINT_STRING = true
 
 --------------------------------------------------------------------------------
 -- Spawn Options
@@ -124,6 +130,9 @@ if RESOURCE_SEPARATION ~= nil then
 	START_RESOURCE_COPPER_POS_Y = START_RESOURCE_COAL_POS_Y + START_RESOURCE_COAL_SIZE + RESOURCE_SEPARATION
 	START_RESOURCE_IRON_POS_Y = START_RESOURCE_COPPER_POS_Y + START_RESOURCE_COPPER_SIZE + RESOURCE_SEPARATION
 end
+-- Force the land area circle at the spawn to be fully grass
+ENABLE_SPAWN_FORCE_GRASS = true
+
 ---------------------------------------
 -- Safe Spawn Area Options
 ---------------------------------------

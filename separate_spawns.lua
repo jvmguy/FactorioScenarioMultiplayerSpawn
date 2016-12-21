@@ -229,6 +229,7 @@ end
 --------------------------------------------------------------------------------
 function HexPoint(kangle, rad)
       local degreesToRadians = math.pi / 180;
+	  -- the slight 10 degree tilt is to make the grid slightly less obvious
       local angle = kangle * 2*math.pi / 6 + 10 * degreesToRadians; 
       return { x= rad * math.sin(angle), y = rad * math.cos(angle) }
 end
@@ -372,7 +373,7 @@ function SendPlayerToNewSpawnAndCreateIt(player, spawn)
     -- If we get a valid spawn point, setup the area
     if ((spawn.x ~= 0) and (spawn.y ~= 0)) then
         global.uniqueSpawns[player.name] = spawn
-        ClearNearbyEnemies(player.surface, spawn, SAFE_AREA_TILE_DIST)
+        ClearNearbyEnemies(player, SAFE_AREA_TILE_DIST)
     else      
         DebugPrint("THIS SHOULD NOT EVER HAPPEN! Spawn failed!")
         SendBroadcastMsg("Failed to create spawn point for: " .. player.name)

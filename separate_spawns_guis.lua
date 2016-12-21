@@ -29,7 +29,7 @@ function DisplayWelcomeTextGui(player)
     player.gui.center.add{name = "welcome_msg",
                             type = "frame",
                             direction = "vertical",
-                            caption="Welcome to Jvmguy's Server"}
+                            caption=WELCOME_MSG_TITLE}
     local wGui = player.gui.center.welcome_msg
 
     wGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
@@ -51,6 +51,16 @@ function DisplayWelcomeTextGui(player)
     ApplyStyle(wGui.welcome_msg_lbl2, my_label_style)
     ApplyStyle(wGui.welcome_msg_spacer1, my_spacer_style)
 
+    wGui.add{name = "other_msg_lbl1", type = "label",
+                    caption=OTHER_MSG1}
+    wGui.add{name = "other_msg_lbl2", type = "label",
+                    caption=OTHER_MSG2}
+    wGui.add{name = "other_msg_spacer1", type = "label",
+                    caption=" "}
+
+    ApplyStyle(wGui.other_msg_lbl1, my_label_style)
+    ApplyStyle(wGui.other_msg_lbl2, my_label_style)
+    ApplyStyle(wGui.other_msg_spacer1, my_spacer_style)
 
     wGui.add{name = "welcome_msg_lbl3", type = "label",
                     caption=WELCOME_MSG3}
@@ -170,40 +180,52 @@ function DisplaySpawnOptions(player)
 
 
     -- Spawn options to join another player's base.
-    if (TableLength(global.sharedSpawns) > 0) then
-        sGui.add{name = "join_other_spawn",
-                        type = "button",
-                        caption="Join Someone (" .. TableLength(global.sharedSpawns) .. " available)"}
-        sGui.add{name = "join_other_spawn_lbl1", type = "label",
-                        caption="You are spawned in someone else's base."}
-        sGui.add{name = "join_other_spawn_lbl2", type = "label",
-                        caption="This requires at least 1 person to have allowed access to their base."}
-        sGui.add{name = "join_other_spawn_lbl3", type = "label",
-                        caption="This choice is final and you will not be able to create your own spawn later."}
-        sGui.add{name = "join_other_spawn_spacer", type = "label",
-                        caption=" "}
-        ApplyStyle(sGui.join_other_spawn_lbl1, my_label_style)
-        ApplyStyle(sGui.join_other_spawn_lbl2, my_label_style)
-        ApplyStyle(sGui.join_other_spawn_lbl3, my_label_style)
-        ApplyStyle(sGui.join_other_spawn_spacer, my_spacer_style)
+    if ENABLE_SHARED_SPAWNS then
+        local numAvailSpawns = GetNumberOfAvailableSharedSpawns()
+        if (numAvailSpawns > 0) then
+            sGui.add{name = "join_other_spawn",
+                            type = "button",
+                            caption="Join Someone (" .. numAvailSpawns .. " available)"}
+            sGui.add{name = "join_other_spawn_lbl1", type = "label",
+                            caption="You are spawned in someone else's base."}
+            sGui.add{name = "join_other_spawn_lbl2", type = "label",
+                            caption="This requires at least 1 person to have allowed access to their base."}
+            sGui.add{name = "join_other_spawn_lbl3", type = "label",
+                            caption="This choice is final and you will not be able to create your own spawn later."}
+            sGui.add{name = "join_other_spawn_spacer", type = "label",
+                            caption=" "}
+            ApplyStyle(sGui.join_other_spawn_lbl1, my_label_style)
+            ApplyStyle(sGui.join_other_spawn_lbl2, my_label_style)
+            ApplyStyle(sGui.join_other_spawn_lbl3, my_label_style)
+            ApplyStyle(sGui.join_other_spawn_spacer, my_spacer_style)
+        else
+            sGui.add{name = "join_other_spawn_lbl1", type = "label",
+                            caption="There are currently no shared bases availble to spawn at."}
+            sGui.add{name = "join_other_spawn_spacer", type = "label",
+                            caption=" "}
+            ApplyStyle(sGui.join_other_spawn_lbl1, my_warning_style)
+            ApplyStyle(sGui.join_other_spawn_spacer, my_spacer_style)
+            sGui.add{name = "join_other_spawn_check",
+                            type = "button",
+                            caption="Check Again"}
+        end
     else
         sGui.add{name = "join_other_spawn_lbl1", type = "label",
-                        caption="There are currently no shared bases availble to spawn at."}
-        sGui.add{name = "join_other_spawn_spacer", type = "label",
-                        caption=" "}
+                        caption="Shared spawns are disabled in this mode."}
         ApplyStyle(sGui.join_other_spawn_lbl1, my_warning_style)
-        ApplyStyle(sGui.join_other_spawn_spacer, my_spacer_style)
-        sGui.add{name = "join_other_spawn_check",
-                        type = "button",
-                        caption="Check Again"}
     end
-
 
     -- Some final notes
     sGui.add{name = "note_spacer1", type = "label",
                     caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
     sGui.add{name = "note_spacer2", type = "label",
                     caption=" "}
+
+    if MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN then
+        sGui.add{name = "shared_spawn_note1", type = "label",
+                    caption="If you create your own spawn point you can allow up to " .. MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN-1 .. " other online players to join." }
+        ApplyStyle(sGui.shared_spawn_note1, my_note_style)
+    end
 --    sGui.add{name = "note_lbl1", type = "label",
 --                    caption="Near spawn is between " .. NEAR_MIN_DIST*CHUNK_SIZE .. "-" .. NEAR_MAX_DIST*CHUNK_SIZE ..  " tiles away from the center of the map."}
 --    sGui.add{name = "note_lbl2", type = "label",
@@ -255,6 +277,7 @@ function SpawnOptsGuiClick(event)
         -- Create a new spawn point
         local newSpawn = PickRandomSpawn( global.unusedSpawns, buttonClicked == "isolated_spawn_far");
         GivePlayerStarterItems(player)
+
         if newSpawn ~= nil then
           local used = newSpawn.used;
           newSpawn.used = true;
