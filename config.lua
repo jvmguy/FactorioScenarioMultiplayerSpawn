@@ -81,7 +81,7 @@ FAR_MAX_DIST = 200 --125
 ---------------------------------------
 
 -- Start resource amounts
-START_IRON_AMOUNT = 1800
+START_IRON_AMOUNT = 1500
 START_COPPER_AMOUNT = 1500
 START_STONE_AMOUNT = 1500
 START_COAL_AMOUNT = 1500
@@ -115,6 +115,16 @@ START_RESOURCE_OIL_POS_X = -32
 START_RESOURCE_OIL_POS_Y = 0
 
 ---------------------------------------
+-- We override the vertical position to give uniform spacing here. comment out to 
+---------------------------------------
+RESOURCE_SEPARATION = 3
+
+if RESOURCE_SEPARATION ~= nil then
+	START_RESOURCE_COAL_POS_Y = START_RESOURCE_STONE_POS_Y + START_RESOURCE_STONE_SIZE + RESOURCE_SEPARATION
+	START_RESOURCE_COPPER_POS_Y = START_RESOURCE_COAL_POS_Y + START_RESOURCE_COAL_SIZE + RESOURCE_SEPARATION
+	START_RESOURCE_IRON_POS_Y = START_RESOURCE_COPPER_POS_Y + START_RESOURCE_COPPER_SIZE + RESOURCE_SEPARATION
+end
+---------------------------------------
 -- Safe Spawn Area Options
 ---------------------------------------
 
@@ -132,7 +142,7 @@ WARN_AREA_REDUCTION_RATIO = 15
 -- Create a circle of land area for the spawn
 ENFORCE_LAND_AREA_TILE_DIST = 48
 
-HEXSPACING = 1024 -- distance between spawns (tiles)
+HEXSPACING = 1696 -- distance between spawns (tiles)
 HEXRINGS = 3  -- number of rings of start spawns
 HEX_FAR_SPACING = HEXSPACING * 2 -- the outermost 2 rings
 
@@ -183,8 +193,8 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
-ENEMY_POLLUTION_FACTOR_DIVISOR = 20
-ENEMY_DESTROY_FACTOR_DIVISOR = 8
+ENEMY_POLLUTION_FACTOR_DIVISOR = 25
+ENEMY_DESTROY_FACTOR_DIVISOR = 10
 
 
 --------------------------------------------------------------------------------
