@@ -30,7 +30,6 @@ end
 
 function GenerateSpawnChunk( event, spawnPos)
     local surface = event.surface
-    if surface.name ~= "nauvis" then return end
     local chunkArea = event.area
 		
         local landArea = {left_top=
@@ -94,8 +93,8 @@ function GenerateSpawnChunk( event, spawnPos)
                     entity.destroy()
                 end
             end
-			if (ENABLE_CROP_HEXAGON) then
-	            CreateCropHexagon(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
+			if (ENABLE_CROP_OCTAGON) then
+	            CreateCropOctagon(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
 			else
 	            CreateCropCircle(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
 			end
@@ -260,11 +259,15 @@ function InitSpawnPoint(k, kangle, j)
    spawn.sector = kangle
    spawn.seq = j
    table.insert(global.unusedSpawns, spawn );
+   table.insert(global.allSpawns, spawn)
 end
 
 function InitSpawnGlobalsAndForces()
     -- Contains an array of all player spawns
     -- A secondary array tracks whether the character will respawn there.
+    if (global.allSpawns == nil) then
+        global.allSpawns = {}
+    end
     if (global.playerSpawns == nil) then
         global.playerSpawns = {}
     end
@@ -367,6 +370,10 @@ end
 
 function SendPlayerToNewSpawnAndCreateIt(player, spawn)
     -- Send the player to that position
+    if spawn == nil then
+      DebugPrint("SendPlayerToNewSpawnAndCreateIt: error. spawn is nil")
+      spawn = { x = 0, y = 0 }
+    end
     player.teleport(spawn)
     ChartArea(player.force, player.position, 4)
 

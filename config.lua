@@ -70,7 +70,7 @@ ENABLE_BLUEPRINT_STRING = true
 --------------------------------------------------------------------------------
 -- Spawn Options
 --------------------------------------------------------------------------------
-ENABLE_CROP_HEXAGON=true
+ENABLE_CROP_OCTAGON=true
 ---------------------------------------
 -- Distance Options
 ---------------------------------------
@@ -103,19 +103,19 @@ ELLIPSE_X_STRETCH=2.0	-- stretch the size horizontally (make it an ellipse)
 -- Position is relative to player starting location
 START_RESOURCE_STONE_POS_X = -25
 START_RESOURCE_STONE_POS_Y = -31
-START_RESOURCE_STONE_SIZE = 14
+START_RESOURCE_STONE_SIZE = 10
 
 START_RESOURCE_COAL_POS_X = -25
 START_RESOURCE_COAL_POS_Y = -16
-START_RESOURCE_COAL_SIZE = 14
+START_RESOURCE_COAL_SIZE = 12
 
 START_RESOURCE_COPPER_POS_X = -25
 START_RESOURCE_COPPER_POS_Y = 0
-START_RESOURCE_COPPER_SIZE = 14
+START_RESOURCE_COPPER_SIZE = 12
 
 START_RESOURCE_IRON_POS_X = -25
 START_RESOURCE_IRON_POS_Y = 15
-START_RESOURCE_IRON_SIZE = 14
+START_RESOURCE_IRON_SIZE = 12
 
 START_RESOURCE_OIL_POS_X = -32
 START_RESOURCE_OIL_POS_Y = 0
@@ -169,7 +169,7 @@ HEX_FAR_SPACING = HEXSPACING * 2 -- the outermost 2 rings
 MAIN_FORCE = "main_force"
 
 -- Enable if people can spawn at the main base
-ENABLE_DEFAULT_SPAWN = false
+ENABLE_DEFAULT_SPAWN = true
 
 -- Enable if people can allow others to join their base
 ENABLE_SHARED_SPAWNS = true
@@ -202,7 +202,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
-ENEMY_POLLUTION_FACTOR_DIVISOR = 25
+ENEMY_POLLUTION_FACTOR_DIVISOR = 10
 ENEMY_DESTROY_FACTOR_DIVISOR = 10
 
 

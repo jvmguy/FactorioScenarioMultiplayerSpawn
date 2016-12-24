@@ -343,7 +343,6 @@ function PickRandomSpawn( t, far )
   if ncandidates > 0 then
     local pick = math.random(1,ncandidates)
     spawnPos = candidates[pick];
-    t[spawnPos.key] = nil;
     return spawnPos;
   end
   return nil;

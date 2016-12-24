@@ -1,7 +1,7 @@
 
 -- Enforce a square of land, with a tree border
 -- this is equivalent to the CreateCropCircle code
-function CreateCropHexagon(surface, centerPos, chunkArea, tileRadius)
+function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius)
 
     local dirtTiles = {}
     for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
@@ -82,3 +82,10 @@ function GiveFastStartItems(player)
     player.insert({name = "inserter", count=100})
     player.insert({name = "fast-inserter", count=50})
 end
+
+function ShowSpawns(player, t)
+  for key,spawn in pairs(t) do
+    player.print("spawn " .. key .. ": " .. spawn.radius .. " sector " .. spawn.sector .. " seq ".. spawn.seq );
+  end
+end
+
