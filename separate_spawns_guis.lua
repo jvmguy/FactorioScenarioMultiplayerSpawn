@@ -276,29 +276,34 @@ function SpawnOptsGuiClick(event)
 
         -- Create a new spawn point
         local newSpawn = PickRandomSpawn( global.unusedSpawns, buttonClicked == "isolated_spawn_far");
+        if newSpawn == nil then
+            -- no spawn of the type requested. just pick one
+            newSpawn = PickRandomSpawn( global.unusedSpawns, buttonClicked ~= "isolated_spawn_far");
+        end
+        
         GivePlayerStarterItems(player)
-
-        if newSpawn ~= nil then
-          local used = newSpawn.used;
-          newSpawn.used = true;
-          table.remove(global.unusedSpawns)
-          global.uniqueSpawns[player.name] = newSpawn
-  
-          if used then
-            ChangePlayerSpawn(player, newSpawn)
-            player.print("Sorry! You have been assigned to an abandoned base! This is done to keep map size small.")
-            SendBroadcastMsg(player.name .. " joined an abandoned base!")
-          else
-            ChangePlayerSpawn(player, newSpawn)
-            SendPlayerToNewSpawnAndCreateIt(player, newSpawn)
-            player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!")
-            SendBroadcastMsg(player.name .. " joined a new base!")
+        if newSpawn == nil then
+            player.print("Sorry! You have been assigned to the default spawn.")
+            ChangePlayerSpawn(player, player.force.get_spawn_position("nauvis"))
+            SendBroadcastMsg(player.name .. " joined the main force!")
             ChartArea(player.force, player.position, 4)
-          end
         else
-          ChangePlayerSpawn(player, player.force.get_spawn_position("nauvis"))
-          SendBroadcastMsg(player.name .. " joined the main force!")
-          ChartArea(player.force, player.position, 4)
+            local used = newSpawn.used;
+            newSpawn.used = true;
+            table.remove(global.unusedSpawns)
+            global.uniqueSpawns[player.name] = newSpawn
+
+            if used then
+                ChangePlayerSpawn(player, newSpawn)
+                player.print("Sorry! You have been assigned to an abandoned base! This is done to keep map size small.")
+                SendBroadcastMsg(player.name .. " joined an abandoned base!")
+            else
+                ChangePlayerSpawn(player, newSpawn)
+                SendPlayerToNewSpawnAndCreateIt(player, newSpawn)
+                player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!")
+                SendBroadcastMsg(player.name .. " joined a new base!")
+                ChartArea(player.force, player.position, 4)
+            end
         end
     elseif (buttonClicked == "join_other_spawn") then
         DisplaySharedSpawnOptions(player)

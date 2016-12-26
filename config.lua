@@ -97,13 +97,13 @@ START_OIL_AMOUNT = 30000
 -- If this is true, it will be a circle or an ellipse
 -- If false, it will be a square
 ENABLE_RESOURCE_SHAPE_CIRCLE = true
-ELLIPSE_X_STRETCH=2.0	-- stretch the size horizontally (make it an ellipse)
+ELLIPSE_X_STRETCH=1.3	-- stretch the size horizontally (make it an ellipse)
 
 -- Start resource position and size
 -- Position is relative to player starting location
 START_RESOURCE_STONE_POS_X = -25
 START_RESOURCE_STONE_POS_Y = -31
-START_RESOURCE_STONE_SIZE = 10
+START_RESOURCE_STONE_SIZE = 8
 
 START_RESOURCE_COAL_POS_X = -25
 START_RESOURCE_COAL_POS_Y = -16
@@ -115,7 +115,7 @@ START_RESOURCE_COPPER_SIZE = 12
 
 START_RESOURCE_IRON_POS_X = -25
 START_RESOURCE_IRON_POS_Y = 15
-START_RESOURCE_IRON_SIZE = 12
+START_RESOURCE_IRON_SIZE = 14
 
 START_RESOURCE_OIL_POS_X = -32
 START_RESOURCE_OIL_POS_Y = 0
