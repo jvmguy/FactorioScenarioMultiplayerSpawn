@@ -87,17 +87,17 @@ FAR_MAX_DIST = 200 --125
 ---------------------------------------
 
 -- Start resource amounts
-START_IRON_AMOUNT = 1500
-START_COPPER_AMOUNT = 1500
-START_STONE_AMOUNT = 1500
-START_COAL_AMOUNT = 1500
+START_IRON_AMOUNT = 1800
+START_COPPER_AMOUNT = 1800
+START_STONE_AMOUNT = 1800
+START_COAL_AMOUNT = 1800
 START_OIL_AMOUNT = 30000
 
 -- Stat resource shape
 -- If this is true, it will be a circle or an ellipse
 -- If false, it will be a square
 ENABLE_RESOURCE_SHAPE_CIRCLE = true
-ELLIPSE_X_STRETCH=1.3	-- stretch the size horizontally (make it an ellipse)
+ELLIPSE_X_STRETCH=1.8	-- stretch the size horizontally (make it an ellipse)
 
 -- Start resource position and size
 -- Position is relative to player starting location
@@ -151,7 +151,7 @@ WARN_AREA_REDUCTION_RATIO = 15
 -- Create a circle of land area for the spawn
 ENFORCE_LAND_AREA_TILE_DIST = 48
 
-HEXSPACING = 1696 -- distance between spawns (tiles)
+HEXSPACING = 2048 -- distance between spawns (tiles)
 HEXRINGS = 3  -- number of rings of start spawns
 HEX_FAR_SPACING = HEXSPACING * 2 -- the outermost 2 rings
 
@@ -179,7 +179,7 @@ MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 3
 ---------------------------------------
 -- Special Action Cooldowns
 ---------------------------------------
-RESPAWN_COOLDOWN_IN_MINUTES = 60
+RESPAWN_COOLDOWN_IN_MINUTES = 15
 RESPAWN_COOLDOWN_TICKS = TICKS_PER_MINUTE * RESPAWN_COOLDOWN_IN_MINUTES
 
 -- Require playes to be online for at least 5 minutes
@@ -202,8 +202,8 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
-ENEMY_POLLUTION_FACTOR_DIVISOR = 10
-ENEMY_DESTROY_FACTOR_DIVISOR = 10
+ENEMY_POLLUTION_FACTOR_DIVISOR = 8
+ENEMY_DESTROY_FACTOR_DIVISOR = 8
 
 
 --------------------------------------------------------------------------------
@@ -225,7 +225,7 @@ ENABLE_RANDOM_SILO_POSITION = true
 -- Long Reach Options
 --------------------------------------------------------------------------------
 
-BUILD_DIST_BONUS = 15
+BUILD_DIST_BONUS = 14
 REACH_DIST_BONUS = BUILD_DIST_BONUS
 RESOURCE_DIST_BONUS = 2
 
