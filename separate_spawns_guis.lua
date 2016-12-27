@@ -268,6 +268,7 @@ function SpawnOptsGuiClick(event)
         CreateSpawnCtrlGui(player)
         GivePlayerStarterItems(player)
         ChangePlayerSpawn(player, player.force.get_spawn_position("nauvis"))
+        SendPlayerToSpawn(player)
         SendBroadcastMsg(player.name .. " joined the main force!")
         ChartArea(player.force, player.position, 4)
 
@@ -295,6 +296,7 @@ function SpawnOptsGuiClick(event)
 
             if used then
                 ChangePlayerSpawn(player, newSpawn)
+                SendPlayerToSpawn(player)
                 player.print("Sorry! You have been assigned to an abandoned base! This is done to keep map size small.")
                 SendBroadcastMsg(player.name .. " joined an abandoned base!")
             else
