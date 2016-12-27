@@ -291,7 +291,6 @@ function SpawnOptsGuiClick(event)
         else
             local used = newSpawn.used;
             newSpawn.used = true;
-            table.remove(global.unusedSpawns)
             global.uniqueSpawns[player.name] = newSpawn
 
             if used then
@@ -350,6 +349,7 @@ function PickRandomSpawn( t, far )
   if ncandidates > 0 then
     local pick = math.random(1,ncandidates)
     spawnPos = candidates[pick];
+    t[spawnPos.key] = nil;
     return spawnPos;
   end
   return nil;
