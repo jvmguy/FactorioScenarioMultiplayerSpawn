@@ -21,7 +21,9 @@ function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius)
             -- Create a ring
             if ((distVar < tileRadius) and 
                 (distVar > tileRadius-1.9)) then
-                surface.create_entity({name="tree-01", amount=1, position={i, j}})
+                if math.random() > 0.8 then
+                  surface.create_entity({name="tree-01", amount=1, position={i, j}})
+                end
             end
         end
     end
@@ -55,6 +57,7 @@ function GiveSpecialItems(player)
     player.insert{name="night-vision-equipment", count = 1}
     player.insert{name="steel-axe", count = 5}
 end
+
 function GiveFastStartItems(player)
   -- raw materials
     player.insert{name = "coal", count = 100}
@@ -84,8 +87,13 @@ function GiveFastStartItems(player)
 end
 
 function ShowSpawns(player, t)
-  for key,spawn in pairs(t) do
-    player.print("spawn " .. key .. ": " .. spawn.radius .. " sector " .. spawn.sector .. " seq ".. spawn.seq );
+  if t ~= nil then
+    for key,spawn in pairs(t) do
+      player.print("spawn " .. key .. ": " .. spawn.radius .. " sector " .. spawn.sector .. " seq ".. spawn.seq .. " " .. spawn.x .. "," .. spawn.y );
+    end
   end
 end
 
+function ShowPlayerSpawns(player)
+  ShowSpawns( player, global.playerSpawns );
+end
