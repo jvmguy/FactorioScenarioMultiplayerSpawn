@@ -107,7 +107,7 @@ START_RESOURCE_STONE_SIZE = 8
 
 START_RESOURCE_COAL_POS_X = -25
 START_RESOURCE_COAL_POS_Y = -16
-START_RESOURCE_COAL_SIZE = 12
+START_RESOURCE_COAL_SIZE = 10
 
 START_RESOURCE_COPPER_POS_X = -25
 START_RESOURCE_COPPER_POS_Y = 0
@@ -139,7 +139,7 @@ ENABLE_SPAWN_FORCE_GRASS = true
 
 -- Safe area has no aliens
 -- +/- this in x and y direction
-SAFE_AREA_TILE_DIST = CHUNK_SIZE*10
+SAFE_AREA_TILE_DIST = CHUNK_SIZE*12
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
@@ -151,7 +151,7 @@ WARN_AREA_REDUCTION_RATIO = 15
 -- Create a circle of land area for the spawn
 ENFORCE_LAND_AREA_TILE_DIST = 48
 
-HEXSPACING = 2048 -- distance between spawns (tiles)
+HEXSPACING = 1800 -- distance between spawns (tiles)
 HEXRINGS = 3  -- number of rings of start spawns
 HEX_FAR_SPACING = HEXSPACING * 2 -- the outermost 2 rings
 
