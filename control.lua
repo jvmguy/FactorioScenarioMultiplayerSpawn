@@ -108,6 +108,10 @@ script.on_init(function(event)
     if ENABLE_BLUEPRINT_STRING then
         bps_init()
     end
+    
+    if ENABLE_BLUEPRINT_FROM_START then
+        EnableAutomatedConstruction(game.forces[MAIN_FORCE])
+    end
 end)
 
 

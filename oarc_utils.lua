@@ -118,6 +118,15 @@ function GivePlayerStarterItems(player)
     player.insert{name="iron-plate", count=8}
     player.insert{name="burner-mining-drill", count = 1}
     player.insert{name="stone-furnace", count = 1}
+    if ENABLE_GOOD_STARTER_ITEMS then
+        GivePlayerGoodStarterItems(player);
+    end
+    if ENABLE_BETTER_STARTER_ITEMS then
+        GivePlayerBetterStarterItems(player);
+    end
+    if ENABLE_BEST_STARTER_ITEMS then
+        GivePlayerBestStarterItems(player);
+    end
 end
 
 -- Check if given position is in area bounding box

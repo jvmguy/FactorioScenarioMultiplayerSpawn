@@ -46,7 +46,7 @@ function CreateWaterStrip(surface, spawnPos, tileRadius)
     surface.set_tiles(waterTiles)
 end
 
-function GiveSpecialItems(player)
+function GivePlayerBestStarterItems(player)
     player.insert{name = "power-armor-mk2", count = 1}
     player.insert{name = "fusion-reactor-equipment", count=1}
     player.insert({name = "exoskeleton-equipment", count=3})
@@ -58,7 +58,29 @@ function GiveSpecialItems(player)
     player.insert{name="steel-axe", count = 5}
 end
 
-function GiveFastStartItems(player)
+function GivePlayerBetterStarterItems(player)
+    player.insert{name = "power-armor", count = 1}
+    player.insert{name = "fusion-reactor-equipment", count=1}
+    player.insert({name = "exoskeleton-equipment", count=1})
+    player.insert({name = "personal-roboport-equipment", count=2})
+    player.insert{name="construction-robot", count = 20}
+    player.insert{name="blueprint", count = 3}
+    player.insert{name="deconstruction-planner", count = 1}
+    player.insert{name="night-vision-equipment", count = 1}
+    player.insert{name="steel-axe", count = 5}
+end
+
+function GivePlayerGoodStarterItems(player)
+    player.insert{name = "modular-armor", count = 1}
+    player.insert{name = "battery-equipment", count=1}
+    player.insert({name = "solar-panel-equipment", count=2})
+    player.insert({name = "personal-roboport-equipment", count=1})
+    player.insert{name="construction-robot", count = 5}
+    player.insert{name="blueprint", count = 2}
+    player.insert{name="deconstruction-planner", count = 1}
+    player.insert{name = "iron-plate", count = 10}
+end
+function GiveBestStartItems(player)
   -- raw materials
     player.insert{name = "coal", count = 100}
     player.insert{name = "iron-plate", count = 100}
@@ -84,6 +106,10 @@ function GiveFastStartItems(player)
     player.insert({name = "splitter", count=50})
     player.insert({name = "inserter", count=100})
     player.insert({name = "fast-inserter", count=50})
+end
+
+function EnableAutomatedConstruction(force)
+    force.technologies['automated-construction'].researched=true;
 end
 
 function ShowSpawns(player, t)
