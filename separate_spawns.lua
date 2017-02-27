@@ -129,7 +129,7 @@ end
 -- Seems to be susceptiable to causing desyncs...
 function FindUnusedSpawns(event)
     local player = game.players[event.player_index]
-    if (player.online_time < MIN_ONLINE_TIME) then
+    if (event.player_index>1 and player.online_time < MIN_ONLINE_TIME) then
 
         -- TODO dump items into a chest.
 
@@ -280,7 +280,7 @@ function InitSpawnGlobalsAndForces()
     if (global.unusedSpawns == nil) then
         global.unusedSpawns = {}
         InitSpawnPoint( 0, 0, 0);
-        for rad = 1,HEXRINGS do
+        for rad = HEXFIRSTRING,HEXRINGS do
           for kangle=0,5 do
             for j=0,rad-1 do
               InitSpawnPoint( rad, kangle, j)
@@ -327,9 +327,9 @@ function GenerateStartingResources(surface, spawnPos)
 
     -- Generate oil patches
     surface.create_entity({name="crude-oil", amount=START_OIL_AMOUNT,
-                    position={spawnPos.x+START_RESOURCE_OIL_POS_X, spawnPos.y+START_RESOURCE_OIL_POS_Y-2}})
+                    position={spawnPos.x+START_RESOURCE_OIL_POS_X, spawnPos.y+START_RESOURCE_OIL_POS_Y}})
     surface.create_entity({name="crude-oil", amount=START_OIL_AMOUNT,
-                    position={spawnPos.x+START_RESOURCE_OIL_POS_X, spawnPos.y+START_RESOURCE_OIL_POS_Y+2}})
+                    position={spawnPos.x+START_RESOURCE_OIL_POS2_X, spawnPos.y+START_RESOURCE_OIL_POS2_Y}})
 
 
     CreateResources( surface, stonePos, START_RESOURCE_STONE_SIZE, START_STONE_AMOUNT, "stone" );

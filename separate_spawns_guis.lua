@@ -335,21 +335,42 @@ function SpawnIsCompatible( spawnPos, far )
   return compatible;
 end
 
+function DistanceFromUsedSpawns( pick )
+  local minDist = 999999
+  for key, spawnPos in pairs(global.allSpawns) do
+    if spawnPos.used then
+        local dx = spawnPos.x - pick.x
+        local dy = spawnPos.y - pick.y
+        local dist = math.sqrt( dx*dx + dy*dy)
+        if dist < minDist then
+            minDist = dist
+        end
+    end
+  end
+  return minDist
+end
+
 function PickRandomSpawn( t, far )
+  -- local player = game.players[1];
   local candidates = {}
   for key, spawnPos in pairs(t) do
     if spawnPos ~= nil and SpawnIsCompatible( spawnPos, far ) then
         spawnPos.key = key;
+        spawnPos.dist = DistanceFromUsedSpawns(spawnPos)
         table.insert( candidates, spawnPos );
     end
   end
+  table.sort (candidates, function (k1, k2) return k1.dist > k2.dist end )
   local ncandidates = TableLength(candidates)
-  local player = game.players[1];
+  if ncandidates > 5 then
+        ncandidates = math.floor((ncandidates+1)/3)
+  end
   -- player.print("choosing a spawn from " .. ncandidates .. " candidates");
   if ncandidates > 0 then
     local pick = math.random(1,ncandidates)
     spawnPos = candidates[pick];
     t[spawnPos.key] = nil;
+    -- player.print("chose " .. spawnPos.x .. "," .. spawnPos.y .. " distance " .. spawnPos.dist);
     return spawnPos;
   end
   return nil;

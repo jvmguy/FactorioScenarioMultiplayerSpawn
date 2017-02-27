@@ -11,9 +11,9 @@ scenario.config.mapsettings = scenario.config.mapsettings or {}
 --------------------------------------------------------------------------------
 
 WELCOME_MSG = "Welcome to jvmguy's server."
-GAME_MODE_MSG = "In the current game mode, a satellite must be launched from the rocket silo to the far east to win!"
+GAME_MODE_MSG = "In the current game mode, a satellite must be launched from the rocket silo in the center to win!"
 -- GAME_MODE_MSG = "The current game mode is just basic vanilla!"
-MODULES_ENABLED = "Mods Enabled: Separate Spawns, RSO, Gravestone Chests, Long-Reach, Autofill, Blueprint Strings"
+MODULES_ENABLED = "Mods Enabled: Separate Spawns, RSO, Gravestone Chests, Long-Reach, Autofill"
 -- MODULES_ENABLED = "Mods Enabled: Gravestone-Chests"
 
 -- WELCOME_MSG_TITLE = "[INSERT SERVER OWNER MSG HERE!]"
@@ -46,11 +46,11 @@ FRONTIER_ROCKET_SILO_MODE = true
 -- Separate spawns
 ENABLE_SEPARATE_SPAWNS = true
 
-ENABLE_GOOD_STARTER_ITEMS = true
+ENABLE_GOOD_STARTER_ITEMS = false
 ENABLE_BETTER_STARTER_ITEMS = false
 ENABLE_BEST_STARTER_ITEMS = false
 
-ENABLE_BLUEPRINT_FROM_START = true
+ENABLE_BLUEPRINT_FROM_START = false
 
 -- Enable Scenario version of RSO
 ENABLE_RSO = true
@@ -71,7 +71,7 @@ ENABLE_LONGREACH = true
 ENABLE_AUTOFILL = true
 
 -- Enable BPS
-ENABLE_BLUEPRINT_STRING = true
+ENABLE_BLUEPRINT_STRING = false
 
 --------------------------------------------------------------------------------
 -- Spawn Options
@@ -97,16 +97,19 @@ START_IRON_AMOUNT = 1800
 START_COPPER_AMOUNT = 1800
 START_STONE_AMOUNT = 1800
 START_COAL_AMOUNT = 1800
-START_OIL_AMOUNT = 30000
+START_OIL_AMOUNT = 20000
+
+SPAWN_TREE_DENSITY = 0.2
 
 -- Stat resource shape
 -- If this is true, it will be a circle or an ellipse
 -- If false, it will be a square
 ENABLE_RESOURCE_SHAPE_CIRCLE = true
-ELLIPSE_X_STRETCH=1.8	-- stretch the size horizontally (make it an ellipse)
+ELLIPSE_X_STRETCH=2.0	-- stretch the size horizontally (make it an ellipse)
 
 -- Start resource position and size
 -- Position is relative to player starting location
+
 START_RESOURCE_STONE_POS_X = -25
 START_RESOURCE_STONE_POS_Y = -31
 START_RESOURCE_STONE_SIZE = 8
@@ -123,8 +126,11 @@ START_RESOURCE_IRON_POS_X = -25
 START_RESOURCE_IRON_POS_Y = 15
 START_RESOURCE_IRON_SIZE = 14
 
-START_RESOURCE_OIL_POS_X = -32
-START_RESOURCE_OIL_POS_Y = 0
+START_RESOURCE_OIL_POS_X = 20
+START_RESOURCE_OIL_POS_Y = -36
+
+START_RESOURCE_OIL_POS2_X = 24
+START_RESOURCE_OIL_POS2_Y = -36
 
 ---------------------------------------
 -- We override the vertical position to give uniform spacing here. comment out to 
@@ -158,8 +164,10 @@ WARN_AREA_REDUCTION_RATIO = 15
 ENFORCE_LAND_AREA_TILE_DIST = 48
 
 HEXSPACING = 1800 -- distance between spawns (tiles)
-HEXRINGS = 3  -- number of rings of start spawns
-HEX_FAR_SPACING = HEXSPACING * 2 -- the outermost 2 rings
+
+HEXFIRSTRING = 3  -- number of rings of start spawns
+HEXRINGS = 4  -- number of rings of start spawns
+HEX_FAR_SPACING = HEXSPACING * HEXFIRSTRING -- the outermost 2 rings
 
 
 
@@ -175,7 +183,7 @@ HEX_FAR_SPACING = HEXSPACING * 2 -- the outermost 2 rings
 MAIN_FORCE = "main_force"
 
 -- Enable if people can spawn at the main base
-ENABLE_DEFAULT_SPAWN = true
+ENABLE_DEFAULT_SPAWN = false
 
 -- Enable if people can allow others to join their base
 ENABLE_SHARED_SPAWNS = true
@@ -216,7 +224,8 @@ ENEMY_DESTROY_FACTOR_DIVISOR = 8
 -- Frontier Rocket Silo Options
 --------------------------------------------------------------------------------
 
-SILO_DISTANCE = 4 * HEXSPACING
+-- SILO_DISTANCE = 4 * HEXSPACING
+SILO_DISTANCE = CHUNK_SIZE      -- put the silo 1 chunk east of the origin (prevents problems)
 SILO_CHUNK_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE);
 SILO_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE)* CHUNK_SIZE + CHUNK_SIZE/2
 SILO_DISTANCE_Y = CHUNK_SIZE/2
@@ -225,7 +234,7 @@ SILO_DISTANCE_Y = CHUNK_SIZE/2
 SILO_POSITION = {x = SILO_DISTANCE_X, y = SILO_DISTANCE_Y}
 
 -- If this is enabled, the static position is ignored.
-ENABLE_RANDOM_SILO_POSITION = true
+ENABLE_RANDOM_SILO_POSITION = false
 
 --------------------------------------------------------------------------------
 -- Long Reach Options

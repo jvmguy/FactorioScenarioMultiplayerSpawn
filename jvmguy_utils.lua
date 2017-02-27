@@ -21,7 +21,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius)
             -- Create a ring
             if ((distVar < tileRadius) and 
                 (distVar > tileRadius-1.9)) then
-                if math.random() > 0.8 then
+                if math.random() < SPAWN_TREE_DENSITY then
                   surface.create_entity({name="tree-01", amount=1, position={i, j}})
                 end
             end
@@ -71,15 +71,37 @@ function GivePlayerBetterStarterItems(player)
 end
 
 function GivePlayerGoodStarterItems(player)
+    player.insert{name="steel-axe", count = 5}
+    player.insert{name = "raw-fish", count = 20}
     player.insert{name = "modular-armor", count = 1}
     player.insert{name = "battery-equipment", count=1}
-    player.insert({name = "solar-panel-equipment", count=2})
+    player.insert({name = "solar-panel-equipment", count=5})
     player.insert({name = "personal-roboport-equipment", count=1})
     player.insert{name="construction-robot", count = 5}
     player.insert{name="blueprint", count = 2}
     player.insert{name="deconstruction-planner", count = 1}
-    player.insert{name = "iron-plate", count = 10}
+    player.insert{name="roboport", count = 1}
+    player.insert{name="logistic-chest-storage", count = 1}
+
+    player.insert{name = "iron-plate", count = 100}
+    player.insert{name = "copper-plate", count = 100}
+
+    -- fast power setup
+    player.insert{name = "offshore-pump", count = 1}
+    player.insert{name = "boiler", count = 4}
+    player.insert{name = "steam-engine", count = 3}
+    player.insert({name = "pipe", count=10})
+    player.insert({name = "pipe-to-ground", count=10})
+
+    -- resource extraction    
+    player.insert{name = "electric-mining-drill", count = 5}
+    player.insert{name = "stone-furnace", count = 9} -- there's one already there
+
+    -- connectivity
+    player.insert{name = "transport-belt", count=50}
+    player.insert({name = "inserter", count=20})
 end
+
 function GiveBestStartItems(player)
   -- raw materials
     player.insert{name = "coal", count = 100}
