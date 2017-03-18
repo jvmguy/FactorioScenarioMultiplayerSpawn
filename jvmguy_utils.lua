@@ -51,7 +51,7 @@ function GivePlayerBestStarterItems(player)
     player.insert{name = "fusion-reactor-equipment", count=1}
     player.insert({name = "exoskeleton-equipment", count=3})
     player.insert({name = "personal-roboport-equipment", count=4})
-    player.insert{name="construction-robot", count = 40}
+    player.insert{name="construction-robot", count = 50}
     player.insert{name="blueprint", count = 3}
     player.insert{name="deconstruction-planner", count = 1}
     player.insert{name="night-vision-equipment", count = 1}
@@ -68,6 +68,7 @@ function GivePlayerBetterStarterItems(player)
     player.insert{name="deconstruction-planner", count = 1}
     player.insert{name="night-vision-equipment", count = 1}
     player.insert{name="steel-axe", count = 5}
+    player.insert{name="roboport", count = 1}
 end
 
 function GivePlayerGoodStarterItems(player)
@@ -128,6 +129,30 @@ function GiveBestStartItems(player)
     player.insert({name = "splitter", count=50})
     player.insert({name = "inserter", count=100})
     player.insert({name = "fast-inserter", count=50})
+end
+
+function GivePlayerLogisticStarterItems(player)
+    -- connectivity
+    player.insert{name="roboport", count = 5}
+    player.insert{name="logistic-robot", count = 50}
+    player.insert{name="logistic-chest-storage", count = 50}
+    player.insert{name="logistic-chest-requester", count = 50}
+    player.insert{name="logistic-chest-passive-provider", count = 50}
+    player.insert{name="logistic-chest-active-provider", count = 50}
+    player.insert({name = "inserter", count=100})
+    player.insert({name = "fast-inserter", count=50})
+    player.insert({name = "long-handed-inserter", count=50})
+    player.insert{name = "medium-electric-pole", count = 50}
+    player.insert{name = "big-electric-pole", count = 20}
+    player.insert{name = "substation", count = 20}
+    -- fast power setup
+    player.insert{name="solar-panel", count = 200}
+    player.insert{name="accumulator", count = 200}
+    -- resource extraction
+    player.insert{name = "electric-mining-drill", count = 50}
+    player.insert{name="electric-furnace", count = 50}
+    -- production
+    player.insert({name = "assembling-machine-2", count=20})
 end
 
 function EnableAutomatedConstruction(force)

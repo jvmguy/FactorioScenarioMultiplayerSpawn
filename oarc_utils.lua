@@ -127,6 +127,9 @@ function GivePlayerStarterItems(player)
     if ENABLE_BEST_STARTER_ITEMS then
         GivePlayerBestStarterItems(player);
     end
+    if ENABLE_LOGISTIC_STARTER_ITEMS then
+        GivePlayerLogisticStarterItems(player);
+    end
 end
 
 -- Check if given position is in area bounding box

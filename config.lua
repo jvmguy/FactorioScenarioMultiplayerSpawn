@@ -47,10 +47,12 @@ FRONTIER_ROCKET_SILO_MODE = true
 ENABLE_SEPARATE_SPAWNS = true
 
 ENABLE_GOOD_STARTER_ITEMS = false
-ENABLE_BETTER_STARTER_ITEMS = false
+ENABLE_BETTER_STARTER_ITEMS = true
 ENABLE_BEST_STARTER_ITEMS = false
+ENABLE_LOGISTIC_STARTER_ITEMS = true
 
 ENABLE_BLUEPRINT_FROM_START = false
+ENABLE_ALL_RESEARCH_DONE = true
 
 -- Enable Scenario version of RSO
 ENABLE_RSO = true
@@ -71,7 +73,7 @@ ENABLE_LONGREACH = true
 ENABLE_AUTOFILL = true
 
 -- Enable BPS
-ENABLE_BLUEPRINT_STRING = false
+ENABLE_BLUEPRINT_STRING = true
 
 --------------------------------------------------------------------------------
 -- Spawn Options

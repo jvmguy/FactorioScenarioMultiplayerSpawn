@@ -279,7 +279,7 @@ function InitSpawnGlobalsAndForces()
     end
     if (global.unusedSpawns == nil) then
         global.unusedSpawns = {}
-        InitSpawnPoint( 0, 0, 0);
+        -- InitSpawnPoint( 0, 0, 0);
         for rad = HEXFIRSTRING,HEXRINGS do
           for kangle=0,5 do
             for j=0,rad-1 do

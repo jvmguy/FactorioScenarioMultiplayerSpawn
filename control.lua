@@ -112,6 +112,11 @@ script.on_init(function(event)
     if ENABLE_BLUEPRINT_FROM_START then
         EnableAutomatedConstruction(game.forces[MAIN_FORCE])
     end
+
+    if ENABLE_ALL_RESEARCH_DONE then
+        game.forces[MAIN_FORCE].research_all_technologies()
+    end
+    
 end)
 
 
