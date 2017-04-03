@@ -49,7 +49,7 @@ ENABLE_SEPARATE_SPAWNS = true
 ENABLE_GOOD_STARTER_ITEMS = false
 ENABLE_BETTER_STARTER_ITEMS = true
 ENABLE_BEST_STARTER_ITEMS = false
-ENABLE_LOGISTIC_STARTER_ITEMS = true
+ENABLE_LOGISTIC_STARTER_ITEMS = false
 
 ENABLE_BLUEPRINT_FROM_START = false
 ENABLE_ALL_RESEARCH_DONE = true
@@ -95,11 +95,11 @@ FAR_MAX_DIST = 200 --125
 ---------------------------------------
 
 -- Start resource amounts
-START_IRON_AMOUNT = 1800
-START_COPPER_AMOUNT = 1800
-START_STONE_AMOUNT = 1800
-START_COAL_AMOUNT = 1800
-START_OIL_AMOUNT = 20000
+START_IRON_AMOUNT = 1500
+START_COPPER_AMOUNT = 1500
+START_STONE_AMOUNT = 1500
+START_COAL_AMOUNT = 1500
+START_OIL_AMOUNT = 30000
 
 SPAWN_TREE_DENSITY = 0.2
 
@@ -189,7 +189,7 @@ ENABLE_DEFAULT_SPAWN = false
 
 -- Enable if people can allow others to join their base
 ENABLE_SHARED_SPAWNS = true
-MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 3
+MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 2
 
 
 ---------------------------------------
@@ -218,9 +218,8 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
-ENEMY_POLLUTION_FACTOR_DIVISOR = 8
-ENEMY_DESTROY_FACTOR_DIVISOR = 8
-
+ENEMY_POLLUTION_FACTOR_DIVISOR = 10
+ENEMY_DESTROY_FACTOR_DIVISOR = 5
 
 --------------------------------------------------------------------------------
 -- Frontier Rocket Silo Options
@@ -242,7 +241,7 @@ ENABLE_RANDOM_SILO_POSITION = false
 -- Long Reach Options
 --------------------------------------------------------------------------------
 
-BUILD_DIST_BONUS = 14
+BUILD_DIST_BONUS = 15
 REACH_DIST_BONUS = BUILD_DIST_BONUS
 RESOURCE_DIST_BONUS = 2
 

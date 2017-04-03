@@ -63,12 +63,14 @@ function GivePlayerBetterStarterItems(player)
     player.insert{name = "fusion-reactor-equipment", count=1}
     player.insert({name = "exoskeleton-equipment", count=1})
     player.insert({name = "personal-roboport-equipment", count=2})
-    player.insert{name="construction-robot", count = 20}
+    player.insert{name="construction-robot", count = 50}
     player.insert{name="blueprint", count = 3}
     player.insert{name="deconstruction-planner", count = 1}
     player.insert{name="night-vision-equipment", count = 1}
     player.insert{name="steel-axe", count = 5}
-    player.insert{name="roboport", count = 1}
+    player.insert{name="roboport", count = 3}
+    player.insert{name="logistic-chest-storage", count = 1}
+    player.insert{name = "battery-equipment", count=3}
 end
 
 function GivePlayerGoodStarterItems(player)
