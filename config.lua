@@ -43,6 +43,9 @@ SPAWN_MSG3 = "Resources are spread out far apart but are quite rich."
 -- Frontier style rocket silo mode
 FRONTIER_ROCKET_SILO_MODE = true
 
+-- put players on a special surface until they've chosen
+ENABLE_SPAWN_SURFACE = true
+
 -- Separate spawns
 ENABLE_SEPARATE_SPAWNS = true
 
@@ -52,7 +55,7 @@ ENABLE_BEST_STARTER_ITEMS = false
 ENABLE_LOGISTIC_STARTER_ITEMS = false
 
 ENABLE_BLUEPRINT_FROM_START = false
-ENABLE_ALL_RESEARCH_DONE = true
+ENABLE_ALL_RESEARCH_DONE = false
 
 -- Enable Scenario version of RSO
 ENABLE_RSO = true

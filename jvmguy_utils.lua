@@ -161,6 +161,24 @@ function EnableAutomatedConstruction(force)
     force.technologies['automated-construction'].researched=true;
 end
 
+function AssignPlayerToStartSurface(player)
+    local startSurface = game.surfaces["start_world"]
+    if startSurface == nil then
+        local settings = {
+            terrain_segmentation = "very-low",
+            water= "very-high",
+            width =64,
+            height = 64,
+            starting_area = "low",
+            peaceful_mode = true,
+            seed = 1
+        };
+        game.create_surface("start_world", settings)
+        startSurface = game.surfaces["start_world"]
+    end
+    player.teleport( {x=0,y=0}, startSurface)
+end
+
 function ShowSpawns(player, t)
   if t ~= nil then
     for key,spawn in pairs(t) do

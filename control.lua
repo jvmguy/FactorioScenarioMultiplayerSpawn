@@ -188,6 +188,9 @@ script.on_event(defines.events.on_player_joined_game, function(event)
 end)
 
 script.on_event(defines.events.on_player_created, function(event)
+    if ENABLE_SPAWN_SURFACE then
+        AssignPlayerToStartSurface(game.players[event.player_index])
+    end
     if ENABLE_RSO then
         RSO_PlayerCreated(event)
     end

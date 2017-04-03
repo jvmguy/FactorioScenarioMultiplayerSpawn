@@ -374,7 +374,7 @@ function SendPlayerToNewSpawnAndCreateIt(player, spawn)
       DebugPrint("SendPlayerToNewSpawnAndCreateIt: error. spawn is nil")
       spawn = { x = 0, y = 0 }
     end
-    player.teleport(spawn)
+    player.teleport(spawn, game.surfaces["nauvis"])
     ChartArea(player.force, player.position, 4)
 
     -- If we get a valid spawn point, setup the area
@@ -389,9 +389,9 @@ end
 
 function SendPlayerToSpawn(player)
     if (DoesPlayerHaveCustomSpawn(player)) then
-        player.teleport(global.playerSpawns[player.name])
+        player.teleport(global.playerSpawns[player.name], game.surfaces["nauvis"])
     else
-        player.teleport(game.forces[MAIN_FORCE].get_spawn_position("nauvis"))
+        player.teleport(game.forces[MAIN_FORCE].get_spawn_position("nauvis"), game.surfaces["nauvis"])
     end
 end
 
@@ -401,12 +401,12 @@ function SendPlayerToRandomSpawn(player)
     local counter = 0
 
     if (rndSpawn == 0) then
-        player.teleport(game.forces[MAIN_FORCE].get_spawn_position("nauvis"))
+        player.teleport(game.forces[MAIN_FORCE].get_spawn_position("nauvis"), game.surfaces["nauvis"])
     else
         counter = counter + 1
         for name,spawnPos in pairs(global.uniqueSpawns) do
             if (counter == rndSpawn) then
-                player.teleport(spawnPos)
+                player.teleport(spawnPos, game.surfaces["nauvis"])
                 break
             end
             counter = counter + 1
