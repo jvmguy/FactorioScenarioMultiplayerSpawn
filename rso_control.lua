@@ -1347,13 +1347,3 @@ function RSO_ChunkGenerated(event)
 	roll_region(c_x, c_y)
 	roll_chunk(event.surface, c_x, c_y)
 end
-
-function RSO_PlayerCreated(event)
-	RSO_init()
-	local player = game.players[event.player_index]
-	
-	if debug_enabled then	
-		printResourceProbability(player)
-	end
-end
-

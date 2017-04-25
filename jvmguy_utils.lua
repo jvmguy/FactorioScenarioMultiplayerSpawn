@@ -158,7 +158,7 @@ function GivePlayerLogisticStarterItems(player)
 end
 
 function EnableAutomatedConstruction(force)
-    force.technologies['automated-construction'].researched=true;
+--    force.technologies['automated-construction'].researched=true;
 end
 
 function AssignPlayerToStartSurface(player)

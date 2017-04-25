@@ -33,7 +33,6 @@ require("config")
 -- Include Mods
 require("separate_spawns")
 require("separate_spawns_guis")
-require("rso_control")
 require("frontier_silo")
 require("tag")
 require("bps")

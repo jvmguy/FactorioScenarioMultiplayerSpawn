@@ -54,11 +54,11 @@ ENABLE_BETTER_STARTER_ITEMS = true
 ENABLE_BEST_STARTER_ITEMS = false
 ENABLE_LOGISTIC_STARTER_ITEMS = false
 
-ENABLE_BLUEPRINT_FROM_START = false
+ENABLE_BLUEPRINT_FROM_START = true
 ENABLE_ALL_RESEARCH_DONE = false
 
 -- Enable Scenario version of RSO
-ENABLE_RSO = true
+ENABLE_RSO = false
 
 -- Enable Gravestone Chests
 ENABLE_GRAVESTONE_CHESTS = true
@@ -76,7 +76,7 @@ ENABLE_LONGREACH = true
 ENABLE_AUTOFILL = true
 
 -- Enable BPS
-ENABLE_BLUEPRINT_STRING = true
+ENABLE_BLUEPRINT_STRING = false
 
 --------------------------------------------------------------------------------
 -- Spawn Options
@@ -102,7 +102,7 @@ START_IRON_AMOUNT = 1500
 START_COPPER_AMOUNT = 1500
 START_STONE_AMOUNT = 1500
 START_COAL_AMOUNT = 1500
-START_OIL_AMOUNT = 30000
+START_OIL_AMOUNT = 1000000
 
 SPAWN_TREE_DENSITY = 0.2
 
@@ -168,7 +168,7 @@ WARN_AREA_REDUCTION_RATIO = 15
 -- Create a circle of land area for the spawn
 ENFORCE_LAND_AREA_TILE_DIST = 48
 
-HEXSPACING = 1800 -- distance between spawns (tiles)
+HEXSPACING = 2400 -- distance between spawns (tiles)
 
 HEXFIRSTRING = 3  -- number of rings of start spawns
 HEXRINGS = 4  -- number of rings of start spawns

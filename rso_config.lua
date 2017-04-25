@@ -21,7 +21,7 @@ multi_resource_richness_factor = 0.60 	-- any additional resource is multiplied 
 multi_resource_size_factor = 0.90
 multi_resource_chance_diminish = 0.6	-- diminishing effect factor on multi_resource_chance
 
-min_amount=250 					-- default value for minimum amount of resource in single pile
+min_amount=350 					-- default value for minimum amount of resource in single pile
 
 richness_distance_factor=0.9 	-- exponent for richness distance factor calculation
 size_distance_factor=0.15	   	-- exponent for size distance factor calculation

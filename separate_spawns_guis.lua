@@ -5,8 +5,10 @@
 
 require("separate_spawns")
 
-local SPAWN_GUI_MAX_WIDTH = 450
-local SPAWN_GUI_MAX_HEIGHT = 650
+local SPAWN_GUI_MAX_WIDTH = 1000
+local SPAWN_GUI_MAX_HEIGHT = 1000
+local SPAWN_GUI_MIN_WIDTH = 400
+local SPAWN_GUI_MIN_HEIGHT = 400
 
 -- Use this for testing shared spawns...
 -- local sharedSpawnExample1 = {openAccess=true,
@@ -34,6 +36,8 @@ function DisplayWelcomeTextGui(player)
 
     wGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
     wGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
+    wGui.style.minimal_width = SPAWN_GUI_MIN_WIDTH
+    wGui.style.minimal_height = SPAWN_GUI_MIN_HEIGHT
 
 
 
@@ -114,6 +118,8 @@ function DisplaySpawnOptions(player)
     local sGui = player.gui.center.spawn_opts
     sGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
     sGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
+    sGui.style.maximal_width = SPAWN_GUI_MIN_WIDTH
+    sGui.style.maximal_height = SPAWN_GUI_MIN_HEIGHT
 
 
     -- Warnings and explanations...
@@ -388,6 +394,8 @@ function DisplaySharedSpawnOptions(player)
     ApplyStyle(shGui, my_fixed_width_style)
     shGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
     shGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
+    shGui.style.minimal_width = SPAWN_GUI_MIN_WIDTH
+    shGui.style.minimal_height = SPAWN_GUI_MIN_HEIGHT
     shGui.horizontal_scroll_policy = "never"
 
 

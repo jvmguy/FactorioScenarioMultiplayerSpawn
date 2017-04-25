@@ -14,9 +14,9 @@ BlueprintString.LINE_LENGTH = 120
 -- Initialise player GUI
 -- @param player
 local function init_gui(player)
-	if (not player.force.technologies["automated-construction"].researched) then
-		return
-	end
+--	if (not player.force.technologies["automated-construction"].researched) then
+--		return
+--	end
 
 	if (not player.gui.top["blueprint-string-button"]) then
 		player.gui.top.add { type = "button", name = "blueprint-string-button", caption = "BPS" }
@@ -39,13 +39,13 @@ end
 -- Handle research completion
 -- @param event on_research_finished event
 function bps_on_research_finished(event)
-	if (event.research.name == "automated-construction") then
-		for _, player in pairs(game.players) do
-			if (event.research.force.name == player.force.name) then
-				init_gui(player)
-			end
-		end
-	end
+--	if (event.research.name == "automated-construction") then
+--		for _, player in pairs(game.players) do
+--			if (event.research.force.name == player.force.name) then
+--				init_gui(player)
+--			end
+--		end
+--	end
 end
 
 -- Expand player's gui

@@ -23,21 +23,24 @@ my_fixed_width_style = {
     maximal_width = 450
 }
 my_label_style = {
-    minimal_width = 450,
+    minimal_width = 900,
     maximal_width = 450,
-    maximal_height = 10,
+    minimal_height = 20,
+    maximal_height = 20,
     font_color = {r=1,g=1,b=1}
 }
 my_note_style = {
-    minimal_width = 450,
-    maximal_height = 10,
+    minimal_width = 900,
+    minimal_height = 20,
+    maximal_height = 20,
     font = "default-small-semibold",
     font_color = {r=1,g=0.5,b=0.5}
 }
 my_warning_style = {
     minimal_width = 450,
-    maximal_width = 450,
-    maximal_height = 10,
+    maximal_width = 900,
+    minimal_height = 20,
+    maximal_height = 20,
     font_color = {r=1,g=0.1,b=0.1}
 }
 my_spacer_style = {
@@ -134,8 +137,8 @@ end
 
 -- Check if given position is in area bounding box
 function CheckIfInArea(point, area)
-    if ((point.x > area.left_top.x) and (point.x < area.right_bottom.x)) then
-        if ((point.y > area.left_top.y) and (point.y < area.right_bottom.y)) then
+    if ((point.x >= area.left_top.x) and (point.x < area.right_bottom.x)) then
+        if ((point.y >= area.left_top.y) and (point.y < area.right_bottom.y)) then
             return true
         end
     end
@@ -412,7 +415,9 @@ function GivePlayerLongReach(player)
     -- player.character.character_resource_reach_distance_bonus  = RESOURCE_DIST_BONUS
 end
 
-
+-- This creates a random silo position, stored to global.siloPosition
+-- It uses the config setting SILO_CHUNK_DISTANCE and spawns the silo somewhere
+-- on a circle edge with radius using that distance.
 function SetRandomSiloPosition()
     if (global.siloPosition == nil) then
         -- Get an X,Y on a circle far away.
@@ -427,7 +432,7 @@ function SetRandomSiloPosition()
     end
 end
 
--- Use preset value
+-- Sets the global.siloPosition var to the set in the config file
 function SetFixedSiloPosition()
     if (global.siloPosition == nil) then
         global.siloPosition = SILO_POSITION
@@ -469,6 +474,7 @@ function TransferItemMultipleTypes(srcInv, destEntity, itemNameArray, itemCount)
     return ret -- Return the last error code
 end
 
+-- Autofills a turret with ammo
 function AutofillTurret(player, turret)
     local mainInv = player.get_inventory(defines.inventory.player_main)
 
@@ -486,6 +492,7 @@ function AutofillTurret(player, turret)
     end
 end
 
+-- Autofills a vehicle with fuel, bullets and shells where applicable
 function AutoFillVehicle(player, vehicle)
     local mainInv = player.get_inventory(defines.inventory.player_main)
 

@@ -23,7 +23,7 @@ local roles = {
   {display_name = "[AFK]"},
   {display_name = "Clear"}}
 
-local function ExpangTagGui(player)
+local function ExpandTagGui(player)
     local frame = player.gui.left["tag-panel"]
     if (frame) then
         frame.destroy()
@@ -41,7 +41,7 @@ function TagGuiClick(event)
     local name = event.element.name
 
 		if (name == "tag") then
-			ExpangTagGui(player)		
+			ExpandTagGui(player)		
 		end
 		
 		if (name == "Clear") then 
@@ -51,6 +51,7 @@ function TagGuiClick(event)
     
 		for _, role in pairs(roles) do
 			if (name == role.display_name) then
-				player.tag = role.display_name			end
+				player.tag = role.display_name
+      end
 		end
 end
