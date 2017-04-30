@@ -61,7 +61,7 @@ ENABLE_ALL_RESEARCH_DONE = false
 ENABLE_RSO = false
 
 -- Enable Gravestone Chests
-ENABLE_GRAVESTONE_CHESTS = true
+ENABLE_GRAVESTONE_CHESTS = false
 
 -- Enable Undecorator
 ENABLE_UNDECORATOR = true
