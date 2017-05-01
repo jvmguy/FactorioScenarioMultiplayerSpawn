@@ -31,6 +31,7 @@ require("jvmguy_utils")
 require("config")
 
 -- Include Mods
+require("rso_control")
 require("separate_spawns")
 require("separate_spawns_guis")
 require("frontier_silo")
@@ -190,9 +191,9 @@ script.on_event(defines.events.on_player_created, function(event)
     if ENABLE_SPAWN_SURFACE then
         AssignPlayerToStartSurface(game.players[event.player_index])
     end
-    if ENABLE_RSO then
-        RSO_PlayerCreated(event)
-    end
+--    if ENABLE_RSO then
+--      RSO_PlayerCreated(event)
+--  end
 
     if ENABLE_LONGREACH then
         GivePlayerLongReach(game.players[event.player_index])

@@ -27,10 +27,20 @@ function SeparateSpawnsPlayerRespawned(event)
 end
 
 
-
 function GenerateSpawnChunk( event, spawnPos)
     local surface = event.surface
     local chunkArea = event.area
+
+    local chunkAreaCenter = {x=chunkArea.left_top.x+(CHUNK_SIZE/2),
+                             y=chunkArea.left_top.y+(CHUNK_SIZE/2)}
+    local warningArea = {left_top=
+                            {x=spawnPos.x-WARNING_AREA_TILE_DIST,
+                             y=spawnPos.y-WARNING_AREA_TILE_DIST},
+                        right_bottom=
+                            {x=spawnPos.x+WARNING_AREA_TILE_DIST,
+                             y=spawnPos.y+WARNING_AREA_TILE_DIST}}
+    if CheckIfInArea(chunkAreaCenter,warningArea) then
+
 		
         local landArea = {left_top=
                             {x=spawnPos.x-ENFORCE_LAND_AREA_TILE_DIST,
@@ -46,15 +56,6 @@ function GenerateSpawnChunk( event, spawnPos)
                             {x=spawnPos.x+SAFE_AREA_TILE_DIST,
                              y=spawnPos.y+SAFE_AREA_TILE_DIST}}
 
-        local warningArea = {left_top=
-                                {x=spawnPos.x-WARNING_AREA_TILE_DIST,
-                                 y=spawnPos.y-WARNING_AREA_TILE_DIST},
-                            right_bottom=
-                                {x=spawnPos.x+WARNING_AREA_TILE_DIST,
-                                 y=spawnPos.y+WARNING_AREA_TILE_DIST}}
-
-        local chunkAreaCenter = {x=chunkArea.left_top.x+(CHUNK_SIZE/2),
-                                 y=chunkArea.left_top.y+(CHUNK_SIZE/2)}
 
                                  
 
@@ -99,11 +100,30 @@ function GenerateSpawnChunk( event, spawnPos)
 	            CreateCropCircle(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
 			end
             CreateWaterStrip( surface, spawnPos, ENFORCE_LAND_AREA_TILE_DIST*3/4 )
-            if not spawnPos.generated then
-              spawnPos.generated = true;
-              GenerateStartingResources( surface, spawnPos);
-            end
+            GenerateStartingResources( surface, chunkArea, spawnPos);
         end
+    end
+end
+
+function DistanceFromPoint( spawnPos, p)
+    local dx = spawnPos.x - p.x
+    local dy = spawnPos.y - p.y
+    local dist = math.sqrt( dx*dx + dy*dy)
+    return dist
+end
+
+-- return the spawn from table t,  nearest position p
+function NearestSpawn( t, p )
+  local candidates = {}
+  for key, spawnPos in pairs(t) do
+    if spawnPos ~= nil then
+        spawnPos.key = key;
+        spawnPos.dist = DistanceFromPoint(spawnPos, p)
+        table.insert( candidates, spawnPos );
+    end
+  end
+  table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
+  return candidates[1]
 end
 
 
@@ -111,16 +131,14 @@ end
 -- Provides resources, land and a safe zone
 function SeparateSpawnsGenerateChunk(event)
     local surface = event.surface
-    if surface.name ~= "nauvis" then return end
-    local chunkArea = event.area
-    -- This handles chunk generation near player spawns
-    -- If it is near a player spawn, it does a few things like make the area
-    -- safe and provide a guaranteed area of land and water tiles.
-    for name,spawnPos in pairs(global.uniqueSpawns) do
-		  GenerateSpawnChunk(event, spawnPos)
-    end
-    for name,spawnPos in pairs(global.unusedSpawns) do
-  		GenerateSpawnChunk(event, spawnPos)
+    
+    if surface.name == "nauvis" then
+        -- Only take into account the nearest spawn when generating resources
+        local chunkArea = event.area
+        local midPoint = {x = (chunkArea.left_top.x + chunkArea.right_bottom.x)/2,
+                            y = (chunkArea.left_top.y + chunkArea.right_bottom.y)/2 } 
+        local spawnPos = NearestSpawn( global.allSpawns, midPoint)
+        GenerateSpawnChunk(event, spawnPos)
     end
 end
 
@@ -265,6 +283,7 @@ end
 function InitSpawnGlobalsAndForces()
     -- Contains an array of all player spawns
     -- A secondary array tracks whether the character will respawn there.
+    
     if (global.allSpawns == nil) then
         global.allSpawns = {}
     end
@@ -304,7 +323,7 @@ function InitSpawnGlobalsAndForces()
     SetCeaseFireBetweenAllForces()
 end
 
-function GenerateStartingResources(surface, spawnPos)
+function GenerateStartingResources(surface, chunkArea, spawnPos)
     --local surface = player.surface
 
     -- Generate stone
@@ -323,22 +342,24 @@ function GenerateStartingResources(surface, spawnPos)
     local ironOrePos = {x=spawnPos.x+START_RESOURCE_IRON_POS_X,
                   y=spawnPos.y+START_RESOURCE_IRON_POS_Y}
 
+    -- Generate iron ore
+    local oilPos1 = {x=spawnPos.x+START_RESOURCE_OIL_POS_X,
+                  y=spawnPos.y+START_RESOURCE_OIL_POS_Y}
+
+    local oilPos2 = {x=spawnPos.x+START_RESOURCE_OIL_POS2_X,
+                  y=spawnPos.y+START_RESOURCE_OIL_POS2_Y}
+
     -- Tree generation is taken care of in chunk generation
 
-    -- Generate oil patches
-    surface.create_entity({name="crude-oil", amount=START_OIL_AMOUNT,
-                    position={spawnPos.x+START_RESOURCE_OIL_POS_X, spawnPos.y+START_RESOURCE_OIL_POS_Y}})
-    surface.create_entity({name="crude-oil", amount=START_OIL_AMOUNT,
-                    position={spawnPos.x+START_RESOURCE_OIL_POS2_X, spawnPos.y+START_RESOURCE_OIL_POS2_Y}})
-
-
-    CreateResources( surface, stonePos, START_RESOURCE_STONE_SIZE, START_STONE_AMOUNT, "stone" );
-    CreateResources( surface, coalPos, START_RESOURCE_COAL_SIZE, START_COAL_AMOUNT, "coal" );
-    CreateResources( surface, copperOrePos, START_RESOURCE_COPPER_SIZE, START_COPPER_AMOUNT, "copper-ore" );
-    CreateResources( surface, ironOrePos, START_RESOURCE_IRON_SIZE, START_IRON_AMOUNT, "iron-ore" );
+    CreateResources( surface, chunkArea, oilPos2, 1, START_OIL_AMOUNT, "crude-oil" );
+    CreateResources( surface, chunkArea, oilPos1, 1, START_OIL_AMOUNT, "crude-oil" );
+    CreateResources( surface, chunkArea, stonePos, START_RESOURCE_STONE_SIZE, START_STONE_AMOUNT, "stone" );
+    CreateResources( surface, chunkArea, coalPos, START_RESOURCE_COAL_SIZE, START_COAL_AMOUNT, "coal" );
+    CreateResources( surface, chunkArea, copperOrePos, START_RESOURCE_COPPER_SIZE, START_COPPER_AMOUNT, "copper-ore" );
+    CreateResources( surface, chunkArea, ironOrePos, START_RESOURCE_IRON_SIZE, START_IRON_AMOUNT, "iron-ore" );
 end
 
-function CreateResources( surface, pos, size, startAmount, resourceName )
+function CreateResources( surface, chunkArea, pos, size, startAmount, resourceName )
     local xsize = size * ELLIPSE_X_STRETCH
     local ysize = size
     local xRadiusSq = (xsize/2)^2;
@@ -348,11 +369,21 @@ function CreateResources( surface, pos, size, startAmount, resourceName )
     for y=0, size do
         for x=0, xsize do
             if (((x-midPointX)^2/xRadiusSq + (y-midPointY)^2/yRadiusSq < 1) or not ENABLE_RESOURCE_SHAPE_CIRCLE) then
-                surface.create_entity({name=resourceName, amount=startAmount,
-                    position={pos.x+x, pos.y+y}})
+                if CheckIfInChunk( pos.x+x, pos.y+y, chunkArea) then 
+                    surface.create_entity({name=resourceName, amount=startAmount,
+                        position={pos.x+x, pos.y+y}})
+                end
             end
         end
     end
+end
+
+function CheckIfInChunk(x, y, chunkArea)
+    if x>=chunkArea.left_top.x and x<chunkArea.right_bottom.x
+    and y>=chunkArea.left_top.y and y<chunkArea.right_bottom.y then
+        return true;
+    end
+    return false;
 end
 
 function DoesPlayerHaveCustomSpawn(player)

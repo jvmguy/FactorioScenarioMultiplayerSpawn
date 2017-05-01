@@ -58,7 +58,7 @@ ENABLE_BLUEPRINT_FROM_START = true
 ENABLE_ALL_RESEARCH_DONE = false
 
 -- Enable Scenario version of RSO
-ENABLE_RSO = false
+ENABLE_RSO = true
 
 -- Enable Gravestone Chests
 ENABLE_GRAVESTONE_CHESTS = false

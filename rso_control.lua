@@ -1243,7 +1243,26 @@ local function roll_chunk(surface, c_x, c_y)
 					c_center_x, c_center_y, restriction = find_intersection(surface, c_center_x, c_center_y)
 					spawn_resource_liquid(surface, resource, {x=c_center_x,y=c_center_y}, size, richness, false, restriction)
 				elseif r_config.type=="entity" then
-					spawn_entity(surface, resource, r_config, c_center_x, c_center_y)
+
+					-- OARC EDIT -- Remove spawns in any safe area!
+					local isNearSpawn = false
+					if (global.uniqueSpawns) and (SAFE_AREA_TILE_DIST) then
+						for name,spawnPos in pairs(global.allSpawns) do
+					        local safeArea = {left_top=
+					                            {x=spawnPos.x-SAFE_AREA_TILE_DIST,
+					                             y=spawnPos.y-SAFE_AREA_TILE_DIST},
+					                          right_bottom=
+					                            {x=spawnPos.x+SAFE_AREA_TILE_DIST,
+					                             y=spawnPos.y+SAFE_AREA_TILE_DIST}}
+
+					        if (CheckIfInArea({x=c_center_x, y=c_center_y},safeArea)) then
+					        	isNearSpawn = true
+					        end
+	                 	end
+	                end
+                 	if (not isNearSpawn) then
+						spawn_entity(surface, resource, r_config, c_center_x, c_center_y)
+					end
 				end
 			else
 				debug("Resource access failed for " .. resource)
@@ -1314,6 +1333,9 @@ function RSO_init()
 	    end
 	    if game.surfaces["nauvis"].map_gen_settings.autoplace_controls["copper-ore"].size ~= "none" then
 	        game.players[1].print("RSO WARNING - VANILLA copper-ore GEN IS NOT DISABLED!")
+	    end
+	    if game.surfaces["nauvis"].map_gen_settings.autoplace_controls["uranium-ore"].size ~= "none" then
+	        game.players[1].print("RSO WARNING - VANILLA uranium-ore GEN IS NOT DISABLED!")
 	    end
 	    if game.surfaces["nauvis"].map_gen_settings.autoplace_controls["crude-oil"].size ~= "none" then
 	        game.players[1].print("RSO WARNING - VANILLA crude-oil GEN IS NOT DISABLED!")
