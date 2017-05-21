@@ -497,7 +497,7 @@ function AutoFillVehicle(player, vehicle)
     local mainInv = player.get_inventory(defines.inventory.player_main)
 
     -- Attempt to transfer some fuel
-    if ((vehicle.name == "car") or (vehicle.name == "tank") or (vehicle.name == "diesel-locomotive")) then
+    if ((vehicle.name == "car") or (vehicle.name == "tank") or (vehicle.name == "locomotive")) then
         TransferItemMultipleTypes(mainInv, vehicle, {"raw-wood", "coal", "solid-fuel"}, 50)
     end
 
@@ -557,7 +557,7 @@ function Autofill(event)
         AutofillTurret(player, eventEntity)
     end
 
-    if ((eventEntity.name == "car") or (eventEntity.name == "tank") or (eventEntity.name == "diesel-locomotive")) then
+    if ((eventEntity.name == "car") or (eventEntity.name == "tank") or (eventEntity.name == "locomotive")) then
         AutoFillVehicle(player, eventEntity)
     end
 end
