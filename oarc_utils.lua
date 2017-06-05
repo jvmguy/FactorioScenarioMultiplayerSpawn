@@ -19,36 +19,41 @@ TICKS_PER_MINUTE = TICKS_PER_SECOND * 60
 -- GUI Label Styles
 --------------------------------------------------------------------------------
 my_fixed_width_style = {
-    minimal_width = 450,
-    maximal_width = 450
+    minimal_width = 500,
+    maximal_width = 500
 }
 my_label_style = {
-    minimal_width = 900,
-    maximal_width = 450,
-    minimal_height = 20,
-    maximal_height = 20,
-    font_color = {r=1,g=1,b=1}
+    minimal_width = 500,
+    maximal_width = 500,
+    maximal_height = 10,
+    font_color = {r=1,g=1,b=1},
+    top_padding = 0,
+    bottom_padding = 0
 }
 my_note_style = {
-    minimal_width = 900,
-    minimal_height = 20,
-    maximal_height = 20,
+    minimal_width = 500,
+    maximal_height = 10,
     font = "default-small-semibold",
-    font_color = {r=1,g=0.5,b=0.5}
+    font_color = {r=1,g=0.5,b=0.5},
+    top_padding = 0,
+    bottom_padding = 0
 }
 my_warning_style = {
-    minimal_width = 450,
-    maximal_width = 900,
-    minimal_height = 20,
-    maximal_height = 20,
-    font_color = {r=1,g=0.1,b=0.1}
+    minimal_width = 500,
+    maximal_width = 500,
+    maximal_height = 10,
+    font_color = {r=1,g=0.1,b=0.1},
+    top_padding = 0,
+    bottom_padding = 0
 }
 my_spacer_style = {
-    minimal_width = 450,
-    maximal_width = 450,
+    minimal_width = 500,
+    maximal_width = 500,
     minimal_height = 20,
     maximal_height = 20,
-    font_color = {r=0,g=0,b=0}
+    font_color = {r=0,g=0,b=0},
+    top_padding = 0,
+    bottom_padding = 0
 }
 my_small_button_style = {
     font = "default-small-semibold"
@@ -306,6 +311,14 @@ function FindUngeneratedCoordinates(minDistChunks, maxDistChunks)
     return position
 end
 
+--------------------------------------------------------------------------------
+-- Anti-griefing Stuff
+--------------------------------------------------------------------------------
+function AntiGriefing(force)
+    force.zoom_to_world_deconstruction_planner_enabled=false
+    force.friendly_fire=false
+end
+
 -- Return steel chest entity (or nil)
 function DropEmptySteelChest(player)
     local pos = player.surface.find_non_colliding_position("steel-chest", player.position, 15, 1)
@@ -439,6 +452,10 @@ function SetFixedSiloPosition()
     end
 end
 
+--------------------------------------------------------------------------------
+-- Autofill Stuff
+--------------------------------------------------------------------------------
+
 -- Transfer Items Between Inventory
 -- Returns the number of items that were successfully transferred.
 -- Returns -1 if item not available.
@@ -479,16 +496,16 @@ function AutofillTurret(player, turret)
     local mainInv = player.get_inventory(defines.inventory.player_main)
 
     -- Attempt to transfer some ammo
-    local ret = TransferItemMultipleTypes(mainInv, turret, {"piercing-rounds-magazine","firearm-magazine"}, AUTOFILL_TURRET_AMMO_QUANTITY)
+    local ret = TransferItemMultipleTypes(mainInv, turret, {"uranium-rounds-magazine", "piercing-rounds-magazine", "firearm-magazine"}, AUTOFILL_TURRET_AMMO_QUANTITY)
 
     -- Check the result and print the right text to inform the user what happened.
     if (ret > 0) then
         -- Inserted ammo successfully
-        -- FlyingText("Inserted ammo x" .. ret, turret.position, my_color_red)
+        -- FlyingText("Inserted ammo x" .. ret, turret.position, my_color_red, player.surface)
     elseif (ret == -1) then
-        FlyingText("Out of ammo!", turret.position, my_color_red) 
+        FlyingText("Out of ammo!", turret.position, my_color_red, player.surface) 
     elseif (ret == -2) then
-        FlyingText("Autofill ERROR! - Report this bug!", turret.position, my_color_red)
+        FlyingText("Autofill ERROR! - Report this bug!", turret.position, my_color_red, player.surface)
     end
 end
 
@@ -503,12 +520,12 @@ function AutoFillVehicle(player, vehicle)
 
     -- Attempt to transfer some ammo
     if ((vehicle.name == "car") or (vehicle.name == "tank")) then
-        TransferItemMultipleTypes(mainInv, vehicle, {"piercing-rounds-magazine","firearm-magazine"}, 100)
+        TransferItemMultipleTypes(mainInv, vehicle, {"uranium-rounds-magazine", "piercing-rounds-magazine","firearm-magazine"}, AUTOFILL_TURRET_AMMO_QUANTITY)
     end
 
     -- Attempt to transfer some tank shells
     if (vehicle.name == "tank") then
-        TransferItemMultipleTypes(mainInv, vehicle, {"explosive-cannon-shell", "cannon-shell"}, 100)
+        TransferItemMultipleTypes(mainInv, vehicle, {"explosive-cannon-shell", "cannon-shell"}, AUTOFILL_TURRET_AMMO_QUANTITY)
     end
 end
 
@@ -520,9 +537,9 @@ end
 -- Display messages to a user everytime they join
 function PlayerJoinedMessages(event)
     local player = game.players[event.player_index]
-    player.print(WELCOME_MSG)
-    player.print(GAME_MODE_MSG)
-    player.print(MODULES_ENABLED)
+    for _,msg in pairs(scenario.config.joinedMessages) do
+        player.print(msg)
+    end
 end
 
 -- Create the gravestone chests for a player when they die

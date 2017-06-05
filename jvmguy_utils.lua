@@ -64,8 +64,6 @@ function GivePlayerBetterStarterItems(player)
     player.insert({name = "exoskeleton-equipment", count=1})
     player.insert({name = "personal-roboport-equipment", count=2})
     player.insert{name="construction-robot", count = 50}
-    player.insert{name="blueprint", count = 3}
-    player.insert{name="deconstruction-planner", count = 1}
     player.insert{name="night-vision-equipment", count = 1}
     player.insert{name="steel-axe", count = 5}
     player.insert{name="roboport", count = 3}
@@ -162,7 +160,7 @@ function EnableAutomatedConstruction(force)
 end
 
 function AssignPlayerToStartSurface(player)
-    local startSurface = game.surfaces["start_world"]
+    local startSurface = game.surfaces["lobby"]
     if startSurface == nil then
         local settings = {
             terrain_segmentation = "very-low",
@@ -173,8 +171,8 @@ function AssignPlayerToStartSurface(player)
             peaceful_mode = true,
             seed = 1
         };
-        game.create_surface("start_world", settings)
-        startSurface = game.surfaces["start_world"]
+        game.create_surface("lobby", settings)
+        startSurface = game.surfaces["lobby"]
     end
     player.teleport( {x=0,y=0}, startSurface)
 end

@@ -9,26 +9,30 @@ scenario.config.mapsettings = scenario.config.mapsettings or {}
 --------------------------------------------------------------------------------
 -- Messages
 --------------------------------------------------------------------------------
-
-WELCOME_MSG = "Welcome to jvmguy's server."
-GAME_MODE_MSG = "In the current game mode, a satellite must be launched from the rocket silo in the center to win!"
--- GAME_MODE_MSG = "The current game mode is just basic vanilla!"
-MODULES_ENABLED = "Mods Enabled: Separate Spawns, RSO, Gravestone Chests, Long-Reach, Autofill"
+scenario.config.joinedMessages = {
+    "Welcome to jvmguy's server.",
+     "In the current game mode, a satellite must be launched from the rocket silo in the center to win!",
+    "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill",
+}
 -- MODULES_ENABLED = "Mods Enabled: Gravestone-Chests"
 
 -- WELCOME_MSG_TITLE = "[INSERT SERVER OWNER MSG HERE!]"
 -- WELCOME_MSG_TITLE = "Welcome to Oarc's Server"
 WELCOME_MSG_TITLE = "Welcome to Jvmguy's Server"
 
-WELCOME_MSG0 = "This scenario is a variant of a scenario created by Oarc"
-WELCOME_MSG1 = "Rules: Be polite. Ask before changing other players's stuff. Have fun!"
-WELCOME_MSG2 = "This server is running a custom scenario that changes spawn locations."
-WELCOME_MSG3 = "Due to the way this scenario works, it may take some time for the land"
-WELCOME_MSG4 = "around your new spawn area to generate..."
-WELCOME_MSG5 = "Please wait for 10-20 seconds when you select your first spawn."
-WELCOME_MSG6 = "Oarc contact: SteamID:Oarc | Twitter:@_Oarc_ | oarcinae@gmail.com"
-WELCOME_MSG7 = "jvmguy contact: SteamID:jvmguy | Discorc:@jvmguy | jvmgiu@gmail.com"
-
+scenario.config.welcomeMessages = {
+    "This scenario is a variant of a scenario created by Oarc",
+    "",
+    "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
+    "This server is running a custom scenario that changes spawn locations.",
+    "",
+    "/w Due to the way this scenario works, it may take some time for the land",
+    "/w around your new spawn area to generate...",
+    "/w Please wait for 10-20 seconds when you select your first spawn.",
+    "",
+    "Oarc contact: SteamID:Oarc | Twitter:@_Oarc_ | oarcinae@gmail.com",
+    "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
+}
 
 SPAWN_MSG1 = "Current Spawn Mode: HARDCORE WILDERNESS"
 SPAWN_MSG2 = "In this mode, there is no default spawn. Everyone starts in the wild!"
@@ -54,7 +58,7 @@ ENABLE_BETTER_STARTER_ITEMS = true
 ENABLE_BEST_STARTER_ITEMS = false
 ENABLE_LOGISTIC_STARTER_ITEMS = false
 
-ENABLE_BLUEPRINT_FROM_START = true
+ENABLE_BLUEPRINT_FROM_START = false
 ENABLE_ALL_RESEARCH_DONE = false
 
 -- Enable Scenario version of RSO
@@ -96,57 +100,33 @@ FAR_MAX_DIST = 200 --125
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
+-- everyone gets a separate start area
+scenario.config.separateSpawns = {
+--    enabled = true,
+--    firstHexRing = 3,
+--    hexRings = 4,
+--    hexSpacing = 2400,
+--
+--    shape = "octagon",
+--    treeDensity = 0.2,
+    resources = {
+        { shape="ellipse", type="stone", x=-25, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
+        { shape="ellipse", type="coal", x=-27, dy=11, size=10, aspectRatio=2.0, amount=1500,  },
+        { shape="ellipse", type="copper-ore", x=-29, dy=13, size=12, aspectRatio=2.0, amount=1500,  },
+        { shape="ellipse", type="iron-ore", x=-31, dy=15, size=16, aspectRatio=2.0, amount=1500,  },
+        
+        { shape="ellipse", type="crude-oil", x=-40, y=-5, size=1, amount=1000000,  },
+        { shape="ellipse", type="crude-oil", dy=5, size=1, amount=1000000,  },
+        { shape="ellipse", type="crude-oil", dy=5, size=1, amount=1000000,  },
+        
+        { shape="rect", type="uranium-ore", x=16, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
+    },
+}
 
--- Start resource amounts
-START_IRON_AMOUNT = 1500
-START_COPPER_AMOUNT = 1500
-START_STONE_AMOUNT = 1500
-START_COAL_AMOUNT = 1500
-START_OIL_AMOUNT = 1000000
 
 SPAWN_TREE_DENSITY = 0.2
 
--- Stat resource shape
--- If this is true, it will be a circle or an ellipse
--- If false, it will be a square
-ENABLE_RESOURCE_SHAPE_CIRCLE = true
-ELLIPSE_X_STRETCH=2.0	-- stretch the size horizontally (make it an ellipse)
 
--- Start resource position and size
--- Position is relative to player starting location
-
-START_RESOURCE_STONE_POS_X = -25
-START_RESOURCE_STONE_POS_Y = -31
-START_RESOURCE_STONE_SIZE = 8
-
-START_RESOURCE_COAL_POS_X = -25
-START_RESOURCE_COAL_POS_Y = -16
-START_RESOURCE_COAL_SIZE = 10
-
-START_RESOURCE_COPPER_POS_X = -25
-START_RESOURCE_COPPER_POS_Y = 0
-START_RESOURCE_COPPER_SIZE = 12
-
-START_RESOURCE_IRON_POS_X = -25
-START_RESOURCE_IRON_POS_Y = 15
-START_RESOURCE_IRON_SIZE = 14
-
-START_RESOURCE_OIL_POS_X = 20
-START_RESOURCE_OIL_POS_Y = -36
-
-START_RESOURCE_OIL_POS2_X = 24
-START_RESOURCE_OIL_POS2_Y = -36
-
----------------------------------------
--- We override the vertical position to give uniform spacing here. comment out to 
----------------------------------------
-RESOURCE_SEPARATION = 3
-
-if RESOURCE_SEPARATION ~= nil then
-	START_RESOURCE_COAL_POS_Y = START_RESOURCE_STONE_POS_Y + START_RESOURCE_STONE_SIZE + RESOURCE_SEPARATION
-	START_RESOURCE_COPPER_POS_Y = START_RESOURCE_COAL_POS_Y + START_RESOURCE_COAL_SIZE + RESOURCE_SEPARATION
-	START_RESOURCE_IRON_POS_Y = START_RESOURCE_COPPER_POS_Y + START_RESOURCE_COPPER_SIZE + RESOURCE_SEPARATION
-end
 -- Force the land area circle at the spawn to be fully grass
 ENABLE_SPAWN_FORCE_GRASS = true
 
@@ -168,10 +148,10 @@ WARN_AREA_REDUCTION_RATIO = 15
 -- Create a circle of land area for the spawn
 ENFORCE_LAND_AREA_TILE_DIST = 48
 
-HEXSPACING = 2400 -- distance between spawns (tiles)
+HEXSPACING = 1600 -- distance between spawns (tiles)
 
-HEXFIRSTRING = 3  -- number of rings of start spawns
-HEXRINGS = 4  -- number of rings of start spawns
+HEXFIRSTRING = 4  -- number of rings of start spawns
+HEXRINGS = 5  -- number of rings of start spawns
 HEX_FAR_SPACING = HEXSPACING * HEXFIRSTRING -- the outermost 2 rings
 
 
@@ -218,7 +198,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = false
+ENEMY_EXPANSION = true
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
 ENEMY_POLLUTION_FACTOR_DIVISOR = 10

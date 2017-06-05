@@ -5,10 +5,10 @@
 
 require("separate_spawns")
 
-local SPAWN_GUI_MAX_WIDTH = 1000
-local SPAWN_GUI_MAX_HEIGHT = 1000
-local SPAWN_GUI_MIN_WIDTH = 400
-local SPAWN_GUI_MIN_HEIGHT = 400
+local SPAWN_GUI_MAX_WIDTH = 600
+local SPAWN_GUI_MAX_HEIGHT = 750
+-- local SPAWN_GUI_MIN_WIDTH = 400
+-- local SPAWN_GUI_MIN_HEIGHT = 400
 
 -- Use this for testing shared spawns...
 -- local sharedSpawnExample1 = {openAccess=true,
@@ -36,56 +36,23 @@ function DisplayWelcomeTextGui(player)
 
     wGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
     wGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
-    wGui.style.minimal_width = SPAWN_GUI_MIN_WIDTH
-    wGui.style.minimal_height = SPAWN_GUI_MIN_HEIGHT
 
-
-
-    wGui.add{name = "welcome_msg_lbl0", type = "label",
-                    caption=WELCOME_MSG0}
-    wGui.add{name = "welcome_msg_lbl1", type = "label",
-                    caption=WELCOME_MSG1}
-    wGui.add{name = "welcome_msg_lbl2", type = "label",
-                    caption=WELCOME_MSG2}
-    wGui.add{name = "welcome_msg_spacer1", type = "label",
-                    caption=" "}
-
-    ApplyStyle(wGui.welcome_msg_lbl0, my_label_style)
-    ApplyStyle(wGui.welcome_msg_lbl1, my_label_style)
-    ApplyStyle(wGui.welcome_msg_lbl2, my_label_style)
-    ApplyStyle(wGui.welcome_msg_spacer1, my_spacer_style)
-
-    wGui.add{name = "other_msg_lbl1", type = "label",
-                    caption=OTHER_MSG1}
-    wGui.add{name = "other_msg_lbl2", type = "label",
-                    caption=OTHER_MSG2}
-    wGui.add{name = "other_msg_spacer1", type = "label",
-                    caption=" "}
-
-    ApplyStyle(wGui.other_msg_lbl1, my_label_style)
-    ApplyStyle(wGui.other_msg_lbl2, my_label_style)
-    ApplyStyle(wGui.other_msg_spacer1, my_spacer_style)
-
-    wGui.add{name = "welcome_msg_lbl3", type = "label",
-                    caption=WELCOME_MSG3}
-    wGui.add{name = "welcome_msg_lbl4", type = "label",
-                    caption=WELCOME_MSG4}
-    wGui.add{name = "welcome_msg_lbl5", type = "label",
-                    caption=WELCOME_MSG5}
-    wGui.add{name = "welcome_msg_lbl6", type = "label",
-                    caption=WELCOME_MSG6}
-    wGui.add{name = "welcome_msg_lbl7", type = "label",
-                    caption=WELCOME_MSG7}
-    wGui.add{name = "welcome_msg_spacer2", type = "label",
-                    caption=" "}
-
-    ApplyStyle(wGui.welcome_msg_lbl3, my_warning_style)
-    ApplyStyle(wGui.welcome_msg_lbl4, my_warning_style)
-    ApplyStyle(wGui.welcome_msg_lbl5, my_warning_style)
-    ApplyStyle(wGui.welcome_msg_lbl6, my_label_style)
-    ApplyStyle(wGui.welcome_msg_lbl7, my_label_style)
-    ApplyStyle(wGui.welcome_msg_spacer2, my_spacer_style)
-
+    local ix = 0
+    for _,msg in pairs(scenario.config.welcomeMessages) do
+        local name = "welcome_msg_lbl" .. ix
+        local style = my_label_style
+        if  string.sub(msg,1,2) == "/w" then
+            style = my_warning_style
+            msg = string.sub(msg,4)
+        end
+        wGui.add{name = name, type = "label", caption=msg}
+        if msg == "" then
+            ApplyStyle(wGui[name], my_spacer_style)
+        else
+            ApplyStyle(wGui[name], style)
+        end
+        ix = ix + 1
+    end
 
 
     wGui.add{name = "welcome_okay_btn",
@@ -118,8 +85,8 @@ function DisplaySpawnOptions(player)
     local sGui = player.gui.center.spawn_opts
     sGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
     sGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
-    sGui.style.maximal_width = SPAWN_GUI_MIN_WIDTH
-    sGui.style.maximal_height = SPAWN_GUI_MIN_HEIGHT
+--    sGui.style.maximal_width = SPAWN_GUI_MIN_WIDTH
+--    sGui.style.maximal_height = SPAWN_GUI_MIN_HEIGHT
 
 
     -- Warnings and explanations...
@@ -137,7 +104,7 @@ function DisplaySpawnOptions(player)
     sGui.add{name = "spawn_msg_lbl3", type = "label",
                     caption=SPAWN_MSG3}
     sGui.add{name = "spawn_msg_spacer", type = "label",
-                    caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
+                    caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
     ApplyStyle(sGui.spawn_msg_lbl1, my_label_style)
     ApplyStyle(sGui.spawn_msg_lbl2, my_label_style)
     ApplyStyle(sGui.spawn_msg_lbl3, my_label_style)
@@ -163,14 +130,14 @@ function DisplaySpawnOptions(player)
         ApplyStyle(sGui.normal_spawn_lbl1, my_warning_style)
     end
     sGui.add{name = "normal_spawn_spacer", type = "label",
-                    caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
+                    caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
     ApplyStyle(sGui.normal_spawn_spacer, my_spacer_style)
 
 
     -- The main spawning options. Solo near and solo far.
-    sGui.add{name = "isolated_spawn_near",
-                    type = "button",
-                    caption="Solo Spawn (Near)"}
+--    sGui.add{name = "isolated_spawn_near",
+--                    type = "button",
+--                    caption="Solo Spawn (Near)"}
     sGui.add{name = "isolated_spawn_far",
                     type = "button",
                     caption="Solo Spawn (Far)"}
@@ -394,8 +361,8 @@ function DisplaySharedSpawnOptions(player)
     ApplyStyle(shGui, my_fixed_width_style)
     shGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
     shGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
-    shGui.style.minimal_width = SPAWN_GUI_MIN_WIDTH
-    shGui.style.minimal_height = SPAWN_GUI_MIN_HEIGHT
+--    shGui.style.minimal_width = SPAWN_GUI_MIN_WIDTH
+--    shGui.style.minimal_height = SPAWN_GUI_MIN_HEIGHT
     shGui.horizontal_scroll_policy = "never"
 
 

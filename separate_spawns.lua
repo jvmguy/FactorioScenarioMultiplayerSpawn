@@ -321,46 +321,35 @@ function InitSpawnGlobalsAndForces()
     game.create_force(MAIN_FORCE)
     game.forces[MAIN_FORCE].set_spawn_position(game.forces["player"].get_spawn_position("nauvis"), "nauvis")
     SetCeaseFireBetweenAllForces()
+    AntiGriefing(game.forces[MAIN_FORCE])
 end
 
 function GenerateStartingResources(surface, chunkArea, spawnPos)
     --local surface = player.surface
-
-    -- Generate stone
-    local stonePos = {x=spawnPos.x+START_RESOURCE_STONE_POS_X,
-                  y=spawnPos.y+START_RESOURCE_STONE_POS_Y}
-
-    -- Generate coal
-    local coalPos = {x=spawnPos.x+START_RESOURCE_COAL_POS_X,
-                  y=spawnPos.y+START_RESOURCE_COAL_POS_Y}
-
-    -- Generate copper ore
-    local copperOrePos = {x=spawnPos.x+START_RESOURCE_COPPER_POS_X,
-                  y=spawnPos.y+START_RESOURCE_COPPER_POS_Y}
-                  
-    -- Generate iron ore
-    local ironOrePos = {x=spawnPos.x+START_RESOURCE_IRON_POS_X,
-                  y=spawnPos.y+START_RESOURCE_IRON_POS_Y}
-
-    -- Generate iron ore
-    local oilPos1 = {x=spawnPos.x+START_RESOURCE_OIL_POS_X,
-                  y=spawnPos.y+START_RESOURCE_OIL_POS_Y}
-
-    local oilPos2 = {x=spawnPos.x+START_RESOURCE_OIL_POS2_X,
-                  y=spawnPos.y+START_RESOURCE_OIL_POS2_Y}
-
-    -- Tree generation is taken care of in chunk generation
-
-    CreateResources( surface, chunkArea, oilPos2, 1, START_OIL_AMOUNT, "crude-oil" );
-    CreateResources( surface, chunkArea, oilPos1, 1, START_OIL_AMOUNT, "crude-oil" );
-    CreateResources( surface, chunkArea, stonePos, START_RESOURCE_STONE_SIZE, START_STONE_AMOUNT, "stone" );
-    CreateResources( surface, chunkArea, coalPos, START_RESOURCE_COAL_SIZE, START_COAL_AMOUNT, "coal" );
-    CreateResources( surface, chunkArea, copperOrePos, START_RESOURCE_COPPER_SIZE, START_COPPER_AMOUNT, "copper-ore" );
-    CreateResources( surface, chunkArea, ironOrePos, START_RESOURCE_IRON_SIZE, START_IRON_AMOUNT, "iron-ore" );
+    local pos = { x=spawnPos.x, y=spawnPos.y } 
+    for _, res in pairs( scenario.config.separateSpawns.resources ) do
+        -- resource may specify dx,dy or x,y relative to spawn
+        if res.x ~= nil then
+            pos.x = spawnPos.x + res.x
+        end
+        if res.y ~= nil then
+            pos.y = spawnPos.y + res.y
+        end
+        if res.dx ~= nil then
+            pos.x = pos.x + res.dx
+        end
+        if res.dy ~= nil then
+            pos.y = pos.y + res.dy
+        end
+        CreateResources( surface, chunkArea, pos, res.shape, res.aspectRatio, res.size, res.amount, res.type );
+    end   
 end
 
-function CreateResources( surface, chunkArea, pos, size, startAmount, resourceName )
-    local xsize = size * ELLIPSE_X_STRETCH
+function CreateResources( surface, chunkArea, pos, shape, aspectRatio, size, startAmount, resourceName )
+    if aspectRatio == nil then
+        aspectRatio = 1.0;
+    end
+    local xsize = size * aspectRatio
     local ysize = size
     local xRadiusSq = (xsize/2)^2;
     local yRadiusSq = (ysize/2)^2;
@@ -368,11 +357,19 @@ function CreateResources( surface, chunkArea, pos, size, startAmount, resourceNa
     local midPointX = math.floor(xsize/2)
     for y=0, size do
         for x=0, xsize do
-            if (((x-midPointX)^2/xRadiusSq + (y-midPointY)^2/yRadiusSq < 1) or not ENABLE_RESOURCE_SHAPE_CIRCLE) then
-                if CheckIfInChunk( pos.x+x, pos.y+y, chunkArea) then 
-                    surface.create_entity({name=resourceName, amount=startAmount,
-                        position={pos.x+x, pos.y+y}})
+            local inShape = false;
+            if (shape == "ellipse") then
+
+                if (((x-midPointX)^2/xRadiusSq + (y-midPointY)^2/yRadiusSq < 1)) then
+                    inShape = true;
                 end
+            end
+            if (shape == "rect") then
+                inShape = true;
+            end
+            if inShape and CheckIfInChunk( pos.x+x, pos.y+y, chunkArea) then 
+                surface.create_entity({name=resourceName, amount=startAmount,
+                    position={pos.x+x, pos.y+y}})
             end
         end
     end
