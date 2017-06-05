@@ -70,6 +70,9 @@ ENABLE_GRAVESTONE_CHESTS = false
 -- Enable Undecorator
 ENABLE_UNDECORATOR = true
 
+-- enable player time/position status
+ENABLE_STATUS = true
+
 -- Enable Tags
 ENABLE_TAGS = true
 
