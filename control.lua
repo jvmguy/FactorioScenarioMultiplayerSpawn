@@ -37,7 +37,7 @@ require("separate_spawns_guis")
 require("frontier_silo")
 require("tag")
 require("bps")
-require("statusgui")
+require("statuscommand")
 
 
 --------------------------------------------------------------------------------
@@ -120,7 +120,6 @@ script.on_init(function(event)
     
 end)
 
-
 ----------------------------------------
 -- Freeplay rocket launch info
 -- Slightly modified for my purposes
@@ -158,9 +157,6 @@ end)
 -- Gui Click
 ----------------------------------------
 script.on_event(defines.events.on_gui_click, function(event)
-    if ENABLE_STATUS then
-        StatusGuiClick(event)
-    end
     if ENABLE_TAGS then
         TagGuiClick(event)
     end
@@ -185,9 +181,6 @@ script.on_event(defines.events.on_player_joined_game, function(event)
     
     PlayerJoinedMessages(event)
 
-    if ENABLE_STATUS then
-        CreateStatusGui(event)
-    end
     if ENABLE_TAGS then
         CreateTagGui(event)
     end

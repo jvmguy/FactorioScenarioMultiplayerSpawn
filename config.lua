@@ -151,7 +151,7 @@ WARN_AREA_REDUCTION_RATIO = 15
 -- Create a circle of land area for the spawn
 ENFORCE_LAND_AREA_TILE_DIST = 48
 
-HEXSPACING = 1600 -- distance between spawns (tiles)
+HEXSPACING = 1500 -- distance between spawns (tiles)
 
 HEXFIRSTRING = 4  -- number of rings of start spawns
 HEXRINGS = 5  -- number of rings of start spawns
