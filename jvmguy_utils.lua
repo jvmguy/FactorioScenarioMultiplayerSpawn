@@ -1,4 +1,8 @@
 
+if global.portal == nil then
+    global.portal={}
+end
+
 -- Enforce a square of land, with a tree border
 -- this is equivalent to the CreateCropCircle code
 function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius)
@@ -153,6 +157,46 @@ function GivePlayerLogisticStarterItems(player)
     player.insert{name="electric-furnace", count = 50}
     -- production
     player.insert({name = "assembling-machine-2", count=20})
+end
+
+function CreateTeleporter(surface, spawnPos, dest)
+    local car = surface.create_entity{name="car", position={spawnPos.x+2,spawnPos.y}, force="neutral" }
+    car.destructible=false;
+    car.minable=false;
+    table.insert(global.portal, { position=spawnPos, car = car, dest=dest });
+end
+
+function TeleportPlayer( player )
+    local car = player.vehicle;
+    if car ~= nil then
+        local dest = nil
+        for _,portal in pairs(global.portal) do
+            if car == portal.car then
+                if portal.dest == nil then
+                    -- teleport from silo back to player spawn.
+                    player.print("teleport back to player spawn");
+                    dest = global.playerSpawns[player.name];
+                    break
+                -- we could allow only the player to use the teleporter.
+                -- elseif SameCoord(portal.dest, global.playerSpawns[player.name]) then
+                else    
+                    -- teleport player to silo
+                    player.print("teleport to silo");
+                    dest = portal.dest;
+                    break
+                end
+            end
+        end
+        -- TODO. transport anyone in the vicinity as well 
+        if dest ~= nil then
+            player.driving=false;
+            player.teleport(dest);
+        end
+    end
+end
+
+function SameCoord(a, b)
+    return a.x == b.x and a.y == b.y;
 end
 
 function EnableAutomatedConstruction(force)

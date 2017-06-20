@@ -101,6 +101,10 @@ function GenerateSpawnChunk( event, spawnPos)
 			end
             CreateWaterStrip( surface, spawnPos, ENFORCE_LAND_AREA_TILE_DIST*3/4 )
             GenerateStartingResources( surface, chunkArea, spawnPos);
+            if scenario.config.teleporter.enabled then
+                local pos = { x=spawnPos.x+scenario.config.teleporter.spawnPosition.x, y=spawnPos.y+scenario.config.teleporter.spawnPosition.y }
+                CreateTeleporter(surface, pos, scenario.config.teleporter.siloPosition)
+            end 
         end
     end
 end
@@ -244,38 +248,29 @@ end
 -- NON-EVENT RELATED FUNCTIONS
 -- These should be local functions where possible!
 --------------------------------------------------------------------------------
-function HexPoint(kangle, rad)
-      local degreesToRadians = math.pi / 180;
-	  -- the slight 10 degree tilt is to make the grid slightly less obvious
-      local angle = kangle * 2*math.pi / 6 + 10 * degreesToRadians; 
-      return { x= rad * math.sin(angle), y = rad * math.cos(angle) }
+  
+function PolarToCartesian( p )
+    return { x = p.r * math.sin( p.theta ), y = p.r * math.cos( p.theta) }
 end
 
-function lerp( r, a, b)
-  return{ x = a.x + r * (b.x-a.x), y= a.y + r * (b.y-a.y) }
+function FermatSpiralPoint(n)
+    -- Vogel's model. see https://en.wikipedia.org/wiki/Fermat%27s_spiral
+    local n = scenario.config.separateSpawns.firstSpawnPoint + n
+    local spacing = scenario.config.separateSpawns.spacing
+    return PolarToCartesian({ r=spacing * math.sqrt(n), theta= (n * 137.508 * math.pi/180) })
 end
-  
-function HexRowPoint(kangle, rad, item, itemlen)
-  local first = HexPoint(kangle, rad)
-  local last = HexPoint(kangle+1, rad)
-  if itemlen==0 then
-    return first
-  end
-  return lerp( (1.0*item)/itemlen, first, last)
-end
+
   
 function CenterInChunk(a)
 	return { x = a.x-math.fmod(a.x, 32)+16, y=a.y-math.fmod(a.y, 32)+16 }
 end
 
-function InitSpawnPoint(k, kangle, j)
-   a = HexRowPoint(kangle, k*HEXSPACING, j, k)
+function InitSpawnPoint(n)
+   local a = FermatSpiralPoint(n)
    local spawn = CenterInChunk(a);
    spawn.generated = false;
    spawn.used = false;
-   spawn.radius = k
-   spawn.sector = kangle
-   spawn.seq = j
+   spawn.seq = n
    table.insert(global.unusedSpawns, spawn );
    table.insert(global.allSpawns, spawn)
 end
@@ -299,20 +294,9 @@ function InitSpawnGlobalsAndForces()
     if (global.unusedSpawns == nil) then
         global.unusedSpawns = {}
         -- InitSpawnPoint( 0, 0, 0);
-        for rad = HEXFIRSTRING,HEXRINGS do
-          for kangle=0,5 do
-            for j=0,rad-1 do
-              InitSpawnPoint( rad, kangle, j)
-            end        			
-          end
+        for n = 1,scenario.config.separateSpawns.numSpawnPoints do
+              InitSpawnPoint( n )
         end
---        for rad = 1,HEXRINGS do
---          for kangle=0,0 do
---            for j=0,0 do
---              InitSpawnPoint( rad, kangle, j)
---            end             
---          end
---        end
     end
     if (global.playerCooldowns == nil) then
         global.playerCooldowns = {}

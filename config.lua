@@ -34,6 +34,14 @@ scenario.config.welcomeMessages = {
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
 }
 
+scenario.config.teleporter = {
+    enabled = true,
+    -- where in the spawn to place the teleporter 
+    spawnPosition = { x=2, y=0 },
+    -- where in the silo chunk to place the teleporter
+    siloPosition = { x=0, y=0 }
+}
+
 SPAWN_MSG1 = "Current Spawn Mode: HARDCORE WILDERNESS"
 SPAWN_MSG2 = "In this mode, there is no default spawn. Everyone starts in the wild!"
 SPAWN_MSG3 = "Resources are spread out far apart but are quite rich."
@@ -106,12 +114,17 @@ FAR_MAX_DIST = 200 --125
 -- everyone gets a separate start area
 scenario.config.separateSpawns = {
 --    enabled = true,
---    firstHexRing = 3,
---    hexRings = 4,
---    hexSpacing = 2400,
 --
 --    shape = "octagon",
 --    treeDensity = 0.2,
+
+    -- if we use fermat spirals 
+    --     most distant base is sqrt(16+20)*spacing = 6000
+    --     nearest base is sqrt(16)*spacing = 4000
+    firstSpawnPoint = 16,
+    numSpawnPoints = 20,
+    spacing = 1000,
+    
     resources = {
         { shape="ellipse", type="stone", x=-25, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
         { shape="ellipse", type="coal", x=-27, dy=11, size=10, aspectRatio=2.0, amount=1500,  },
@@ -150,14 +163,6 @@ WARN_AREA_REDUCTION_RATIO = 15
 
 -- Create a circle of land area for the spawn
 ENFORCE_LAND_AREA_TILE_DIST = 48
-
-HEXSPACING = 1500 -- distance between spawns (tiles)
-
-HEXFIRSTRING = 4  -- number of rings of start spawns
-HEXRINGS = 5  -- number of rings of start spawns
-HEX_FAR_SPACING = HEXSPACING * HEXFIRSTRING -- the outermost 2 rings
-
-
 
 ---------------------------------------
 -- Other Forces/Teams Options

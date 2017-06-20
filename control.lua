@@ -240,7 +240,12 @@ script.on_event(defines.events.on_built_entity, function(event)
     end
 end)
 
-
+if scenario.config.teleporter.enabled then
+    script.on_event(defines.events.on_player_driving_changed_state, function(event)
+        local player = game.players[event.player_index];
+        TeleportPlayer(player)
+    end)
+end
 
 ----------------------------------------
 -- On Research Finished

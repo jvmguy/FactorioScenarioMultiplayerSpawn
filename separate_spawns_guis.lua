@@ -300,7 +300,7 @@ end
 function SpawnIsCompatible( spawnPos, far )
   local distSqr = spawnPos.x^2 + spawnPos.y^2;
   local dist = math.sqrt(distSqr);
-  local isFar = distSqr > (HEX_FAR_SPACING-CHUNK_SIZE)^2;
+  local isFar = true
   local compatible = (isFar == far);
   local player = game.players[1];
   

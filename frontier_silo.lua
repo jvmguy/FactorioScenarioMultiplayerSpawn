@@ -37,6 +37,11 @@ local function CreateRocketSilo(surface, chunkArea)
         local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5, global.siloPosition.y}, force = MAIN_FORCE}
         silo.destructible = false
         silo.minable = false
+        
+        if scenario.config.teleporter.enabled then
+            CreateTeleporter(surface, scenario.config.teleporter.siloPosition, nil)
+        end 
+        
     end
 end
 
