@@ -13,10 +13,10 @@ commands.add_command("status", "shows your location, time in game", function()
        for _,xplayer in pairs(game.players) do
            local status = string.format("%s played %s of %s. Location %d,%d",
                   xplayer.name,
-                  HoursAndMinutes(player.online_time),
+                  HoursAndMinutes(xplayer.online_time),
                   HoursAndMinutes(game.tick),
-                  math.floor(player.position.x),
-                  math.floor(player.position.y))
+                  math.floor(xplayer.position.x),
+                  math.floor(xplayer.position.y));
     	   game.player.print(status)
         end
     end
