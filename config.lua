@@ -13,6 +13,9 @@ scenario.config.joinedMessages = {
     "Welcome to jvmguy's server.",
      "In the current game mode, a satellite must be launched from the rocket silo in the center to win!",
     "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill",
+    "",
+    "The car in your spawn is your personal transport to the silo if you want.",
+    "",
 }
 -- MODULES_ENABLED = "Mods Enabled: Gravestone-Chests"
 
@@ -30,6 +33,12 @@ scenario.config.welcomeMessages = {
     "/w around your new spawn area to generate...",
     "/w Please wait for 10-20 seconds when you select your first spawn.",
     "",
+    "/w Biter expansion is on, so watch out!",
+    "",
+    "The car in your spawn is your personal transport to the silo if you want.",
+    "",
+    "Good Luck!",
+    
     "Oarc contact: SteamID:Oarc | Twitter:@_Oarc_ | oarcinae@gmail.com",
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
 }
@@ -119,10 +128,10 @@ scenario.config.separateSpawns = {
 --    treeDensity = 0.2,
 
     -- if we use fermat spirals 
-    --     most distant base is sqrt(16+20)*spacing = 6000
-    --     nearest base is sqrt(16)*spacing = 4000
-    firstSpawnPoint = 16,
-    numSpawnPoints = 20,
+    --     nearest base is sqrt(36)*spacing = 6000
+    --     most distant base is sqrt(36+28)*spacing = 8000
+    firstSpawnPoint = 36,
+    numSpawnPoints = 28,
     spacing = 1000,
     
     resources = {

@@ -126,7 +126,7 @@ local function fillEnemies()
         force="enemy",
         clear_range = {6, 6},
         
-        spawns_per_region={min=1,max=2},
+        spawns_per_region={min=2,max=4},
         size={min=1,max=2},
         size_per_region_factor=1,
         richness=3,
