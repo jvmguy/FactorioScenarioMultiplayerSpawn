@@ -14,8 +14,8 @@
 function SeparateSpawnsPlayerCreated(event)
     local player = game.players[event.player_index]
     player.force = MAIN_FORCE
-    DisplayWelcomeTextGui(player)
     global.playerCooldowns[player.name] = {setRespawn=event.tick}
+    DisplayWelcomeTextGui(player)
 end
 
 
@@ -146,49 +146,51 @@ function SeparateSpawnsGenerateChunk(event)
     end
 end
 
+function RemovePlayer(player)
+
+    -- TODO dump items into a chest.
+
+    -- Clear out global variables for that player???
+    if (global.playerSpawns[player.name] ~= nil) then
+        global.playerSpawns[player.name] = nil;
+    end
+
+    -- If a uniqueSpawn was created for the player, mark it as unused.
+    if (global.uniqueSpawns[player.name] ~= nil) then
+        table.insert(global.unusedSpawns, global.uniqueSpawns[player.name]);
+        global.uniqueSpawns[player.name] = nil;
+        SendBroadcastMsg(player.name .. " base was freed up.");
+    end
+    
+    -- Remove from shared spawns
+    if (global.sharedSpawns[player.name] ~= nil) then
+        global.sharedSpawns[player.name] = nil;
+    end
+
+    -- remove that player's cooldown setting
+    if (global.playerCooldowns[player.name] ~= nil) then
+        global.playerCooldowns[player.name] = nil;
+    end
+
+    -- Remove from shared spawn player slots (need to search all)
+    for _,sharedSpawn in pairs(global.sharedSpawns) do
+        for key,playerName in pairs(sharedSpawn.players) do
+            if (player.name == playerName) then
+                sharedSpawn.players[key] = nil;
+            end
+        end
+    end
+
+    -- Remove the character completely
+    game.remove_offline_players({player});
+end
 
 -- Call this if a player leaves the game
 -- Seems to be susceptiable to causing desyncs...
 function FindUnusedSpawns(event)
     local player = game.players[event.player_index]
     if (event.player_index>1 and player.online_time < MIN_ONLINE_TIME) then
-
-        -- TODO dump items into a chest.
-
-        -- Clear out global variables for that player???
-        if (global.playerSpawns[player.name] ~= nil) then
-            global.playerSpawns[player.name] = nil
-        end
-
-        -- If a uniqueSpawn was created for the player, mark it as unused.
-        if (global.uniqueSpawns[player.name] ~= nil) then
-            table.insert(global.unusedSpawns, global.uniqueSpawns[player.name])
-            global.uniqueSpawns[player.name] = nil
-            SendBroadcastMsg(player.name .. " base was freed up because they left within 5 minutes of joining.")
-        end
-        
-        -- Remove from shared spawns
-        if (global.sharedSpawns[player.name] ~= nil) then
-            global.sharedSpawns[player.name] = nil
-        end
-
-        -- remove that player's cooldown setting
-        if (global.playerCooldowns[player.name] ~= nil) then
-            global.playerCooldowns[player.name] = nil
-        end
-
-        -- Remove from shared spawn player slots (need to search all)
-        for _,sharedSpawn in pairs(global.sharedSpawns) do
-            for key,playerName in pairs(sharedSpawn.players) do
-                if (player.name == playerName) then
-                    sharedSpawn.players[key] = nil;
-                end
-            end
-        end
-
-
-        -- Remove the character completely
-        game.remove_offline_players({player})
+        RemovePlayer(player);
     end
 end
 
@@ -339,8 +341,8 @@ function CreateResources( surface, chunkArea, pos, shape, aspectRatio, size, sta
     local yRadiusSq = (ysize/2)^2;
     local midPointY = math.floor(size/2)
     local midPointX = math.floor(xsize/2)
-    for y=0, size do
-        for x=0, xsize do
+    for y=1, size do
+        for x=1, xsize do
             local inShape = false;
             if (shape == "ellipse") then
 

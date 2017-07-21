@@ -160,9 +160,16 @@ function GivePlayerLogisticStarterItems(player)
 end
 
 function CreateTeleporter(surface, spawnPos, dest)
-    local car = surface.create_entity{name="car", position={spawnPos.x+2,spawnPos.y}, force="neutral" }
+    local car = surface.create_entity{name="car", position={spawnPos.x+2,spawnPos.y}, force=MAIN_FORCE }
     car.destructible=false;
     car.minable=false;
+    for _,item in pairs(scenario.config.startKit) do
+        car.insert(item);
+    end
+    for _,item in pairs(scenario.config.teleporter.startItems) do
+        car.insert(item);
+    end
+    -- resource extraction    
     table.insert(global.portal, { position=spawnPos, car = car, dest=dest });
 end
 

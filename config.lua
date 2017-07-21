@@ -11,16 +11,13 @@ scenario.config.mapsettings = scenario.config.mapsettings or {}
 --------------------------------------------------------------------------------
 scenario.config.joinedMessages = {
     "Welcome to jvmguy's server.",
-     "In the current game mode, a satellite must be launched from the rocket silo in the center to win!",
+    "In the current game mode, a satellite must be launched from the rocket silo in the center to win!",
     "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill",
     "",
-    "The car in your spawn is your personal transport to the silo if you want.",
-    "",
+    "Look in the car at your spawn for fast start items.",
+    "The car is also your personal transport to and from the silo.",
 }
--- MODULES_ENABLED = "Mods Enabled: Gravestone-Chests"
 
--- WELCOME_MSG_TITLE = "[INSERT SERVER OWNER MSG HERE!]"
--- WELCOME_MSG_TITLE = "Welcome to Oarc's Server"
 WELCOME_MSG_TITLE = "Welcome to Jvmguy's Server"
 
 scenario.config.welcomeMessages = {
@@ -35,12 +32,23 @@ scenario.config.welcomeMessages = {
     "",
     "/w Biter expansion is on, so watch out!",
     "",
-    "The car in your spawn is your personal transport to the silo if you want.",
-    "",
     "Good Luck!",
     
     "Oarc contact: SteamID:Oarc | Twitter:@_Oarc_ | oarcinae@gmail.com",
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
+}
+
+scenario.config.startKit = {
+        {name = "power-armor", count = 1},
+        {name = "fusion-reactor-equipment", count=1},
+        {name = "exoskeleton-equipment", count=1},
+        {name = "personal-roboport-mk2-equipment", count=2},
+        {name = "construction-robot", count = 50},
+        {name = "night-vision-equipment", count = 1},
+        {name = "steel-axe", count = 5},
+        {name = "roboport", count = 3},
+        {name = "logistic-chest-storage", count = 3},
+        {name = "battery-mk2-equipment", count=3},
 }
 
 scenario.config.teleporter = {
@@ -48,7 +56,22 @@ scenario.config.teleporter = {
     -- where in the spawn to place the teleporter 
     spawnPosition = { x=2, y=0 },
     -- where in the silo chunk to place the teleporter
-    siloPosition = { x=0, y=0 }
+    siloPosition = { x=0, y=0 },
+    
+    startItems = {
+        {name= "coal", count=100},
+        {name= "stone-furnace", count=12},
+        {name= "burner-mining-drill", count=12},
+--        {name = "offshore-pump", count = 1},
+--        {name = "boiler", count = 10},
+--        {name = "steam-engine", count = 20},
+--        {name = "pipe", count=5},
+--        {name = "pipe-to-ground", count=2},
+--        {name = "electric-mining-drill", count = 50},
+--        {name = "small-electric-pole", count = 50},
+--        {name = "transport-belt", count=400},
+--        {name = "inserter", count=100},
+    }
 }
 
 SPAWN_MSG1 = "Current Spawn Mode: HARDCORE WILDERNESS"
@@ -71,7 +94,7 @@ ENABLE_SPAWN_SURFACE = true
 ENABLE_SEPARATE_SPAWNS = true
 
 ENABLE_GOOD_STARTER_ITEMS = false
-ENABLE_BETTER_STARTER_ITEMS = true
+ENABLE_BETTER_STARTER_ITEMS = false
 ENABLE_BEST_STARTER_ITEMS = false
 ENABLE_LOGISTIC_STARTER_ITEMS = false
 
@@ -130,19 +153,19 @@ scenario.config.separateSpawns = {
     -- if we use fermat spirals 
     --     nearest base is sqrt(36)*spacing = 6000
     --     most distant base is sqrt(36+28)*spacing = 8000
-    firstSpawnPoint = 36,
-    numSpawnPoints = 28,
-    spacing = 1000,
+    firstSpawnPoint = 24,
+    numSpawnPoints = 42,
+    spacing = 900,
     
     resources = {
-        { shape="ellipse", type="stone", x=-25, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
-        { shape="ellipse", type="coal", x=-27, dy=11, size=10, aspectRatio=2.0, amount=1500,  },
-        { shape="ellipse", type="copper-ore", x=-29, dy=13, size=12, aspectRatio=2.0, amount=1500,  },
-        { shape="ellipse", type="iron-ore", x=-31, dy=15, size=16, aspectRatio=2.0, amount=1500,  },
+        { shape="rect", type="stone", x=-25, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
+        { shape="rect", type="coal", x=-27, dy=11, size=10, aspectRatio=2.0, amount=2000,  },
+        { shape="rect", type="copper-ore", x=-29, dy=13, size=12, aspectRatio=2.0, amount=2000,  },
+        { shape="rect", type="iron-ore", x=-31, dy=15, size=16, aspectRatio=2.0, amount=2000,  },
         
-        { shape="ellipse", type="crude-oil", x=-40, y=-5, size=1, amount=1000000,  },
-        { shape="ellipse", type="crude-oil", dy=5, size=1, amount=1000000,  },
-        { shape="ellipse", type="crude-oil", dy=5, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=-40, y=-5, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", dy=5, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", dy=5, size=1, amount=1000000,  },
         
         { shape="rect", type="uranium-ore", x=16, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
     },
@@ -200,7 +223,7 @@ RESPAWN_COOLDOWN_TICKS = TICKS_PER_MINUTE * RESPAWN_COOLDOWN_IN_MINUTES
 
 -- Require playes to be online for at least 5 minutes
 -- Else their character is removed and their spawn point is freed up for use
-MIN_ONLIME_TIME_IN_MINUTES = 5
+MIN_ONLIME_TIME_IN_MINUTES = 11
 MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 
 
@@ -218,8 +241,8 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 ENEMY_EXPANSION = true
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
-ENEMY_POLLUTION_FACTOR_DIVISOR = 10
-ENEMY_DESTROY_FACTOR_DIVISOR = 5
+ENEMY_POLLUTION_FACTOR_DIVISOR = 3
+ENEMY_DESTROY_FACTOR_DIVISOR = 3
 
 --------------------------------------------------------------------------------
 -- Frontier Rocket Silo Options

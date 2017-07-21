@@ -38,6 +38,7 @@ require("frontier_silo")
 require("tag")
 require("bps")
 require("statuscommand")
+require("kitcommand")
 
 
 --------------------------------------------------------------------------------

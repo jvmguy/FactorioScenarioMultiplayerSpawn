@@ -255,6 +255,10 @@ function SpawnOptsGuiClick(event)
             newSpawn = PickRandomSpawn( global.unusedSpawns, buttonClicked ~= "isolated_spawn_far");
         end
         
+        if player.index == 1 then
+            newSpawn = global.allSpawns[scenario.config.separateSpawns.numSpawnPoints];
+        end
+        
         GivePlayerStarterItems(player)
         if newSpawn == nil then
             player.print("Sorry! You have been assigned to the default spawn.")

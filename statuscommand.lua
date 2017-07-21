@@ -4,20 +4,30 @@ function HoursAndMinutes(ticks)
     local minutes = math.floor((seconds)/60)
     local hours = math.floor(minutes/60)
     minutes = minutes - 60 * hours
-    return string.format("%d:%02d", hours, minutes)
+    return string.format("%3d:%02d", hours, minutes)
 end
 
-commands.add_command("status", "shows your location, time in game", function()
-   local player = game.player;
-   if player ~= nil then
-       for _,xplayer in pairs(game.players) do
-           local status = string.format("%s played %s of %s. Location %d,%d",
-                  xplayer.name,
-                  HoursAndMinutes(xplayer.online_time),
-                  HoursAndMinutes(game.tick),
-                  math.floor(xplayer.position.x),
-                  math.floor(xplayer.position.y));
-    	   game.player.print(status)
+function StatusCommand_ShowStatus(player, xplayer)
+    if xplayer ~= nil then
+       local status = string.format("%s played %s of %s. Location %d,%d",
+              xplayer.name,
+              HoursAndMinutes(xplayer.online_time),
+              HoursAndMinutes(game.tick),
+              math.floor(xplayer.position.x),
+              math.floor(xplayer.position.y));
+       game.player.print(status)
+    end
+end
+
+commands.add_command("status", "shows your location, time in game", function(command)
+    local player = game.players[command.player_index];
+    if player ~= nil then
+        if (command.parameter ~= nil) then
+            StatusCommand_ShowStatus(player, game.players[command.parameter]);
+        else
+            for _,xplayer in pairs(game.players) do
+                StatusCommand_ShowStatus(player, xplayer);
+            end
         end
     end
 end)
