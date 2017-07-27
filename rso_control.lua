@@ -39,7 +39,7 @@ if use_donut_shapes then
 	meta_shapes = {MB.MetaEllipse, MB.MetaSquare, MB.MetaDonut}
 else
 	meta_shapes = {MB.MetaEllipse, MB.MetaSquare}
-end	
+end 
 
 -- local globals
 local index_is_built = false
@@ -306,6 +306,23 @@ local function isInStartingArea( regionX, regionY )
 	return false
 end
 
+-- OARC SPECIFIC FUNCTION --
+-- Checks if a point is near a spawn area
+local function isNearOarcSpawn(pointPos)
+
+	if (global.allSpawns) and (ENFORCE_LAND_AREA_TILE_DIST) then
+		for name,spawnPos in pairs(global.allSpawns) do
+			local clearArea = GetAreaFromPointAndDistance(spawnPos,
+										(ENFORCE_LAND_AREA_TILE_DIST+2*CHUNK_SIZE))
+			if (CheckIfInArea(pointPos,clearArea)) then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
 -- modifies the resource size - only used in endless_resource_mode
 local function modify_resource_size(resourceName, resourceSize, startingArea)
 	
@@ -356,7 +373,7 @@ local function spawn_resource_ore(surface, rname, pos, size, richness, startingA
 	local n_balls={}
 	local MIN_BALL_DISTANCE = math.min(MIN_BALL_DISTANCE, radius/2)
 	
-	local maxPradius = 0	
+	local maxPradius = 0    
 	local outside = { xmin = 1e10, xmax = -1e10, ymin = 1e10, ymax = -1e10 }
 	local inside = { xmin = 1e10, xmax = -1e10, ymin = 1e10, ymax = -1e10 }
 	
@@ -610,7 +627,7 @@ local function spawn_resource_ore(surface, rname, pos, size, richness, startingA
 			infiniteOrePresent = false
 		end
 
-		for _,location in ipairs(oreLocations) do
+		for _,location in pairs(oreLocations) do
 			if location.valid then
 				
 				local amount = floor(( forceFactor * location.force + min_amount ) * richnessMultiplier)
@@ -729,12 +746,12 @@ end
 local spawnerTable = nil
 
 local function initSpawnerTable()
-	if spawnerTable == nil then	
+	if spawnerTable == nil then 
 		spawnerTable = {}
 		spawnerTable["biter-spawner"] = game.entity_prototypes["biter-spawner"] ~= nil
-		spawnerTable["bob-biter-spawner"] = game.entity_prototypes["bob-biter-spawner"] ~= nil
+--		spawnerTable["bob-biter-spawner"] = game.entity_prototypes["bob-biter-spawner"] ~= nil
 		spawnerTable["spitter-spawner"] = game.entity_prototypes["spitter-spawner"] ~= nil
-		spawnerTable["bob-spitter-spawner"] = game.entity_prototypes["bob-spitter-spawner"] ~= nil
+--		spawnerTable["bob-spitter-spawner"] = game.entity_prototypes["bob-spitter-spawner"] ~= nil
 	end
 end
 
@@ -797,8 +814,8 @@ local function spawn_entity(surface, ent, r_config, x, y)
 						debug(spawnerName.." @ "..s_x..","..s_y.." placed on "..attempt.." attempt")
 						
 						surface.create_entity{name=spawnerName, position={s_x, s_y}, force=game.forces[r_config.force], amount=floor(richness)}--, direction=rgen:random(4)
-						--			else
-						--				debug("Entity "..spawnerName.." spawn failed")
+						--          else
+						--              debug("Entity "..spawnerName.." spawn failed")
 						break;
 					else
 						if attempt == maxAttemptCount then
@@ -1071,7 +1088,7 @@ local function checkConfigForInvalidResources()
 		end
 		
 		if resourceConfig.valid and resourceConfig.type ~= "entity" then
- 			if prototypes[resourceName].autoplace_specification == nil then
+			if prototypes[resourceName].autoplace_specification == nil then
 				resourceConfig.valid = false
 				debug("Resource "..resourceName.." invalidated - autoplace not present")
 			end
@@ -1084,6 +1101,7 @@ local function roll_region(c_x, c_y)
 	local r_x=floor(c_x/REGION_TILE_SIZE)
 	local r_y=floor(c_y/REGION_TILE_SIZE)
 	local r_data = nil
+
 	--don't spawn stuff in starting area
 	if isInStartingArea( c_x/REGION_TILE_SIZE, c_y/REGION_TILE_SIZE ) then
 		return false
@@ -1195,16 +1213,24 @@ local function roll_chunk(surface, c_x, c_y)
 	local r_x=floor(c_x/REGION_TILE_SIZE)
 	local r_y=floor(c_y/REGION_TILE_SIZE)
 	local r_data = nil
-	--don't spawn stuff in starting area
+
+	--don't spawn stuff in starting area (RSO version of starting areas)
 	if isInStartingArea( c_x/REGION_TILE_SIZE, c_y/REGION_TILE_SIZE ) then
 		return false
 	end
 	
 	local c_center_x=c_x + CHUNK_SIZE/2
 	local c_center_y=c_y + CHUNK_SIZE/2
+	
 	if not (global.regions[r_x] and global.regions[r_x][r_y]) then
 		return
 	end
+
+	-- Check if we are near enough an Oarc spawn so we don't spawn resources!
+	if (isNearOarcSpawn({x=c_center_x,y=c_center_y})) then
+		return
+	end
+
 	r_data = global.regions[r_x][r_y]
 	if not (r_data[c_x] and r_data[c_x][c_y]) then
 		return
@@ -1226,9 +1252,9 @@ local function roll_chunk(surface, c_x, c_y)
 			if r_config and r_config.valid then
 				local dist = distance({x=0,y=0},{x=r_x,y=r_y})
 				local sizeFactor = dist^size_distance_factor
-				local richFactor = dist^richness_distance_factor
-				debug("Resource "..resource.." distance "..dist.." factors (size, richness) "..sizeFactor..","..richFactor)
 				if r_config.type=="resource-ore" then
+					local richFactor = dist^richness_distance_factor
+					debug("Resource "..resource.." distance "..dist.." factors (size, richness) "..sizeFactor..","..richFactor)
 					local size=rgen:random(r_config.size.min, r_config.size.max) * (multi_resource_size_factor^deep) * sizeFactor
 					local richness = r_config.richness * richFactor * (multi_resource_richness_factor^deep)
 					local restriction = ''
@@ -1237,6 +1263,8 @@ local function roll_chunk(surface, c_x, c_y)
 					debug("New Center @ "..c_center_x..","..c_center_y)
 					spawn_resource_ore(surface, resource, {x=c_center_x,y=c_center_y}, size, richness, false, restriction)
 				elseif r_config.type=="resource-liquid" then
+					local richFactor = dist^fluid_richness_distance_factor
+					debug("Resource "..resource.." distance "..dist.." factors (size, richness) "..sizeFactor..","..richFactor)
 					local size=rgen:random(r_config.size.min, r_config.size.max)  * (multi_resource_size_factor^deep) * sizeFactor
 					local richness=rgen:random(r_config.richness.min, r_config.richness.max) * richFactor * (multi_resource_richness_factor^deep)
 					local restriction = ''
@@ -1246,21 +1274,22 @@ local function roll_chunk(surface, c_x, c_y)
 
 					-- OARC EDIT -- Remove spawns in any safe area!
 					local isNearSpawn = false
-					if (global.uniqueSpawns) and (SAFE_AREA_TILE_DIST) then
+					if (global.allSpawns) and (SAFE_AREA_TILE_DIST) then
 						for name,spawnPos in pairs(global.allSpawns) do
-					        local safeArea = {left_top=
-					                            {x=spawnPos.x-SAFE_AREA_TILE_DIST,
-					                             y=spawnPos.y-SAFE_AREA_TILE_DIST},
-					                          right_bottom=
-					                            {x=spawnPos.x+SAFE_AREA_TILE_DIST,
-					                             y=spawnPos.y+SAFE_AREA_TILE_DIST}}
+							local safeArea = {left_top=
+												{x=spawnPos.x-SAFE_AREA_TILE_DIST,
+												 y=spawnPos.y-SAFE_AREA_TILE_DIST},
+											  right_bottom=
+												{x=spawnPos.x+SAFE_AREA_TILE_DIST,
+												 y=spawnPos.y+SAFE_AREA_TILE_DIST}}
 
-					        if (CheckIfInArea({x=c_center_x, y=c_center_y},safeArea)) then
-					        	isNearSpawn = true
-					        end
-	                 	end
-	                end
-                 	if (not isNearSpawn) then
+							if (CheckIfInArea({x=c_center_x, y=c_center_y},safeArea)) then
+								isNearSpawn = true
+								break
+							end
+						end
+					end
+					if (not isNearSpawn) then
 						spawn_entity(surface, resource, r_config, c_center_x, c_center_y)
 					end
 				end
@@ -1280,7 +1309,7 @@ local function printResourceProbability(player)
 	debug("Max allotment"..string.format("%.1f",max_allotment))
 	local sanityCheckAllotment = 0
 	for index,v in ipairs(configIndexed) do
-		if v.type ~= "entity" then		-- ignore enemies - they don't have allotment set
+		if v.type ~= "entity" then      -- ignore enemies - they don't have allotment set
 			if v.allotment then
 				local resProbability = (v.allotment/max_allotment) * 100
 				sanityCheckAllotment = sanityCheckAllotment + v.allotment
@@ -1300,7 +1329,7 @@ end
 function RSO_init()
 	if not initDone then
 		
-		local surface = game.surfaces['nauvis']
+		local surface = game.surfaces[GAME_SURFACE_NAME]
 		
 		if not global.regions then
 			global.regions = {}
@@ -1328,37 +1357,30 @@ function RSO_init()
 				
 		initDone = true
 
-	    if game.surfaces["nauvis"].map_gen_settings.autoplace_controls["iron-ore"].size ~= "none" then
-	        game.players[1].print("RSO WARNING - VANILLA iron-ore GEN IS NOT DISABLED!")
-	    end
-	    if game.surfaces["nauvis"].map_gen_settings.autoplace_controls["copper-ore"].size ~= "none" then
-	        game.players[1].print("RSO WARNING - VANILLA copper-ore GEN IS NOT DISABLED!")
-	    end
-	    if game.surfaces["nauvis"].map_gen_settings.autoplace_controls["uranium-ore"].size ~= "none" then
-	        game.players[1].print("RSO WARNING - VANILLA uranium-ore GEN IS NOT DISABLED!")
-	    end
-	    if game.surfaces["nauvis"].map_gen_settings.autoplace_controls["crude-oil"].size ~= "none" then
-	        game.players[1].print("RSO WARNING - VANILLA crude-oil GEN IS NOT DISABLED!")
-	    end
-	    if game.surfaces["nauvis"].map_gen_settings.autoplace_controls["enemy-base"].size ~= "none" then
-	        game.players[1].print("RSO WARNING - VANILLA enemy-base GEN IS NOT DISABLED!")
-	    end
-	    if game.surfaces["nauvis"].map_gen_settings.autoplace_controls["stone"].size ~= "none" then
-	        game.players[1].print("RSO WARNING - VANILLA stone GEN IS NOT DISABLED!")
-	    end
-	    if game.surfaces["nauvis"].map_gen_settings.autoplace_controls["coal"].size ~= "none" then
-	        game.players[1].print("RSO WARNING - VANILLA coal GEN IS NOT DISABLED!")
-	    end
+		if surface.map_gen_settings.autoplace_controls["iron-ore"].size ~= "none" then
+			game.players[1].print("RSO WARNING - VANILLA iron-ore GEN IS NOT DISABLED!")
+		end
+		if surface.map_gen_settings.autoplace_controls["copper-ore"].size ~= "none" then
+			game.players[1].print("RSO WARNING - VANILLA copper-ore GEN IS NOT DISABLED!")
+		end
+		if surface.map_gen_settings.autoplace_controls["uranium-ore"].size ~= "none" then
+			game.players[1].print("RSO WARNING - VANILLA uranium-ore GEN IS NOT DISABLED!")
+		end
+		if surface.map_gen_settings.autoplace_controls["crude-oil"].size ~= "none" then
+			game.players[1].print("RSO WARNING - VANILLA crude-oil GEN IS NOT DISABLED!")
+		end
+		if surface.map_gen_settings.autoplace_controls["enemy-base"].size ~= "none" then
+			game.players[1].print("RSO WARNING - VANILLA enemy-base GEN IS NOT DISABLED!")
+		end
+		if surface.map_gen_settings.autoplace_controls["stone"].size ~= "none" then
+			game.players[1].print("RSO WARNING - VANILLA stone GEN IS NOT DISABLED!")
+		end
+		if surface.map_gen_settings.autoplace_controls["coal"].size ~= "none" then
+			game.players[1].print("RSO WARNING - VANILLA coal GEN IS NOT DISABLED!")
+		end
 	end
-	
-	script.on_event(defines.events.on_tick, nil)
-end
 
--- Oarc removed this. No idea if this will break save game loads.
--- Tested it once and it seemed to work?
--- function RSO_delayedInit()
--- 	script.on_event(defines.events.on_tick, RSO_init)
--- end
+end
 
 function RSO_ChunkGenerated(event)
 	local c_x = event.area.left_top.x

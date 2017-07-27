@@ -5,17 +5,17 @@ local function fillVanillaConfig()
         type="resource-ore",
         
         -- general spawn params
-        allotment=99, -- how common resource is
+        allotment=90, -- how common resource is
         spawns_per_region={min=1, max=1}, --number of chunks
-        richness=5000,        -- resource_ore has only one richness value - resource-liquid has min/max
+        richness=5500,        -- resource_ore has only one richness value - resource-liquid has min/max
         
-        size={min=25, max=30}, -- rough radius of area, too high value can produce square shaped areas
-        min_amount=350,
+        size={min=20, max=25}, -- rough radius of area, too high value can produce square shaped areas
+        min_amount=500,
         
         -- resource provided at starting location
         -- probability: 1 = 100% chance to be in starting area
         --              0 = resource is not in starting area
-        starting={richness=8000, size=25, probability=0},
+        starting={richness=4000, size=25, probability=0},
         
         multi_resource_chance=0.20, -- absolute value
         multi_resource={
@@ -29,11 +29,11 @@ local function fillVanillaConfig()
     config["copper-ore"] = {
         type="resource-ore",
         
-        allotment=95,
+        allotment=85,
         spawns_per_region={min=1, max=1},
-        richness=5000,
-        size={min=25, max=30},
-        min_amount=350,
+        richness=5500,
+        size={min=20, max=25},
+        min_amount=500,
 
         starting={richness=6000, size=25, probability=0},
         
@@ -49,14 +49,14 @@ local function fillVanillaConfig()
     config["coal"] = {
         type="resource-ore",
         
-        allotment=80,
+        allotment=70,
         
         spawns_per_region={min=1, max=1},
-        size={min=20, max=25},
-        richness=4000,
-        min_amount=350,
+        size={min=18, max=22},
+        richness=5500,
+        min_amount=500,
 
-        starting={richness=6000, size=20, probability=0},
+        starting={richness=3000, size=20, probability=0},
         
         multi_resource_chance=0.30,
         multi_resource={
@@ -71,11 +71,11 @@ local function fillVanillaConfig()
         
         allotment=60,
         spawns_per_region={min=1, max=1},
-        richness=3000,
-        size={min=19, max=22},
-        min_amount=250,
+        richness=4000,
+        size={min=15, max=18},
+        min_amount=500,
 
-        starting={richness=5000, size=16, probability=0},
+        starting={richness=2500, size=16, probability=0},
         
         multi_resource_chance=0.30,
         multi_resource={
@@ -84,24 +84,19 @@ local function fillVanillaConfig()
             ['copper-ore'] = 3,
         }
     }
-
-	config["uranium-ore"] = {
+    
+    config["uranium-ore"] = {
         type="resource-ore",
         
-        allotment=40,
+        allotment=50,
         spawns_per_region={min=1, max=1},
-        richness=3000,
-        size={min=12, max=16},
-        min_amount=250,
+        richness=4500,
+        size={min=10, max=12},
+        min_amount=500,
 
-        starting={richness=3000, size=12, probability=0},
-        
-        multi_resource_chance=0.30,
-        multi_resource={
-            ["coal"] = 4,
-        }
+        starting={richness=2000, size=10, probability=0},
     }
-	
+
     config["crude-oil"] = {
         type="resource-liquid",
         minimum_amount=60000,
@@ -127,7 +122,7 @@ local function fillEnemies()
         clear_range = {6, 6},
         
         spawns_per_region={min=2,max=4},
-        size={min=1,max=2},
+        size={min=2,max=4},
         size_per_region_factor=1,
         richness=3,
         
@@ -166,11 +161,11 @@ local function fillEnemies()
 end
 
 function loadResourceConfig()
-	
-	config={}
-	
-	fillVanillaConfig()
-	fillEnemies()
-	
-	return config
+    
+    config={}
+    
+    fillVanillaConfig()
+    fillEnemies()
+    
+    return config
 end

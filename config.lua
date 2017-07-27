@@ -93,11 +93,6 @@ ENABLE_SPAWN_SURFACE = true
 -- Separate spawns
 ENABLE_SEPARATE_SPAWNS = true
 
-ENABLE_GOOD_STARTER_ITEMS = false
-ENABLE_BETTER_STARTER_ITEMS = false
-ENABLE_BEST_STARTER_ITEMS = false
-ENABLE_LOGISTIC_STARTER_ITEMS = false
-
 ENABLE_BLUEPRINT_FROM_START = false
 ENABLE_ALL_RESEARCH_DONE = false
 
@@ -206,6 +201,7 @@ ENFORCE_LAND_AREA_TILE_DIST = 48
 
 -- Main force is what default players join
 MAIN_FORCE = "main_force"
+GAME_SURFACE_NAME = "nauvis"
 
 -- Enable if people can spawn at the main base
 ENABLE_DEFAULT_SPAWN = false
@@ -218,12 +214,12 @@ MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 2
 ---------------------------------------
 -- Special Action Cooldowns
 ---------------------------------------
-RESPAWN_COOLDOWN_IN_MINUTES = 15
+RESPAWN_COOLDOWN_IN_MINUTES = 20
 RESPAWN_COOLDOWN_TICKS = TICKS_PER_MINUTE * RESPAWN_COOLDOWN_IN_MINUTES
 
--- Require playes to be online for at least 5 minutes
+-- Require playes to be online for at least 15 minutes
 -- Else their character is removed and their spawn point is freed up for use
-MIN_ONLIME_TIME_IN_MINUTES = 11
+MIN_ONLIME_TIME_IN_MINUTES = 15
 MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 
 

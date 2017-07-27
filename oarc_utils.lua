@@ -114,30 +114,26 @@ function ChartArea(force, position, chunkDist)
         position.y+(CHUNK_SIZE*chunkDist)}})
 end
 
--- Give player these default items.
+-- Give player these default items on restart.
 function GivePlayerItems(player)
-    player.insert{name="pistol", count=1}
-    player.insert{name="firearm-magazine", count=100}
 end
 
 -- Additional starter only items
 function GivePlayerStarterItems(player)
-    GivePlayerItems(player)
-    player.insert{name="iron-plate", count=8}
-    player.insert{name="burner-mining-drill", count = 1}
-    player.insert{name="stone-furnace", count = 1}
-    if ENABLE_GOOD_STARTER_ITEMS then
-        GivePlayerGoodStarterItems(player);
+    for _,item in pairs(scenario.config.startKit) do
+        player.insert(item);
     end
-    if ENABLE_BETTER_STARTER_ITEMS then
-        GivePlayerBetterStarterItems(player);
-    end
-    if ENABLE_BEST_STARTER_ITEMS then
-        GivePlayerBestStarterItems(player);
-    end
-    if ENABLE_LOGISTIC_STARTER_ITEMS then
-        GivePlayerLogisticStarterItems(player);
-    end
+end
+
+-- Create area given point and radius-distance
+function GetAreaFromPointAndDistance(point, dist)
+    local area = {left_top=
+                    {x=point.x-dist,
+                     y=point.y-dist},
+                  right_bottom=
+                    {x=point.x+dist,
+                     y=point.y+dist}}
+    return area
 end
 
 -- Check if given position is in area bounding box

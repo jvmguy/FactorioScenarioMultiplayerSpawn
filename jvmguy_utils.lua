@@ -31,26 +31,42 @@ function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius)
             end
         end
     end
-
-
     surface.set_tiles(dirtTiles)
 end
 
-function CreateWaterStrip(surface, spawnPos, tileRadius)
-    local waterTiles = {{name = "water", position ={spawnPos.x+0,spawnPos.y-tileRadius}},
-                        {name = "water", position ={spawnPos.x+1,spawnPos.y-tileRadius}},
-                        {name = "water", position ={spawnPos.x+2,spawnPos.y-tileRadius}},
-                        {name = "water", position ={spawnPos.x+3,spawnPos.y-tileRadius}},
-                        {name = "water", position ={spawnPos.x+4,spawnPos.y-tileRadius}},
-                        {name = "water", position ={spawnPos.x+5,spawnPos.y-tileRadius}},
-                        {name = "water", position ={spawnPos.x+6,spawnPos.y-tileRadius}},
-                        {name = "water", position ={spawnPos.x+7,spawnPos.y-tileRadius}},
-                        {name = "water", position ={spawnPos.x+8,spawnPos.y-tileRadius}}}
+function CreateWaterOctagon(surface, centerPos, chunkArea, tileRadius)
+
+    local dirtTiles = {}
+    for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
+        for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
+
+            local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
+            local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
+            local distVar = math.max(distVar1, distVar2 * 0.707);
+
+            -- Create a water ring
+            if ((distVar < tileRadius) and 
+                (distVar > tileRadius-2.9)) then
+                table.insert(dirtTiles, {name = "water", position ={i,j}})
+            end
+        end
+    end
+    surface.set_tiles(dirtTiles)
+end
+
+function CreateWaterStrip(surface, spawnPos, width, height)
+    local waterTiles = {}
+    for j=1,height do
+        for i=1,width do
+            table.insert(waterTiles, {name = "water", position ={spawnPos.x+i-1,spawnPos.y+j-1}});
+        end
+    end
     -- DebugPrint("Setting water tiles in this chunk! " .. chunkArea.left_top.x .. "," .. chunkArea.left_top.y)
     surface.set_tiles(waterTiles)
 end
 
-function GivePlayerBestStarterItems(player)
+function DeprecatedGivePlayerBestStarterItems(player)
+    -- deprecated, but keeping the list
     player.insert{name = "power-armor-mk2", count = 1}
     player.insert{name = "fusion-reactor-equipment", count=1}
     player.insert({name = "exoskeleton-equipment", count=3})
@@ -62,7 +78,8 @@ function GivePlayerBestStarterItems(player)
     player.insert{name="steel-axe", count = 5}
 end
 
-function GivePlayerBetterStarterItems(player)
+function DeprecatedGivePlayerBetterStarterItems(player)
+    -- deprecated, but keeping the list
     player.insert{name = "power-armor", count = 1}
     player.insert{name = "fusion-reactor-equipment", count=1}
     player.insert({name = "exoskeleton-equipment", count=1})
@@ -75,7 +92,8 @@ function GivePlayerBetterStarterItems(player)
     player.insert{name = "battery-equipment", count=3}
 end
 
-function GivePlayerGoodStarterItems(player)
+function DeprecatedGivePlayerGoodStarterItems(player)
+    -- deprecated, but keeping the list
     player.insert{name="steel-axe", count = 5}
     player.insert{name = "raw-fish", count = 20}
     player.insert{name = "modular-armor", count = 1}
@@ -107,7 +125,8 @@ function GivePlayerGoodStarterItems(player)
     player.insert({name = "inserter", count=20})
 end
 
-function GiveBestStartItems(player)
+function DeprecatedGiveBestStartItems(player)
+    -- deprecated, but keeping the list
   -- raw materials
     player.insert{name = "coal", count = 100}
     player.insert{name = "iron-plate", count = 100}
@@ -135,7 +154,7 @@ function GiveBestStartItems(player)
     player.insert({name = "fast-inserter", count=50})
 end
 
-function GivePlayerLogisticStarterItems(player)
+function DeprecatedGivePlayerLogisticStarterItems(player)
     -- connectivity
     player.insert{name="roboport", count = 5}
     player.insert{name="logistic-robot", count = 50}
@@ -163,9 +182,6 @@ function CreateTeleporter(surface, spawnPos, dest)
     local car = surface.create_entity{name="car", position={spawnPos.x+2,spawnPos.y}, force=MAIN_FORCE }
     car.destructible=false;
     car.minable=false;
-    for _,item in pairs(scenario.config.startKit) do
-        car.insert(item);
-    end
     for _,item in pairs(scenario.config.teleporter.startItems) do
         car.insert(item);
     end
@@ -238,4 +254,27 @@ end
 
 function ShowPlayerSpawns(player)
   ShowSpawns( player, global.playerSpawns );
+end
+
+function EraseArea(position, chunkDist)
+    local surface = game.surfaces["nauvis"];
+    local eraseArea = {left_top=
+                            {x=position.x-chunkDist*CHUNK_SIZE,
+                             y=position.y-chunkDist*CHUNK_SIZE},
+                        right_bottom=
+                            {x=position.x+chunkDist*CHUNK_SIZE,
+                             y=position.y+chunkDist*CHUNK_SIZE}}
+    for chunk in surface.get_chunks() do
+        local chunkAreaCenter = {x=chunk.x*CHUNK_SIZE+(CHUNK_SIZE/2), y=chunk.y*CHUNK_SIZE+(CHUNK_SIZE/2)}
+        if CheckIfInArea(chunkAreaCenter,eraseArea) then
+            surface.delete_chunk(chunk);
+        end
+    end
+end
+
+function SurfaceSettings(surface)
+    local settings = surface.map_gen_settings;
+    game.player.print("surface terrain_segmentation=" .. settings.terrain_segmentation);
+    game.player.print("surface water=" .. settings.water);
+    game.player.print("surface seed=" .. settings.seed);
 end

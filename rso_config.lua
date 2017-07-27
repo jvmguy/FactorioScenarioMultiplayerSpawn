@@ -1,19 +1,19 @@
 debug_enabled = false
 
-region_size = 8	-- alternative mean to control how further away resources would be, default - 256 tiles or 8 chunks
-				-- each region is region_size*region_size chunks
-				-- each chunk is 32*32 tiles
+region_size = 10    -- alternative mean to control how further away resources would be, default - 256 tiles or 8 chunks
+				    -- each region is region_size*region_size chunks
+				    -- each chunk is 32*32 tiles
 
 use_donut_shapes = false		-- setting this to false will remove donuts from possible resource layouts
 
-starting_area_size = 0.8         	-- starting area in regions, safe from random nonsense
+starting_area_size = 0         	-- starting area in regions, safe from random nonsense
 
-absolute_resource_chance = 0.50 -- chance to spawn an resource in a region
+absolute_resource_chance = 0.6 -- chance to spawn an resource in a region
 starting_richness_mult = 1		-- multiply starting area richness for resources
 global_richness_mult = 1		-- multiply richness for all resources except starting area
 global_size_mult = 1			-- multiply size for all ores, doesn't affect starting area
 
-absolute_enemy_chance = 3	      -- chance to spawn enemies per sector (can be more then one base if spawned)
+absolute_enemy_chance = 10	      -- chance to spawn enemies per sector (can be more then one base if spawned)
 enemy_base_size_multiplier = 1  -- all base sizes will be multiplied by this - larger number means bigger bases
 
 multi_resource_active = false			-- global switch for multi resource chances
@@ -21,10 +21,11 @@ multi_resource_richness_factor = 0.60 	-- any additional resource is multiplied 
 multi_resource_size_factor = 0.90
 multi_resource_chance_diminish = 0.6	-- diminishing effect factor on multi_resource_chance
 
-min_amount=350 					-- default value for minimum amount of resource in single pile
+min_amount=500 					-- default value for minimum amount of resource in single pile
 
-richness_distance_factor=0.9 	-- exponent for richness distance factor calculation
-size_distance_factor=0.15	   	-- exponent for size distance factor calculation
+richness_distance_factor=1 	-- exponent for richness distance factor calculation
+fluid_richness_distance_factor = 0.6 -- exponent for richness distance factor calculation for fluids
+size_distance_factor=0.08	   	-- exponent for size distance factor calculation
 
 deterministic = true           	-- set to false to use system for all decisions  math.random
 
@@ -46,6 +47,8 @@ useEnemiesInPeaceMod = false -- additional override for peace mod detection - wh
 
 -- Always leave this setting to true in this soft mod scenario version! -- OARC
 ignoreMapGenSettings = true -- stops the default behaviour of reading map gen settings
+
+fluidResourcesFactor = 20 -- temporary factor for calculation of resource %-ages for fluids
 
 useResourceCollisionDetection = true	-- enables avoidace calculations to reduce ores overlaping of each other
 resourceCollisionDetectionRatio = 0.8	-- at least this much of ore field needs to be placable to spawn it

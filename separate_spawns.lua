@@ -95,11 +95,18 @@ function GenerateSpawnChunk( event, spawnPos)
                 end
             end
 			if (ENABLE_CROP_OCTAGON) then
-	            CreateCropOctagon(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
+	            CreateCropOctagon(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST-2)
 			else
-	            CreateCropCircle(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
+	            CreateCropCircle(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST-2)
 			end
-            CreateWaterStrip( surface, spawnPos, ENFORCE_LAND_AREA_TILE_DIST*3/4 )
+
+            local px = ENFORCE_LAND_AREA_TILE_DIST-2 			
+--            CreateWaterStrip( surface, { x=spawnPos.x-10, y=spawnPos.y - px},  21, 1)
+--            CreateWaterStrip( surface, { x=spawnPos.x-10, y=spawnPos.y + px},  21, 1)
+--            CreateWaterStrip( surface, { x=spawnPos.x - px, y=spawnPos.y-10},  1, 21)
+--            CreateWaterStrip( surface, { x=spawnPos.x + px, y=spawnPos.y-10},  1, 21)
+            CreateWaterOctagon(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
+            
             GenerateStartingResources( surface, chunkArea, spawnPos);
             if scenario.config.teleporter.enabled then
                 local pos = { x=spawnPos.x+scenario.config.teleporter.spawnPosition.x, y=spawnPos.y+scenario.config.teleporter.spawnPosition.y }

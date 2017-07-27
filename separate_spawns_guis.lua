@@ -248,16 +248,20 @@ function SpawnOptsGuiClick(event)
     elseif ((buttonClicked == "isolated_spawn_near") or (buttonClicked == "isolated_spawn_far")) then
         CreateSpawnCtrlGui(player)
 
+        local newSpawn = nil;
         -- Create a new spawn point
-        local newSpawn = PickRandomSpawn( global.unusedSpawns, buttonClicked == "isolated_spawn_far");
+        if player.index == 1 then
+            newSpawn = global.unusedSpawns[scenario.config.separateSpawns.numSpawnPoints];
+            global.unusedSpawns[scenario.config.separateSpawns.numSpawnPoints]= nil;
+        end
+        if newSpawn == nil then
+            newSpawn = PickRandomSpawn( global.unusedSpawns, buttonClicked == "isolated_spawn_far");
+        end
         if newSpawn == nil then
             -- no spawn of the type requested. just pick one
             newSpawn = PickRandomSpawn( global.unusedSpawns, buttonClicked ~= "isolated_spawn_far");
         end
         
-        if player.index == 1 then
-            newSpawn = global.allSpawns[scenario.config.separateSpawns.numSpawnPoints];
-        end
         
         GivePlayerStarterItems(player)
         if newSpawn == nil then
