@@ -19,13 +19,22 @@ function StatusCommand_ShowStatus(player, xplayer)
     end
 end
 
+commands.remove_command("status");
 commands.add_command("status", "shows your location, time in game", function(command)
+    local players = {}
+    for _,p in pairs(game.players) do
+        players[_] = p;
+    end
+    table.sort(players, 
+        function(a,b) return a.online_time < b.online_time; end
+    );
+    
     local player = game.players[command.player_index];
     if player ~= nil then
         if (command.parameter ~= nil) then
             StatusCommand_ShowStatus(player, game.players[command.parameter]);
         else
-            for _,xplayer in pairs(game.players) do
+            for _,xplayer in pairs(players) do
                 StatusCommand_ShowStatus(player, xplayer);
             end
         end

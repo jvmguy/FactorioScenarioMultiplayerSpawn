@@ -16,6 +16,7 @@ scenario.config.joinedMessages = {
     "",
     "Look in the car at your spawn for fast start items.",
     "The car is also your personal transport to and from the silo.",
+    "Discord chat: https://discord.gg/q6gfYa9",
 }
 
 WELCOME_MSG_TITLE = "Welcome to Jvmguy's Server"
@@ -24,13 +25,14 @@ scenario.config.welcomeMessages = {
     "This scenario is a variant of a scenario created by Oarc",
     "",
     "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
-    "This server is running a custom scenario that changes spawn locations.",
+--    "This server is running a custom scenario that changes spawn locations.",
     "",
-    "/w Due to the way this scenario works, it may take some time for the land",
-    "/w around your new spawn area to generate...",
-    "/w Please wait for 10-20 seconds when you select your first spawn.",
-    "",
+--    "/w Due to the way this scenario works, it may take some time for the land",
+--    "/w around your new spawn area to generate...",
+--    "/w Please wait for 10-20 seconds when you select your first spawn.",
+--    "",
     "/w Biter expansion is on, so watch out!",
+    "Discord chat https://discord.gg/q6gfYa9",
     "",
     "Good Luck!",
     
@@ -59,7 +61,7 @@ scenario.config.teleporter = {
     siloPosition = { x=0, y=0 },
     
     startItems = {
-        {name= "coal", count=100},
+        {name= "coal", count=200},
         {name= "stone-furnace", count=12},
         {name= "burner-mining-drill", count=12},
 --        {name = "offshore-pump", count = 1},
@@ -148,15 +150,15 @@ scenario.config.separateSpawns = {
     -- if we use fermat spirals 
     --     nearest base is sqrt(36)*spacing = 6000
     --     most distant base is sqrt(36+28)*spacing = 8000
-    firstSpawnPoint = 24,
+    firstSpawnPoint = 20,
     numSpawnPoints = 42,
     spacing = 900,
     
     resources = {
         { shape="rect", type="stone", x=-25, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
-        { shape="rect", type="coal", x=-27, dy=11, size=10, aspectRatio=2.0, amount=2000,  },
-        { shape="rect", type="copper-ore", x=-29, dy=13, size=12, aspectRatio=2.0, amount=2000,  },
-        { shape="rect", type="iron-ore", x=-31, dy=15, size=16, aspectRatio=2.0, amount=2000,  },
+        { shape="rect", type="coal", x=-27, dy=12, size=10, aspectRatio=2.0, amount=2000,  },
+        { shape="rect", type="copper-ore", x=-29, dy=14, size=12, aspectRatio=2.0, amount=2000,  },
+        { shape="rect", type="iron-ore", x=-31, dy=16, size=16, aspectRatio=2.0, amount=2000,  },
         
         { shape="rect", type="crude-oil", x=-40, y=-5, size=1, amount=1000000,  },
         { shape="rect", type="crude-oil", dy=5, size=1, amount=1000000,  },

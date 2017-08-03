@@ -9,7 +9,7 @@ local function fillVanillaConfig()
         spawns_per_region={min=1, max=1}, --number of chunks
         richness=5500,        -- resource_ore has only one richness value - resource-liquid has min/max
         
-        size={min=20, max=25}, -- rough radius of area, too high value can produce square shaped areas
+        size={min=22, max=27}, -- rough radius of area, too high value can produce square shaped areas
         min_amount=500,
         
         -- resource provided at starting location
@@ -32,7 +32,7 @@ local function fillVanillaConfig()
         allotment=85,
         spawns_per_region={min=1, max=1},
         richness=5500,
-        size={min=20, max=25},
+        size={min=22, max=27},
         min_amount=500,
 
         starting={richness=6000, size=25, probability=0},
@@ -52,7 +52,7 @@ local function fillVanillaConfig()
         allotment=70,
         
         spawns_per_region={min=1, max=1},
-        size={min=18, max=22},
+        size={min=20, max=24},
         richness=5500,
         min_amount=500,
 
@@ -72,7 +72,7 @@ local function fillVanillaConfig()
         allotment=60,
         spawns_per_region={min=1, max=1},
         richness=4000,
-        size={min=15, max=18},
+        size={min=17, max=19},
         min_amount=500,
 
         starting={richness=2500, size=16, probability=0},
@@ -91,7 +91,7 @@ local function fillVanillaConfig()
         allotment=50,
         spawns_per_region={min=1, max=1},
         richness=4500,
-        size={min=10, max=12},
+        size={min=12, max=14},
         min_amount=500,
 
         starting={richness=2000, size=10, probability=0},
