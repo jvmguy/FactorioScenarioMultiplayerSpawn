@@ -44,7 +44,7 @@ scenario.config.startKit = {
         {name = "power-armor", count = 1},
         {name = "fusion-reactor-equipment", count=1},
         {name = "exoskeleton-equipment", count=1},
-        {name = "personal-roboport-mk2-equipment", count=2},
+        {name = "personal-roboport-mk2-equipment", count=3},
         {name = "construction-robot", count = 50},
         {name = "night-vision-equipment", count = 1},
         {name = "steel-axe", count = 5},
@@ -61,9 +61,10 @@ scenario.config.teleporter = {
     siloPosition = { x=0, y=0 },
     
     startItems = {
-        {name= "coal", count=200},
-        {name= "stone-furnace", count=12},
-        {name= "burner-mining-drill", count=12},
+        {name= "coal", count=50},
+        {name= "stone-furnace", count=2},
+        {name= "burner-mining-drill", count=2},
+        {name= "landfill", count=50},
 --        {name = "offshore-pump", count = 1},
 --        {name = "boiler", count = 10},
 --        {name = "steam-engine", count = 20},
@@ -150,9 +151,9 @@ scenario.config.separateSpawns = {
     -- if we use fermat spirals 
     --     nearest base is sqrt(36)*spacing = 6000
     --     most distant base is sqrt(36+28)*spacing = 8000
-    firstSpawnPoint = 20,
+    firstSpawnPoint = 24,
     numSpawnPoints = 42,
-    spacing = 900,
+    spacing = 1000,
     
     resources = {
         { shape="rect", type="stone", x=-25, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
@@ -161,8 +162,8 @@ scenario.config.separateSpawns = {
         { shape="rect", type="iron-ore", x=-31, dy=16, size=16, aspectRatio=2.0, amount=2000,  },
         
         { shape="rect", type="crude-oil", x=-40, y=-5, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", dy=5, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", dy=5, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", dy=6, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", dy=6, size=1, amount=1000000,  },
         
         { shape="rect", type="uranium-ore", x=16, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
     },
