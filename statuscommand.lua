@@ -29,7 +29,7 @@ commands.add_command("status", "shows your location, time in game", function(com
         function(a,b) return a.online_time < b.online_time; end
     );
     
-    local player = game.players[command.player_index];
+    local player = game.player;
     if player ~= nil then
         if (command.parameter ~= nil) then
             StatusCommand_ShowStatus(player, game.players[command.parameter]);
