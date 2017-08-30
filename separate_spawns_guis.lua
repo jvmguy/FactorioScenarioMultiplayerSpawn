@@ -240,7 +240,7 @@ function SpawnOptsGuiClick(event)
     if (buttonClicked == "default_spawn_btn") then
         CreateSpawnCtrlGui(player)
         GivePlayerStarterItems(player)
-        ChangePlayerSpawn(player, player.force.get_spawn_position("nauvis"))
+        ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME))
         SendPlayerToSpawn(player)
         SendBroadcastMsg(player.name .. " joined the main force!")
         ChartArea(player.force, player.position, 4)
@@ -266,7 +266,7 @@ function SpawnOptsGuiClick(event)
         GivePlayerStarterItems(player)
         if newSpawn == nil then
             player.print("Sorry! You have been assigned to the default spawn.")
-            ChangePlayerSpawn(player, player.force.get_spawn_position("nauvis"))
+            ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME))
             SendBroadcastMsg(player.name .. " joined the main force!")
             ChartArea(player.force, player.position, 4)
         else

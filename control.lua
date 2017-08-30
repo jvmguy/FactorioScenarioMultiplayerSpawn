@@ -92,6 +92,12 @@ script.on_init(function(event)
 
     -- Configures the map settings for enemies
     -- This controls evolution growth factors and enemy expansion settings.
+    if ENABLE_RSO then
+        CreateGameSurface(RSO_MODE)
+    else
+        CreateGameSurface(VANILLA_MODE)
+    end
+
     ConfigureAlienStartingParams()
 
     if ENABLE_SEPARATE_SPAWNS then

@@ -194,7 +194,7 @@ end
 -- Includes a crop circle
 function GenerateRocketSiloChunk(event)
     local surface = event.surface
-    if surface.name ~= "nauvis" then return end
+    if surface.name ~= GAME_SURFACE_NAME then return end
     local chunkArea = event.area
 
     local chunkAreaCenter = {x=chunkArea.left_top.x+(CHUNK_SIZE/2),
@@ -220,5 +220,5 @@ function GenerateRocketSiloChunk(event)
 end
 
 function ChartRocketSiloArea(force)
-    force.chart(game.surfaces["nauvis"], {{global.siloPosition.x-(CHUNK_SIZE*2), global.siloPosition.y-(CHUNK_SIZE*2)}, {global.siloPosition.x+(CHUNK_SIZE*2), global.siloPosition.y+(CHUNK_SIZE*2)}})
+    force.chart(game.surfaces[GAME_SURFACE_NAME], {{global.siloPosition.x-(CHUNK_SIZE*2), global.siloPosition.y-(CHUNK_SIZE*2)}, {global.siloPosition.x+(CHUNK_SIZE*2), global.siloPosition.y+(CHUNK_SIZE*2)}})
 end

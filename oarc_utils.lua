@@ -76,7 +76,7 @@ end
 -- Prints flying text.
 -- Color is optional
 function FlyingText(msg, pos, color) 
-    local surface = game.surfaces["nauvis"]
+    local surface = game.surfaces[GAME_SURFACE_NAME]
     if color == nil then
         surface.create_entity({ name = "flying-text", position = pos, text = msg })
     else
@@ -107,7 +107,7 @@ end
 
 -- Chart area for a force
 function ChartArea(force, position, chunkDist)
-    force.chart(game.surfaces["nauvis"],
+    force.chart(game.surfaces[GAME_SURFACE_NAME],
         {{position.x-(CHUNK_SIZE*chunkDist),
         position.y-(CHUNK_SIZE*chunkDist)},
         {position.x+(CHUNK_SIZE*chunkDist),
@@ -222,7 +222,7 @@ function IsChunkAreaUngenerated(chunkPos, chunkDist)
         for y=-chunkDist, chunkDist do
             local checkPos = {x=chunkPos.x+x,
                              y=chunkPos.y+y}
-            if (game.surfaces["nauvis"].is_chunk_generated(checkPos)) then
+            if (game.surfaces[GAME_SURFACE_NAME].is_chunk_generated(checkPos)) then
                 return false
             end
         end
@@ -258,7 +258,7 @@ function FindMapEdge(directionVec)
             break
         
         -- If chunk is already generated, keep looking
-        elseif (game.surfaces["nauvis"].is_chunk_generated(chunkPos)) then
+        elseif (game.surfaces[GAME_SURFACE_NAME].is_chunk_generated(chunkPos)) then
             chunkPos.x = chunkPos.x + directionVec.x
             chunkPos.y = chunkPos.y + directionVec.y
         
@@ -539,6 +539,31 @@ function AutoFillVehicle(player, vehicle)
     end
 end
 
+RSO_MODE = 1
+VANILLA_MODE = 2
+
+function CreateGameSurface(mode)
+    local mapSettings =  game.surfaces["nauvis"].map_gen_settings
+    if (mode == RSO_MODE) then
+        mapSettings.terrain_segmentation=scenario.config.mapSettings.RSO_TERRAIN_SEGMENTATION
+        mapSettings.water=scenario.config.mapSettings.RSO_WATER
+        mapSettings.starting_area=scenario.config.mapSettings.STARTING_AREA
+        mapSettings.peaceful_mode=scenario.config.mapSettings.RSO_PEACEFUL
+        mapSettings.seed=math.random(999999999);
+        mapSettings.autoplace_controls = {
+            ["coal"]={ size="none" },
+            ["copper-ore"]={ size="none" },
+            ["iron-ore"]={ size="none" },
+            ["stone"]={ size="none" },
+            ["uranium-ore"]={ size="none" },
+            ["crude-oil"]={ size="none" },
+            ["enemy-base"]={ size="none" }
+        }
+    end
+
+    local surface = game.create_surface(GAME_SURFACE_NAME,mapSettings)
+    -- surface.set_tiles({{name = "out-of-map",position = {1,1}}})
+end
 
 --------------------------------------------------------------------------------
 -- EVENT SPECIFIC FUNCTIONS
@@ -606,7 +631,7 @@ end
 -- THIS DOES NOT WORK IN SCENARIOS!
 -- function DisableVanillaResouresAndEnemies()
 
---     local map_gen_ctrls = game.surfaces["nauvis"].map_gen_settings.autoplace_controls
+--     local map_gen_ctrls = game.surfaces[GAME_SURFACE_NAME].map_gen_settings.autoplace_controls
 
 --     map_gen_ctrls["coal"].size = "none"
 --     map_gen_ctrls["stone"].size = "none"
@@ -629,7 +654,7 @@ end
 --                           right_bottom=
 --                             {x=p.x+(CHUNK_SIZE*3),
 --                              y=p.y+(CHUNK_SIZE*3)}}
---                 f.chart(game.surfaces["nauvis"], visionArea)
+--                 f.chart(game.surfaces[GAME_SURFACE_NAME], visionArea)
 --             end
 --         end
 --     end

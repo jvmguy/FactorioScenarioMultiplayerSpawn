@@ -71,12 +71,23 @@ scenario.config.startKit = {
 --		{name = "landfill", count=200}
 }
 
+scenario.config.mapSettings = {
+    RSO_TERRAIN_SEGMENTATION = "very-low", -- Frequency of water
+    RSO_WATER = "high", -- Size of water patches
+    RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
+    RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
+}
+
 scenario.config.teleporter = {
     enabled = true,
     -- where in the spawn to place the teleporter
 	spawnPosition = { x=30, y=-23 },
+
     -- where in the silo chunk to place the teleporter
     siloPosition = { x=0, y=0 },
+    
+    -- where in the silo chunk the teleporter takes you
+    siloTeleportPosition = { x=-2, y=0 },
     
     startItems = {
         {name= "coal", count=50},
@@ -222,7 +233,7 @@ ENFORCE_LAND_AREA_TILE_DIST = 48
 
 -- Main force is what default players join
 MAIN_FORCE = "main_force"
-GAME_SURFACE_NAME = "nauvis"
+GAME_SURFACE_NAME = "game_surface"
 
 -- Enable if people can spawn at the main base
 ENABLE_DEFAULT_SPAWN = false

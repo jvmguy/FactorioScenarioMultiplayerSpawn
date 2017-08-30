@@ -65,9 +65,8 @@ function CreateWaterStrip(surface, spawnPos, width, height)
     surface.set_tiles(waterTiles)
 end
 
-function CreateTeleporter(surface, spawnPos, dest)
-	local carPosition = scenario.config.teleporter.spawnPosition
-    local car = surface.create_entity{name="car", position={spawnPos.x+carPosition.x,spawnPos.y+carPosition.y}, force=MAIN_FORCE }
+function CreateTeleporter(surface, teleporterPosition, dest)
+    local car = surface.create_entity{name="car", position=teleporterPosition, force=MAIN_FORCE }
     car.destructible=false;
     car.minable=false;
     for _,item in pairs(scenario.config.teleporter.startItems) do
@@ -145,7 +144,7 @@ function ShowPlayerSpawns(player)
 end
 
 function EraseArea(position, chunkDist)
-    local surface = game.surfaces["nauvis"];
+    local surface = game.surfaces[GAME_SURFACE_NAME];
     local eraseArea = {left_top=
                             {x=position.x-chunkDist*CHUNK_SIZE,
                              y=position.y-chunkDist*CHUNK_SIZE},

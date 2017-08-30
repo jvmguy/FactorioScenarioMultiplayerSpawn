@@ -110,7 +110,7 @@ function GenerateSpawnChunk( event, spawnPos)
             GenerateStartingResources( surface, chunkArea, spawnPos);
             if scenario.config.teleporter.enabled then
                 local pos = { x=spawnPos.x+scenario.config.teleporter.spawnPosition.x, y=spawnPos.y+scenario.config.teleporter.spawnPosition.y }
-                CreateTeleporter(surface, pos, scenario.config.teleporter.siloPosition)
+                CreateTeleporter(surface, pos, scenario.config.teleporter.siloTeleportPosition)
             end 
         end
     end
@@ -143,7 +143,7 @@ end
 function SeparateSpawnsGenerateChunk(event)
     local surface = event.surface
     
-    if surface.name == "nauvis" then
+    if surface.name == GAME_SURFACE_NAME then
         -- Only take into account the nearest spawn when generating resources
         local chunkArea = event.area
         local midPoint = {x = (chunkArea.left_top.x + chunkArea.right_bottom.x)/2,
@@ -316,7 +316,7 @@ function InitSpawnGlobalsAndForces()
     end
 
     game.create_force(MAIN_FORCE)
-    game.forces[MAIN_FORCE].set_spawn_position(game.forces["player"].get_spawn_position("nauvis"), "nauvis")
+    game.forces[MAIN_FORCE].set_spawn_position(game.forces["player"].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
     SetCeaseFireBetweenAllForces()
     AntiGriefing(game.forces[MAIN_FORCE])
 end
@@ -342,6 +342,8 @@ function GenerateStartingResources(surface, chunkArea, spawnPos)
     end   
 end
 
+local mixedResources = { "iron-ore", "copper-ore", "coal", "iron-ore", "copper-ore", "coal", "stone" }
+
 function CreateResources( surface, chunkArea, pos, shape, aspectRatio, size, startAmount, resourceName )
     if aspectRatio == nil then
         aspectRatio = 1.0;
@@ -365,7 +367,12 @@ function CreateResources( surface, chunkArea, pos, shape, aspectRatio, size, sta
                 inShape = true;
             end
             if inShape and CheckIfInChunk( pos.x+x, pos.y+y, chunkArea) then 
-                surface.create_entity({name=resourceName, amount=startAmount,
+                local realResourceName = resourceName
+                if resourceName == "mixed" then
+                    local r = math.random(#mixedResources);
+                    realResourceName = mixedResources[r]; 
+                end
+                surface.create_entity({name=realResourceName, amount=startAmount,
                     position={pos.x+x, pos.y+y}})
             end
         end
@@ -399,7 +406,7 @@ function SendPlayerToNewSpawnAndCreateIt(player, spawn)
       DebugPrint("SendPlayerToNewSpawnAndCreateIt: error. spawn is nil")
       spawn = { x = 0, y = 0 }
     end
-    player.teleport(spawn, game.surfaces["nauvis"])
+    player.teleport(spawn, game.surfaces[GAME_SURFACE_NAME])
     ChartArea(player.force, player.position, 4)
 
     -- If we get a valid spawn point, setup the area
@@ -414,9 +421,9 @@ end
 
 function SendPlayerToSpawn(player)
     if (DoesPlayerHaveCustomSpawn(player)) then
-        player.teleport(global.playerSpawns[player.name], game.surfaces["nauvis"])
+        player.teleport(global.playerSpawns[player.name], game.surfaces[GAME_SURFACE_NAME])
     else
-        player.teleport(game.forces[MAIN_FORCE].get_spawn_position("nauvis"), game.surfaces["nauvis"])
+        player.teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), game.surfaces[GAME_SURFACE_NAME])
     end
 end
 
@@ -426,12 +433,12 @@ function SendPlayerToRandomSpawn(player)
     local counter = 0
 
     if (rndSpawn == 0) then
-        player.teleport(game.forces[MAIN_FORCE].get_spawn_position("nauvis"), game.surfaces["nauvis"])
+        player.teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), game.surfaces[GAME_SURFACE_NAME])
     else
         counter = counter + 1
         for name,spawnPos in pairs(global.uniqueSpawns) do
             if (counter == rndSpawn) then
-                player.teleport(spawnPos, game.surfaces["nauvis"])
+                player.teleport(spawnPos, game.surfaces[GAME_SURFACE_NAME])
                 break
             end
             counter = counter + 1
