@@ -39,7 +39,7 @@ require("tag")
 require("bps")
 require("statuscommand")
 require("kitcommand")
-require("exorcisecommand")
+require("rgcommand")
 
 
 --------------------------------------------------------------------------------
