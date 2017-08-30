@@ -27,7 +27,7 @@ local function RemoveGhostEntities()
 end
 
 
-commands.add_command("exorcise", "remove ghosts", function(command)
+commands.add_command("rg", "remove ghosts", function(command)
     local player = game.players[command.player_index];
     if player ~= nil and player.admin then
         if (command.parameter ~= nil) then
@@ -42,7 +42,7 @@ commands.add_command("exorcise", "remove ghosts", function(command)
             elseif command.parameter == "entities" then
                 RemoveGhostEntities()
             else
-                player.print("exorcise all | tiles | modules | entities");
+                player.print("remove all ghostes | tiles | modules | entities");
             end
         end
     end
