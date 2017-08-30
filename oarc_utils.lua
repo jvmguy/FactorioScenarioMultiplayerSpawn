@@ -122,6 +122,20 @@ end
 function GivePlayerStarterItems(player)
     for _,item in pairs(scenario.config.startKit) do
         player.insert(item);
+        if item.equipment ~= nil then
+            local p_armor = player.get_inventory(5)[1].grid --defines.inventory.player_armor = 5?
+            if p_armor ~= nil then
+                for _,equip in pairs(item.equipment) do
+                    local count = equip.count
+                    if count == nil then
+                        count = 1
+                    end
+                    for i = 1,count do
+                        p_armor.put(equip);
+                    end
+                end
+            end
+        end
     end
 end
 
@@ -421,7 +435,7 @@ end
 function GivePlayerLongReach(player)
     player.character.character_build_distance_bonus = BUILD_DIST_BONUS
     player.character.character_reach_distance_bonus = REACH_DIST_BONUS
-    -- player.character.character_resource_reach_distance_bonus  = RESOURCE_DIST_BONUS
+    player.character.character_resource_reach_distance_bonus  = RESOURCE_DIST_BONUS
 end
 
 -- This creates a random silo position, stored to global.siloPosition
@@ -511,7 +525,7 @@ function AutoFillVehicle(player, vehicle)
 
     -- Attempt to transfer some fuel
     if ((vehicle.name == "car") or (vehicle.name == "tank") or (vehicle.name == "locomotive")) then
-        TransferItemMultipleTypes(mainInv, vehicle, {"raw-wood", "coal", "solid-fuel"}, 50)
+        TransferItemMultipleTypes(mainInv, vehicle, {"rocket-fuel", "solid-fuel", "raw-wood", "coal"}, 50)
     end
 
     -- Attempt to transfer some ammo

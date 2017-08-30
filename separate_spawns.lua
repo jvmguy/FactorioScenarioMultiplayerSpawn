@@ -306,6 +306,10 @@ function InitSpawnGlobalsAndForces()
         for n = 1,scenario.config.separateSpawns.numSpawnPoints do
               InitSpawnPoint( n )
         end
+        -- another spawn for admin. admin gets the last spawn
+		if scenario.config.separateSpawns.extraSpawn ~= nil then
+	        InitSpawnPoint( scenario.config.separateSpawns.extraSpawn);
+		end
     end
     if (global.playerCooldowns == nil) then
         global.playerCooldowns = {}

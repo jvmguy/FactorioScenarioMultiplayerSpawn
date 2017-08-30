@@ -14,8 +14,8 @@ scenario.config.joinedMessages = {
     "In the current game mode, a satellite must be launched from the rocket silo in the center to win!",
     "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill",
     "",
-    "Look in the car at your spawn for fast start items.",
-    "The car is also your personal transport to and from the silo.",
+--    "Look in the car at your spawn for fast start items.",
+--    "The car is also your personal transport to and from the silo.",
     "Discord chat: https://discord.gg/q6gfYa9",
 }
 
@@ -31,7 +31,7 @@ scenario.config.welcomeMessages = {
 --    "/w around your new spawn area to generate...",
 --    "/w Please wait for 10-20 seconds when you select your first spawn.",
 --    "",
-    "/w Biter expansion is on, so watch out!",
+--    "/w Biter expansion is on, so watch out!",
     "Discord chat https://discord.gg/q6gfYa9",
     "",
     "Good Luck!",
@@ -40,23 +40,41 @@ scenario.config.welcomeMessages = {
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
 }
 
+scenario.config.silo = {
+    addBeacons = true,
+    addPower = true,
+}
+
 scenario.config.startKit = {
-        {name = "power-armor", count = 1},
-        {name = "fusion-reactor-equipment", count=1},
-        {name = "exoskeleton-equipment", count=1},
-        {name = "personal-roboport-mk2-equipment", count=3},
-        {name = "construction-robot", count = 50},
+        {name = "power-armor", count = 1,
+            equipment = {
+                  -- the order of these does matter.
+                  {name = "fusion-reactor-equipment"},
+                  {name = "exoskeleton-equipment"},
+                  {name = "battery-mk2-equipment", count=3},
+                  {name = "personal-roboport-mk2-equipment", count=3},
+                  {name = "solar-panel-equipment", count = 7 }
+            }
+        },
+        {name = "belt-immunity-equipment", count = 1},
         {name = "night-vision-equipment", count = 1},
+        {name = "construction-robot", count = 50},
         {name = "steel-axe", count = 5},
         {name = "roboport", count = 3},
         {name = "logistic-chest-storage", count = 3},
-        {name = "battery-mk2-equipment", count=3},
+		{name = "burner-mining-drill", count = 1},
+		{name = "stone-furnace", count = 1},
+		{name = "submachine-gun", count=1},
+--		{name = "car", count=1},
+		{name = "raw-wood", count=100},
+		{name = "firearm-magazine", count=100},
+--		{name = "landfill", count=200}
 }
 
 scenario.config.teleporter = {
     enabled = true,
-    -- where in the spawn to place the teleporter 
-    spawnPosition = { x=2, y=0 },
+    -- where in the spawn to place the teleporter
+	spawnPosition = { x=30, y=-23 },
     -- where in the silo chunk to place the teleporter
     siloPosition = { x=0, y=0 },
     
@@ -96,7 +114,6 @@ ENABLE_SPAWN_SURFACE = true
 -- Separate spawns
 ENABLE_SEPARATE_SPAWNS = true
 
-ENABLE_BLUEPRINT_FROM_START = false
 ENABLE_ALL_RESEARCH_DONE = false
 
 -- Enable Scenario version of RSO
@@ -119,9 +136,6 @@ ENABLE_LONGREACH = true
 
 -- Enable Autofill
 ENABLE_AUTOFILL = true
-
--- Enable BPS
-ENABLE_BLUEPRINT_STRING = false
 
 --------------------------------------------------------------------------------
 -- Spawn Options
@@ -149,23 +163,27 @@ scenario.config.separateSpawns = {
 --    treeDensity = 0.2,
 
     -- if we use fermat spirals 
-    --     nearest base is sqrt(36)*spacing = 6000
-    --     most distant base is sqrt(36+28)*spacing = 8000
-    firstSpawnPoint = 24,
+    --     nearest base is sqrt(25)*spacing = 5000
+    --     most distant base is sqrt(25+42)*spacing = 8000
+    firstSpawnPoint = 25,
     numSpawnPoints = 42,
+    extraSpawn = 120,    -- admin spawn really far away
     spacing = 1000,
     
+-- x = right, left
+-- y = up, down
+	
     resources = {
-        { shape="rect", type="stone", x=-25, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
-        { shape="rect", type="coal", x=-27, dy=12, size=10, aspectRatio=2.0, amount=2000,  },
-        { shape="rect", type="copper-ore", x=-29, dy=14, size=12, aspectRatio=2.0, amount=2000,  },
-        { shape="rect", type="iron-ore", x=-31, dy=16, size=16, aspectRatio=2.0, amount=2000,  },
+        { shape="rect", type="coal", x=-16, y=-41, size=18, aspectRatio=1.17, amount=4000,  },
+        { shape="rect", type="stone", x=9, y=-32, size=9, aspectRatio=2.0, amount=4000,  },
+        { shape="rect", type="copper-ore", x=-43, y=-17, size=21, aspectRatio=1.7, amount=4000,  },
+        { shape="rect", type="iron-ore", x=5, y=-17, size=21, aspectRatio=1.7, amount=4000,  },
         
-        { shape="rect", type="crude-oil", x=-40, y=-5, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", dy=6, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", dy=6, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=8, y=-43, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=11, y=-43, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=14, y=-43, size=1, amount=1000000,  },
         
-        { shape="rect", type="uranium-ore", x=16, y=-31, size=8, aspectRatio=2.0, amount=1500,  },
+        { shape="rect", type="uranium-ore", x=-29, y=-33, size=10, aspectRatio=1.0, amount=1800,  },
     },
 }
 
@@ -211,13 +229,13 @@ ENABLE_DEFAULT_SPAWN = false
 
 -- Enable if people can allow others to join their base
 ENABLE_SHARED_SPAWNS = true
-MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 2
+MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 3
 
 
 ---------------------------------------
 -- Special Action Cooldowns
 ---------------------------------------
-RESPAWN_COOLDOWN_IN_MINUTES = 20
+RESPAWN_COOLDOWN_IN_MINUTES = 60
 RESPAWN_COOLDOWN_TICKS = TICKS_PER_MINUTE * RESPAWN_COOLDOWN_IN_MINUTES
 
 -- Require playes to be online for at least 15 minutes
@@ -248,7 +266,7 @@ ENEMY_DESTROY_FACTOR_DIVISOR = 3
 --------------------------------------------------------------------------------
 
 -- SILO_DISTANCE = 4 * HEXSPACING
-SILO_DISTANCE = CHUNK_SIZE      -- put the silo 1 chunk east of the origin (prevents problems)
+SILO_DISTANCE = 0     -- put the silo 1 chunk east of the origin (prevents problems)
 SILO_CHUNK_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE);
 SILO_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE)* CHUNK_SIZE + CHUNK_SIZE/2
 SILO_DISTANCE_Y = CHUNK_SIZE/2
@@ -265,7 +283,7 @@ ENABLE_RANDOM_SILO_POSITION = false
 
 BUILD_DIST_BONUS = 15
 REACH_DIST_BONUS = BUILD_DIST_BONUS
-RESOURCE_DIST_BONUS = 2
+RESOURCE_DIST_BONUS = 3
 
 --------------------------------------------------------------------------------
 -- Autofill Options
