@@ -58,6 +58,29 @@ my_spacer_style = {
 my_small_button_style = {
     font = "default-small-semibold"
 }
+my_player_list_fixed_width_style = {
+    minimal_width = 200,
+    maximal_width = 200,
+    maximal_height = 200
+}
+my_player_list_admin_style = {
+    font = "default-semibold",
+    font_color = {r=1,g=0.5,b=0.5},
+    minimal_width = 200,
+    top_padding = 0,
+    bottom_padding = 0,
+    maximal_height = 15
+}
+my_player_list_style = {
+    font = "default-semibold",
+    minimal_width = 200,
+    top_padding = 0,
+    bottom_padding = 0,
+    maximal_height = 15
+}
+my_player_list_style_spacer = {
+    maximal_height = 15
+}
 my_color_red = {r=1,g=0.1,b=0.1}
 
 
@@ -158,6 +181,23 @@ function CheckIfInArea(point, area)
         end
     end
     return false
+end
+
+-- Returns true if two areas intersect
+function CheckIfChunkIntersects(chunkArea, area)
+    if (area.left_top.x >= chunkArea.right_bottom.x) then
+        return false
+    end
+    if (area.left_top.y >= chunkArea.right_bottom.y) then
+        return false
+    end
+    if (chunkArea.left_top.x >= area.right_bottom.x) then
+        return false
+    end
+    if (chunkArea.left_top.y >= area.right_bottom.y) then
+        return false
+    end
+    return true
 end
 
 -- Ceasefire
@@ -549,7 +589,7 @@ function CreateGameSurface(mode)
         mapSettings.water=scenario.config.mapSettings.RSO_WATER
         mapSettings.starting_area=scenario.config.mapSettings.STARTING_AREA
         mapSettings.peaceful_mode=scenario.config.mapSettings.RSO_PEACEFUL
-        mapSettings.seed=math.random(999999999);
+        -- mapSettings.seed=math.random(999999999);
         mapSettings.autoplace_controls = {
             ["coal"]={ size="none" },
             ["copper-ore"]={ size="none" },

@@ -39,7 +39,7 @@ function GenerateSpawnChunk( event, spawnPos)
                         right_bottom=
                             {x=spawnPos.x+WARNING_AREA_TILE_DIST,
                              y=spawnPos.y+WARNING_AREA_TILE_DIST}}
-    if CheckIfInArea(chunkAreaCenter,warningArea) then
+    if CheckIfChunkIntersects(chunkArea,warningArea) then
 
 		
         local landArea = {left_top=
@@ -60,13 +60,13 @@ function GenerateSpawnChunk( event, spawnPos)
                                  
 
         -- Make chunks near a spawn safe by removing enemies
-        if CheckIfInArea(chunkAreaCenter,safeArea) then
+        if CheckIfChunkIntersects(chunkArea,safeArea) then
             for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
                 entity.destroy()
             end
         
         -- Create a warning area with reduced enemies
-        elseif CheckIfInArea(chunkAreaCenter,warningArea) then
+        elseif CheckIfChunkIntersects(chunkArea,warningArea) then
             local counter = 0
             for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
                 if ((counter % WARN_AREA_REDUCTION_RATIO) ~= 0) then
@@ -86,7 +86,7 @@ function GenerateSpawnChunk( event, spawnPos)
         end
 
         -- Fill in any water to make sure we have guaranteed land mass at the spawn point.
-        if CheckIfInArea(chunkAreaCenter,landArea) then
+        if CheckIfChunkIntersects(chunkArea,landArea) then
 
             -- remove trees in the immediate areas?
             for key, entity in pairs(surface.find_entities_filtered({area=chunkArea, type= "tree"})) do
@@ -95,18 +95,11 @@ function GenerateSpawnChunk( event, spawnPos)
                 end
             end
 			if (ENABLE_CROP_OCTAGON) then
-	            CreateCropOctagon(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST-2)
+	            CreateCropOctagon(surface, spawnPos, chunkArea, scenario.config.separateSpawns.land, scenario.config.separateSpawns.trees, scenario.config.separateSpawns.moat)
 			else
-	            CreateCropCircle(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST-2)
+	            CreateCropCircle(surface, spawnPos, chunkArea, scenario.config.separateSpawns.land)
 			end
 
-            local px = ENFORCE_LAND_AREA_TILE_DIST-2 			
---            CreateWaterStrip( surface, { x=spawnPos.x-10, y=spawnPos.y - px},  21, 1)
---            CreateWaterStrip( surface, { x=spawnPos.x-10, y=spawnPos.y + px},  21, 1)
---            CreateWaterStrip( surface, { x=spawnPos.x - px, y=spawnPos.y-10},  1, 21)
---            CreateWaterStrip( surface, { x=spawnPos.x + px, y=spawnPos.y-10},  1, 21)
-            CreateWaterOctagon(surface, spawnPos, chunkArea, ENFORCE_LAND_AREA_TILE_DIST)
-            
             GenerateStartingResources( surface, chunkArea, spawnPos);
             if scenario.config.teleporter.enabled then
                 local pos = { x=spawnPos.x+scenario.config.teleporter.spawnPosition.x, y=spawnPos.y+scenario.config.teleporter.spawnPosition.y }
@@ -315,10 +308,14 @@ function InitSpawnGlobalsAndForces()
         global.playerCooldowns = {}
     end
 
-    game.create_force(MAIN_FORCE)
-    game.forces[MAIN_FORCE].set_spawn_position(game.forces["player"].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
+    local gameForce = game.create_force(MAIN_FORCE)
+
+    gameForce.set_spawn_position(game.forces["player"].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
+    gameForce.worker_robots_storage_bonus=scenario.config.bots.worker_robots_storage_bonus;
+    gameForce.worker_robots_speed_modifier=scenario.config.bots.worker_robots_speed_modifier;
+    
     SetCeaseFireBetweenAllForces()
-    AntiGriefing(game.forces[MAIN_FORCE])
+    AntiGriefing(gameForce)
 end
 
 function GenerateStartingResources(surface, chunkArea, spawnPos)
@@ -338,13 +335,13 @@ function GenerateStartingResources(surface, chunkArea, spawnPos)
         if res.dy ~= nil then
             pos.y = pos.y + res.dy
         end
-        CreateResources( surface, chunkArea, pos, res.shape, res.aspectRatio, res.size, res.amount, res.type );
+        CreateResources( surface, chunkArea, pos, res.shape, res.aspectRatio, res.size, res.amount, res.type, res.mixedOres );
     end   
 end
 
 local mixedResources = { "iron-ore", "copper-ore", "coal", "iron-ore", "copper-ore", "coal", "stone" }
 
-function CreateResources( surface, chunkArea, pos, shape, aspectRatio, size, startAmount, resourceName )
+function CreateResources( surface, chunkArea, pos, shape, aspectRatio, size, startAmount, resourceName, mixedOres )
     if aspectRatio == nil then
         aspectRatio = 1.0;
     end
@@ -368,7 +365,7 @@ function CreateResources( surface, chunkArea, pos, shape, aspectRatio, size, sta
             end
             if inShape and CheckIfInChunk( pos.x+x, pos.y+y, chunkArea) then 
                 local realResourceName = resourceName
-                if resourceName == "mixed" then
+                if mixedOres and math.random() < 0.2 then
                     local r = math.random(#mixedResources);
                     realResourceName = mixedResources[r]; 
                 end

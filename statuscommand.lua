@@ -9,10 +9,9 @@ end
 
 function StatusCommand_ShowStatus(player, xplayer)
     if xplayer ~= nil then
-       local status = string.format("%s played %s of %s. Location %d,%d",
+       local status = string.format("%s played %s. Location %d,%d",
               xplayer.name,
               HoursAndMinutes(xplayer.online_time),
-              HoursAndMinutes(game.tick),
               math.floor(xplayer.position.x),
               math.floor(xplayer.position.y));
        game.player.print(status)

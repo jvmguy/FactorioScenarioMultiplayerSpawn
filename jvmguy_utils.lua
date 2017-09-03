@@ -5,7 +5,7 @@ end
 
 -- Enforce a square of land, with a tree border
 -- this is equivalent to the CreateCropCircle code
-function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius)
+function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth, moatWidth)
 
     local dirtTiles = {}
     for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
@@ -16,15 +16,15 @@ function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius)
             local distVar = math.max(distVar1, distVar2 * 0.707);
 
             -- Fill in all unexpected water in a circle
-            if (distVar < tileRadius) then
+            if (distVar < landRadius) then
                 if (surface.get_tile(i,j).collides_with("water-tile") or ENABLE_SPAWN_FORCE_GRASS) then
                     table.insert(dirtTiles, {name = "grass", position ={i,j}})
                 end
             end
 
             -- Create a ring
-            if ((distVar < tileRadius) and 
-                (distVar > tileRadius-1.9)) then
+            if ((distVar < landRadius) and 
+                (distVar > landRadius-treeWidth)) then
                 if math.random() < SPAWN_TREE_DENSITY then
                   surface.create_entity({name="tree-01", amount=1, position={i, j}})
                 end
@@ -32,10 +32,8 @@ function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius)
         end
     end
     surface.set_tiles(dirtTiles)
-end
 
-function CreateWaterOctagon(surface, centerPos, chunkArea, tileRadius)
-
+    -- create the moat
     local dirtTiles = {}
     for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
         for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
@@ -45,8 +43,8 @@ function CreateWaterOctagon(surface, centerPos, chunkArea, tileRadius)
             local distVar = math.max(distVar1, distVar2 * 0.707);
 
             -- Create a water ring
-            if ((distVar < tileRadius) and 
-                (distVar > tileRadius-2.9)) then
+            if ((distVar > landRadius) and 
+                (distVar <= landRadius+moatWidth)) then
                 table.insert(dirtTiles, {name = "water", position ={i,j}})
             end
         end
@@ -152,8 +150,13 @@ function EraseArea(position, chunkDist)
                             {x=position.x+chunkDist*CHUNK_SIZE,
                              y=position.y+chunkDist*CHUNK_SIZE}}
     for chunk in surface.get_chunks() do
-        local chunkAreaCenter = {x=chunk.x*CHUNK_SIZE+(CHUNK_SIZE/2), y=chunk.y*CHUNK_SIZE+(CHUNK_SIZE/2)}
-        if CheckIfInArea(chunkAreaCenter,eraseArea) then
+        local chunkArea = {left_top=
+                            {x=chunk.x*CHUNK_SIZE,
+                             y=chunk.y*CHUNK_SIZE },
+                        right_bottom=
+                            {x=chunk.x*CHUNK_SIZE + CHUNK_SIZE,
+                             y=chunk.y*CHUNK_SIZE + CHUNK_SIZE }}
+        if CheckIfInChunk(chunkArea,eraseArea) then
             surface.delete_chunk(chunk);
         end
     end
@@ -165,5 +168,4 @@ function SurfaceSettings(surface)
     game.player.print("surface water=" .. settings.water);
     game.player.print("surface seed=" .. settings.seed);
 end
-
 

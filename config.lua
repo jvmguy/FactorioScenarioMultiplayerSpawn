@@ -40,6 +40,11 @@ scenario.config.welcomeMessages = {
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
 }
 
+scenario.config.bots = {
+    worker_robots_storage_bonus = 5;
+    worker_robots_speed_modifier = 1.5,
+}
+
 scenario.config.silo = {
     addBeacons = true,
     addPower = true,
@@ -74,6 +79,11 @@ scenario.config.startKit = {
 scenario.config.mapSettings = {
     RSO_TERRAIN_SEGMENTATION = "very-low", -- Frequency of water
     RSO_WATER = "high", -- Size of water patches
+    
+    -- jvmguy uses these settings sometimes
+    -- RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
+    -- RSO_WATER = "very-high", -- Size of water patches
+    
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
 }
@@ -142,6 +152,9 @@ ENABLE_STATUS = true
 -- Enable Tags
 ENABLE_TAGS = true
 
+-- Enable GUI player list
+ENABLE_PLAYER_LIST = true
+
 -- Enable Long Reach
 ENABLE_LONGREACH = true
 
@@ -183,6 +196,11 @@ scenario.config.separateSpawns = {
     
 -- x = right, left
 -- y = up, down
+
+    land = 58,
+    trees = 2,  -- included in the land
+    moat = 6,   -- additional to land
+    size = 64,  -- should be land + moat
 	
     resources = {
         { shape="rect", type="coal", x=-16, y=-41, size=18, aspectRatio=1.17, amount=4000,  },
@@ -221,7 +239,7 @@ WARNING_AREA_TILE_DIST = CHUNK_SIZE*14
 WARN_AREA_REDUCTION_RATIO = 15
 
 -- Create a circle of land area for the spawn
-ENFORCE_LAND_AREA_TILE_DIST = 48
+ENFORCE_LAND_AREA_TILE_DIST = scenario.config.separateSpawns.size 
 
 ---------------------------------------
 -- Other Forces/Teams Options
