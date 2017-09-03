@@ -197,8 +197,6 @@ function GenerateRocketSiloChunk(event)
     if surface.name ~= GAME_SURFACE_NAME then return end
     local chunkArea = event.area
 
-    local chunkAreaCenter = {x=chunkArea.left_top.x+(CHUNK_SIZE/2),
-                             y=chunkArea.left_top.y+(CHUNK_SIZE/2)}
     local safeArea = {left_top=
                         {x=global.siloPosition.x-150,
                          y=global.siloPosition.y-150},
@@ -208,7 +206,7 @@ function GenerateRocketSiloChunk(event)
                              
 
     -- Clear enemies directly next to the rocket
-    if CheckIfInArea(chunkAreaCenter,safeArea) then
+    if CheckIfChunkIntersects(chunkArea,safeArea) then
         for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
             entity.destroy()
         end

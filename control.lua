@@ -36,6 +36,7 @@ require("separate_spawns")
 require("separate_spawns_guis")
 require("frontier_silo")
 require("tag")
+require("playerlist_gui")
 require("bps")
 require("statuscommand")
 require("kitcommand")
@@ -114,14 +115,6 @@ script.on_init(function(event)
         ChartRocketSiloArea(game.forces[MAIN_FORCE])
     end
 
-    if ENABLE_BLUEPRINT_STRING then
-        bps_init()
-    end
-    
-    if ENABLE_BLUEPRINT_FROM_START then
-        EnableAutomatedConstruction(game.forces[MAIN_FORCE])
-    end
-
     if ENABLE_ALL_RESEARCH_DONE then
         game.forces[MAIN_FORCE].research_all_technologies()
     end
@@ -169,6 +162,10 @@ script.on_event(defines.events.on_gui_click, function(event)
         TagGuiClick(event)
     end
 
+    if ENABLE_PLAYER_LIST then
+        PlayerListGuiClick(event)
+    end
+
     if ENABLE_SEPARATE_SPAWNS then
         WelcomeTextGuiClick(event)
         SpawnOptsGuiClick(event)
@@ -176,9 +173,6 @@ script.on_event(defines.events.on_gui_click, function(event)
         SharedSpwnOptsGuiClick(event)
     end
 
-    if ENABLE_BLUEPRINT_STRING then
-        bps_on_gui_click(event)
-    end
 end)
 
 
@@ -191,6 +185,10 @@ script.on_event(defines.events.on_player_joined_game, function(event)
 
     if ENABLE_TAGS then
         CreateTagGui(event)
+    end
+
+    if ENABLE_PLAYER_LIST then
+        CreatePlayerListGui(event)
     end
 end)
 
@@ -275,8 +273,5 @@ end)
 ----------------------------------------
 -- BPS Specific Event
 ----------------------------------------
-script.on_event(defines.events.on_robot_built_entity, function(event)
-    if ENABLE_BLUEPRINT_STRING then
-        bps_on_robot_built_entity(event)
-    end
-end)
+--script.on_event(defines.events.on_robot_built_entity, function(event)
+--end)
