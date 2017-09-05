@@ -77,12 +77,12 @@ scenario.config.startKit = {
 }
 
 scenario.config.mapSettings = {
-    RSO_TERRAIN_SEGMENTATION = "very-low", -- Frequency of water
-    RSO_WATER = "high", -- Size of water patches
+--    RSO_TERRAIN_SEGMENTATION = "very-low", -- Frequency of water
+--    RSO_WATER = "high", -- Size of water patches
     
     -- jvmguy uses these settings sometimes
-    -- RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
-    -- RSO_WATER = "very-high", -- Size of water patches
+    RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
+    RSO_WATER = "very-high", -- Size of water patches
     
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
@@ -284,7 +284,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = true
+ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
 ENEMY_POLLUTION_FACTOR_DIVISOR = 3
