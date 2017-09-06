@@ -81,8 +81,12 @@ scenario.config.mapSettings = {
 --    RSO_WATER = "high", -- Size of water patches
     
     -- jvmguy uses these settings sometimes
+--    RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
+--    RSO_WATER = "very-high", -- Size of water patches
+
+    -- jvmguy uses these settings for riverworld
     RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
-    RSO_WATER = "very-high", -- Size of water patches
+    RSO_WATER = "very-low", -- Size of water patches
     
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
@@ -94,10 +98,12 @@ scenario.config.teleporter = {
 	spawnPosition = { x=30, y=-23 },
 
     -- where in the silo chunk to place the teleporter
-    siloPosition = { x=0, y=0 },
+    -- this should not be 0,0 if there is the possibility that the default spawn will be used
+    siloPosition = { x=2, y=0 },
     
     -- where in the silo chunk the teleporter takes you
-    siloTeleportPosition = { x=-2, y=0 },
+    -- this should be different than the silo position
+    siloTeleportPosition = { x=0, y=0 },
     
     startItems = {
         {name= "coal", count=50},
@@ -190,8 +196,8 @@ scenario.config.separateSpawns = {
     --     nearest base is sqrt(25)*spacing = 5000
     --     most distant base is sqrt(25+42)*spacing = 8000
     firstSpawnPoint = 25,
-    numSpawnPoints = 42,
-    extraSpawn = 120,    -- admin spawn really far away
+    numSpawnPoints = 24,
+    -- extraSpawn = 120,    -- admin spawn really far away
     spacing = 1000,
     
 -- x = right, left
@@ -200,7 +206,7 @@ scenario.config.separateSpawns = {
     land = 58,
     trees = 2,  -- included in the land
     moat = 6,   -- additional to land
-    size = 64,  -- should be land + moat
+    size = 64,  -- should be > land + moat
 	
     resources = {
         { shape="rect", type="coal", x=-16, y=-41, size=18, aspectRatio=1.17, amount=4000,  },
@@ -214,6 +220,16 @@ scenario.config.separateSpawns = {
         
         { shape="rect", type="uranium-ore", x=-29, y=-33, size=10, aspectRatio=1.0, amount=1800,  },
     },
+}
+
+scenario.config.riverworld = {
+    -- this mostly inherits the separateSpawns config, but has a few minor differences
+    enabled = true,
+        
+    firstSpawnPoint = 10,   -- if people want to build stuff in the center they can.
+    spacing = 224,  -- because of "no good reasons" this should be an odd multiple of 32 (chunk width)
+    barrier = 52,	-- width of impenetrable barrier
+    rail = 512+11,	-- generate a north-south railway starting here
 }
 
 

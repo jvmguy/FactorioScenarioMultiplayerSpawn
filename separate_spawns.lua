@@ -3,7 +3,6 @@
 -- Code that handles everything regarding giving each player a separate spawn
 -- Includes the GUI stuff
 
-
 --------------------------------------------------------------------------------
 -- EVENT RELATED FUNCTIONS
 --------------------------------------------------------------------------------
@@ -250,36 +249,10 @@ end
 -- NON-EVENT RELATED FUNCTIONS
 -- These should be local functions where possible!
 --------------------------------------------------------------------------------
-  
-function PolarToCartesian( p )
-    return { x = p.r * math.sin( p.theta ), y = p.r * math.cos( p.theta) }
-end
-
-function FermatSpiralPoint(n)
-    -- Vogel's model. see https://en.wikipedia.org/wiki/Fermat%27s_spiral
-    local n = scenario.config.separateSpawns.firstSpawnPoint + n
-    local spacing = scenario.config.separateSpawns.spacing
-    return PolarToCartesian({ r=spacing * math.sqrt(n), theta= (n * 137.508 * math.pi/180) })
-end
-
-  
-function CenterInChunk(a)
-	return { x = a.x-math.fmod(a.x, 32)+16, y=a.y-math.fmod(a.y, 32)+16 }
-end
-
-function InitSpawnPoint(n)
-   local a = FermatSpiralPoint(n)
-   local spawn = CenterInChunk(a);
-   spawn.generated = false;
-   spawn.used = false;
-   spawn.seq = n
-   table.insert(global.unusedSpawns, spawn );
-   table.insert(global.allSpawns, spawn)
-end
-
 function InitSpawnGlobalsAndForces()
     -- Contains an array of all player spawns
     -- A secondary array tracks whether the character will respawn there.
+    
     
     if (global.allSpawns == nil) then
         global.allSpawns = {}
@@ -297,11 +270,11 @@ function InitSpawnGlobalsAndForces()
         global.unusedSpawns = {}
         -- InitSpawnPoint( 0, 0, 0);
         for n = 1,scenario.config.separateSpawns.numSpawnPoints do
-              InitSpawnPoint( n )
+              spawnGenerator.InitSpawnPoint( n )
         end
         -- another spawn for admin. admin gets the last spawn
 		if scenario.config.separateSpawns.extraSpawn ~= nil then
-	        InitSpawnPoint( scenario.config.separateSpawns.extraSpawn);
+	        spawnGenerator.InitSpawnPoint( scenario.config.separateSpawns.extraSpawn);
 		end
     end
     if (global.playerCooldowns == nil) then

@@ -42,6 +42,9 @@ require("statuscommand")
 require("kitcommand")
 require("rgcommand")
 
+--spawnGenerator = require("FermatSpiralSpawns");
+spawnGenerator = require("RiverworldSpawns");
+
 
 --------------------------------------------------------------------------------
 -- Rocket Launch Event Code
@@ -138,6 +141,10 @@ end)
 script.on_event(defines.events.on_chunk_generated, function(event)
     if ENABLE_UNDECORATOR then
         UndecorateOnChunkGenerate(event)
+    end
+    
+    if scenario.config.riverworld.enabled then
+        spawnGenerator.ChunkGenerated(event);
     end
 
     if ENABLE_RSO then

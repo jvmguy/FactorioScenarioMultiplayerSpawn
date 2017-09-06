@@ -250,7 +250,7 @@ function SpawnOptsGuiClick(event)
 
         local newSpawn = nil;
         -- Create a new spawn point
-        if player.index == 1 then
+        if player.index == 1 and scenario.config.separateSpawns.extraSpawn ~= nil then
             newSpawn = global.unusedSpawns[scenario.config.separateSpawns.numSpawnPoints];
             global.unusedSpawns[scenario.config.separateSpawns.numSpawnPoints]= nil;
         end
@@ -267,7 +267,8 @@ function SpawnOptsGuiClick(event)
         if newSpawn == nil then
             player.print("Sorry! You have been assigned to the default spawn.")
             ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME))
-            SendBroadcastMsg(player.name .. " joined the main force!")
+            SendPlayerToSpawn(player)
+            SendBroadcastMsg(player.name .. " joined the default spawn!")
             ChartArea(player.force, player.position, 4)
         else
             local used = newSpawn.used;

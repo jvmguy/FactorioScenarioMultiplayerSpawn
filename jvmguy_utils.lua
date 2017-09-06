@@ -34,22 +34,24 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
     surface.set_tiles(dirtTiles)
 
     -- create the moat
-    local dirtTiles = {}
-    for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
-        for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
-
-            local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
-            local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
-            local distVar = math.max(distVar1, distVar2 * 0.707);
-
-            -- Create a water ring
-            if ((distVar > landRadius) and 
-                (distVar <= landRadius+moatWidth)) then
-                table.insert(dirtTiles, {name = "water", position ={i,j}})
+    if (moatWidth>0) then
+        local waterTiles = {}
+        for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
+            for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
+    
+                local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
+                local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
+                local distVar = math.max(distVar1, distVar2 * 0.707);
+    
+                -- Create a water ring
+                if ((distVar > landRadius) and 
+                    (distVar <= landRadius+moatWidth)) then
+                    table.insert(waterTiles, {name = "water", position ={i,j}})
+                end
             end
         end
+	    surface.set_tiles(waterTiles)
     end
-    surface.set_tiles(dirtTiles)
 end
 
 function CreateWaterStrip(surface, spawnPos, width, height)
