@@ -195,9 +195,10 @@ scenario.config.separateSpawns = {
     -- if we use fermat spirals 
     --     nearest base is sqrt(25)*spacing = 5000
     --     most distant base is sqrt(25+42)*spacing = 8000
+    preferFar = false,
     firstSpawnPoint = 25,
     numSpawnPoints = 24,
-    -- extraSpawn = 120,    -- admin spawn really far away
+    extraSpawn = 31,    -- admin spawn really far away
     spacing = 1000,
     
 -- x = right, left
@@ -225,8 +226,8 @@ scenario.config.separateSpawns = {
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
+    firstSpawnPoint = 25,
         
-    firstSpawnPoint = 10,   -- if people want to build stuff in the center they can.
     spacing = 224,  -- because of "no good reasons" this should be an odd multiple of 32 (chunk width)
     barrier = 52,	-- width of impenetrable barrier
     rail = 512+11,	-- generate a north-south railway starting here

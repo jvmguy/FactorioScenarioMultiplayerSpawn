@@ -6,7 +6,7 @@ local function PolarToCartesian( p )
 end
 
 
-local function SpiralPoint(n)
+local function SpawnPoint(n)
     -- degenerate spiral that just alternates on either side of the axis
     local n = scenario.config.riverworld.firstSpawnPoint + n
     local spacing = scenario.config.riverworld.spacing
@@ -41,7 +41,7 @@ local function ChunkContains( chunk, pt )
 end
 
 function M.InitSpawnPoint(n)
-   local a = SpiralPoint(n)
+   local a = SpawnPoint(n)
    local spawn = CenterInChunk(a);
    spawn.generated = false;
    spawn.used = false;
@@ -62,23 +62,40 @@ function M.ChunkGenerated(event)
         local spacing = scenario.config.riverworld.spacing
         local spawnHeight = spacing / 2
         local barrier = scenario.config.riverworld.barrier / 2
+        local rails = MakeRect( scenario.config.riverworld.rail, 12, -40000, 80000);
+        rails = ChunkIntersection( chunkArea, rails);
+        local w = chunkArea.right_bottom.x - chunkArea.left_top.x
+        local wallRect = MakeRect( chunkArea.left_top.x, w, spawnPos.y-spawnHeight, barrier );
+        wallRect = ChunkIntersection(chunkArea, wallRect);
+        
         -- quick reject
         if (dy < spacing) then
             local tiles = {};
-            for y=chunkArea.left_top.y, chunkArea.right_bottom.y do
-                local ddy = math.abs(y - spawnPos.y);
-                if ddy > spawnHeight - barrier then
-                    for x = chunkArea.left_top.x, chunkArea.right_bottom.x do
---                    	if math.abs(x) < scenario.config.riverworld.barrier_width then
---                        if math.fmod(math.abs(x+64/2), 64)>1 then
-                            table.insert(tiles, {name = "out-of-map",position = {x,y}})
---                        end
-                    end
+            for y=wallRect.left_top.y, wallRect.right_bottom.y do
+                for x = wallRect.left_top.x, wallRect.right_bottom.x do
+--                          table.insert(tiles, {name = "out-of-map",position = {x,y}})
+                            table.insert(tiles, {name = "grass",position = {x,y}})
                 end
             end
             surface.set_tiles(tiles)
+
+	    for _, entity in pairs (surface.find_entities_filtered{area = wallRect}) do
+		entity.destroy()  
+	    end
+            for y=wallRect.left_top.y, wallRect.right_bottom.y do
+                for x = wallRect.left_top.x, wallRect.right_bottom.x do
+                    if not ChunkContains(rails, {x=x,y=y}) then
+                        local wall=surface.create_entity({name="stone-wall", position={x, y}, force=MAIN_FORCE});
+                        if wall ~= nil then
+                            wall.destructible = false;
+                            wall.minable = false;
+                        end
+                    end
+                end
+            end
         end
-        local rails = MakeRect( scenario.config.riverworld.rail, 11, -40000, 80000);
+        
+                
         if ChunkIntersects(chunkArea, rails) then
             local rect = ChunkIntersection( chunkArea, rails );
             local tiles = {};
@@ -88,6 +105,11 @@ function M.ChunkGenerated(event)
                 end
             end
             surface.set_tiles(tiles)
+            
+	    for _, entity in pairs (surface.find_entities_filtered{area = rails}) do
+		entity.destroy()  
+	    end
+            
             for y = rect.left_top.y, rect.right_bottom.y do
                 if math.fmod(y,2)==0 then
                     local pt = { x=scenario.config.riverworld.rail+1, y=y };                 

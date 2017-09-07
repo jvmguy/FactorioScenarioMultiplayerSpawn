@@ -338,11 +338,19 @@ function PickRandomSpawn( t, far )
   for key, spawnPos in pairs(t) do
     if spawnPos ~= nil and SpawnIsCompatible( spawnPos, far ) then
         spawnPos.key = key;
-        spawnPos.dist = DistanceFromUsedSpawns(spawnPos)
+	if scenario.config.separateSpawns.preferFar then
+            spawnPos.dist = DistanceFromUsedSpawns(spawnPos)
+        else
+            spawnPos.dist = math.abs(spawnPos.y)
+        end
         table.insert( candidates, spawnPos );
     end
   end
-  table.sort (candidates, function (k1, k2) return k1.dist > k2.dist end )
+  if scenario.config.separateSpawns.preferFar then
+    table.sort (candidates, function (k1, k2) return k1.dist > k2.dist end )
+  else
+    table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
+  end
   local ncandidates = TableLength(candidates)
   if ncandidates > 5 then
         ncandidates = math.floor((ncandidates+1)/3)
