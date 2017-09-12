@@ -101,7 +101,11 @@ script.on_init(function(event)
     else
         CreateGameSurface(VANILLA_MODE)
     end
-
+    
+    if spawnGenerator.ConfigureGameSurface then
+        spawnGenerator.ConfigureGameSurface()
+    end
+    
     ConfigureAlienStartingParams()
 
     if ENABLE_SEPARATE_SPAWNS then

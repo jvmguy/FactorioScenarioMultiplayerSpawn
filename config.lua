@@ -71,7 +71,7 @@ scenario.config.startKit = {
 		{name = "stone-furnace", count = 1},
 		{name = "submachine-gun", count=1},
 --		{name = "car", count=1},
-		{name = "raw-wood", count=100},
+--		{name = "raw-wood", count=100},
 		{name = "firearm-magazine", count=100},
 --		{name = "landfill", count=200}
 }
@@ -198,7 +198,7 @@ scenario.config.separateSpawns = {
     preferFar = false,
     firstSpawnPoint = 25,
     numSpawnPoints = 24,
-    extraSpawn = 31,    -- admin spawn really far away
+    -- extraSpawn = 31,    -- admin spawn really far away
     spacing = 1000,
     
 -- x = right, left
@@ -226,11 +226,16 @@ scenario.config.separateSpawns = {
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
-    firstSpawnPoint = 25,
+    firstSpawnPoint = 20,
         
-    spacing = 224,  -- because of "no good reasons" this should be an odd multiple of 32 (chunk width)
+    spacing = 288,  -- because of "no good reasons" this should be an odd multiple of 32 (chunk width)
     barrier = 52,	-- width of impenetrable barrier
-    rail = 512+11,	-- generate a north-south railway starting here
+    rail = 3*512+3,	-- generate a north-south railway starting here
+    rail2 = -3*512-32+3, -- generate a north-south railway starting here
+    
+    -- freeze time of day
+    -- you might get night vision at the start, but you have to decide whether it's worth using it.
+    freezeTime = 0.5,   -- see https://wiki.factorio.com/Game-day
 }
 
 
