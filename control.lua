@@ -255,6 +255,13 @@ script.on_event(defines.events.on_built_entity, function(event)
     if ENABLE_AUTOFILL then
         Autofill(event)
     end
+
+    local type = event.created_entity.type    
+    if type == "entity-ghost" or type == "tile-ghost" or type == "item-request-proxy" then
+        if GHOST_TIME_TO_LIVE ~= 0 then
+            event.created_entity.time_to_live = GHOST_TIME_TO_LIVE
+        end
+    end
 end)
 
 if scenario.config.teleporter.enabled then

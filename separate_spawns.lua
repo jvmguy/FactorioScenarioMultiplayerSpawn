@@ -289,6 +289,7 @@ function InitSpawnGlobalsAndForces()
     
     SetCeaseFireBetweenAllForces()
     AntiGriefing(gameForce)
+    SetForceGhostTimeToLive(gameForce)
 end
 
 function GenerateStartingResources(surface, chunkArea, spawnPos)

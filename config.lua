@@ -282,6 +282,12 @@ ENABLE_DEFAULT_SPAWN = false
 ENABLE_SHARED_SPAWNS = true
 MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 3
 
+---------------------------------------
+-- Ghost Time to live
+-- 
+-- Set this to zero for infinite ghosts
+---------------------------------------
+GHOST_TIME_TO_LIVE = 10 * TICKS_PER_MINUTE
 
 ---------------------------------------
 -- Special Action Cooldowns
