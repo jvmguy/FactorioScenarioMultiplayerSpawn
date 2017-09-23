@@ -101,6 +101,40 @@ function M.InitSpawnPoint(n)
    table.insert(global.allSpawns, spawn)
 end
 
+local function GenerateMoat(surface, chunkArea, moatRect)
+    moatRect = ChunkIntersection( chunkArea, moatRect);
+    local tiles = {};
+    for y=moatRect.left_top.y, moatRect.right_bottom.y-1 do
+        for x = moatRect.left_top.x, moatRect.right_bottom.x-1 do
+            table.insert(tiles, {name = "water",position = {x,y}})
+        end
+    end
+    surface.set_tiles(tiles)
+end
+
+local function GenerateWalls(surface, wallRect, railsRect, railsRect2)
+    local tiles = {};
+    for y=wallRect.left_top.y, wallRect.right_bottom.y-1 do
+        for x = wallRect.left_top.x, wallRect.right_bottom.x-1 do
+--                          table.insert(tiles, {name = "out-of-map",position = {x,y}})
+                    table.insert(tiles, {name = "grass",position = {x,y}})
+        end
+    end
+    surface.set_tiles(tiles)
+
+    for _, entity in pairs (surface.find_entities_filtered{area = wallRect}) do
+        entity.destroy()  
+    end
+    
+    for y=wallRect.left_top.y, wallRect.right_bottom.y-1 do
+        for x = wallRect.left_top.x, wallRect.right_bottom.x-1 do
+            if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
+                makeIndestructibleEntity(surface, {name="stone-wall", position={x, y}, force=MAIN_FORCE});
+            end
+        end
+    end
+end
+
 function M.ChunkGenerated(event)
     local surface = event.surface
     
@@ -113,39 +147,32 @@ function M.ChunkGenerated(event)
         local dy = math.abs(midPoint.y - spawnPos.y)
         local spacing = scenario.config.riverworld.spacing
         local barrier = scenario.config.riverworld.barrier
-        local spawnHeight = (spacing - barrier) / 2
         local w = chunkArea.right_bottom.x - chunkArea.left_top.x
-        local wallRect = MakeRect( chunkArea.left_top.x, w, spawnPos.y-spawnHeight - barrier, barrier );
+        local wallRect = MakeRect( chunkArea.left_top.x, w, spawnPos.y - spacing/2 - barrier/2, barrier );
         wallRect = ChunkIntersection(chunkArea, wallRect);
 
+        local wallRect2 = MakeRect( chunkArea.left_top.x, w, spawnPos.y + spacing/2 - barrier/2, barrier );
+        wallRect2 = ChunkIntersection(chunkArea, wallRect2);
                 
         local railsRect = MakeRect( scenario.config.riverworld.rail, 28, -20000, 40000);
         railsRect = ChunkIntersection( chunkArea, railsRect);
                 
         local railsRect2 = MakeRect( scenario.config.riverworld.rail2, 28, -20000, 40000);
         railsRect2 = ChunkIntersection( chunkArea, railsRect2);
-        
+        if dy < spacing and scenario.config.riverworld.moatWidth>0 then
+            local w = scenario.config.riverworld.moatWidth
+            local h = spacing - barrier
+            -- left moat
+            local moatRect = MakeRect( spawnPos.x-scenario.config.riverworld.moat-w, w, spawnPos.y - h/2, h)        
+            GenerateMoat(surface, chunkArea, moatRect);
+            -- right moat
+            local moatRect2 = MakeRect( spawnPos.x+scenario.config.riverworld.moat, w, spawnPos.y - h/2, h)        
+            GenerateMoat(surface, chunkArea, moatRect2);
+        end
         -- quick reject
         if (dy < spacing) then
-            local tiles = {};
-            for y=wallRect.left_top.y, wallRect.right_bottom.y-1 do
-                for x = wallRect.left_top.x, wallRect.right_bottom.x-1 do
---                          table.insert(tiles, {name = "out-of-map",position = {x,y}})
-                            table.insert(tiles, {name = "grass",position = {x,y}})
-                end
-            end
-            surface.set_tiles(tiles)
-
-	    for _, entity in pairs (surface.find_entities_filtered{area = wallRect}) do
-		entity.destroy()  
-	    end
-            for y=wallRect.left_top.y, wallRect.right_bottom.y-1 do
-                for x = wallRect.left_top.x, wallRect.right_bottom.x-1 do
-                    if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
-                        makeIndestructibleEntity(surface, {name="stone-wall", position={x, y}, force=MAIN_FORCE});
-                    end
-                end
-            end
+            GenerateWalls( surface, wallRect, railsRect, railsRect2 )
+            GenerateWalls( surface, wallRect2, railsRect, railsRect2 )
         end
 
         GenerateRails( surface, chunkArea, scenario.config.riverworld.rail, railsRect);        

@@ -116,7 +116,7 @@ function DistanceFromPoint( spawnPos, p)
 end
 
 -- return the spawn from table t,  nearest position p
-function NearestSpawn( t, p )
+function NearestSpawns( t, p )
   local candidates = {}
   for key, spawnPos in pairs(t) do
     if spawnPos ~= nil then
@@ -126,7 +126,12 @@ function NearestSpawn( t, p )
     end
   end
   table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
-  return candidates[1]
+  return candidates
+end
+  
+function NearestSpawn( t, p )
+    local candidates = NearestSpawns(t,p);
+    return candidates[1]
 end
 
 
@@ -292,30 +297,16 @@ function InitSpawnGlobalsAndForces()
     SetForceGhostTimeToLive(gameForce)
 end
 
-function GenerateStartingResources(surface, chunkArea, spawnPos)
-    --local surface = player.surface
-    local pos = { x=spawnPos.x, y=spawnPos.y } 
-    for _, res in pairs( scenario.config.separateSpawns.resources ) do
-        -- resource may specify dx,dy or x,y relative to spawn
-        if res.x ~= nil then
-            pos.x = spawnPos.x + res.x
-        end
-        if res.y ~= nil then
-            pos.y = spawnPos.y + res.y
-        end
-        if res.dx ~= nil then
-            pos.x = pos.x + res.dx
-        end
-        if res.dy ~= nil then
-            pos.y = pos.y + res.dy
-        end
-        CreateResources( surface, chunkArea, pos, res.shape, res.aspectRatio, res.size, res.amount, res.type, res.mixedOres );
-    end   
+function CheckIfInChunk(x, y, chunkArea)
+    if x>=chunkArea.left_top.x and x<chunkArea.right_bottom.x
+    and y>=chunkArea.left_top.y and y<chunkArea.right_bottom.y then
+        return true;
+    end
+    return false;
 end
 
-local mixedResources = { "iron-ore", "copper-ore", "coal", "iron-ore", "copper-ore", "coal", "stone" }
-
-function CreateResources( surface, chunkArea, pos, shape, aspectRatio, size, startAmount, resourceName, mixedOres )
+local function TilesInShape( chunkArea, pos, shape, aspectRatio, size )
+    local tiles = {}
     if aspectRatio == nil then
         aspectRatio = 1.0;
     end
@@ -337,25 +328,62 @@ function CreateResources( surface, chunkArea, pos, shape, aspectRatio, size, sta
             if (shape == "rect") then
                 inShape = true;
             end
-            if inShape and CheckIfInChunk( pos.x+x, pos.y+y, chunkArea) then 
-                local realResourceName = resourceName
-                if mixedOres and math.random() < 0.2 then
-                    local r = math.random(#mixedResources);
-                    realResourceName = mixedResources[r]; 
-                end
-                surface.create_entity({name=realResourceName, amount=startAmount,
-                    position={pos.x+x, pos.y+y}})
+            if inShape and CheckIfInChunk( pos.x+x, pos.y+y, chunkArea) then
+                table.insert( tiles, { x=pos.x+x, y=pos.y+y }) 
+            end
+        end
+    end
+    return tiles
+end
+
+local function CreateItems( surface, tiles, itemName, contents )
+    for _, tile in pairs(tiles) do
+        local chest = surface.create_entity({name=itemName, position=tile, force=MAIN_FORCE})
+        if contents~=nil then
+            for _,item in pairs(contents) do
+                chest.insert(item)
             end
         end
     end
 end
 
-function CheckIfInChunk(x, y, chunkArea)
-    if x>=chunkArea.left_top.x and x<chunkArea.right_bottom.x
-    and y>=chunkArea.left_top.y and y<chunkArea.right_bottom.y then
-        return true;
+local mixedResources = { "iron-ore", "copper-ore", "coal", "iron-ore", "copper-ore", "coal", "stone" }
+
+local function CreateResources( surface, tiles, startAmount, resourceName, mixedOres )
+    for _, tile in pairs(tiles) do
+        local realResourceName = resourceName
+        if mixedOres and math.random() < 0.2 then
+            local r = math.random(#mixedResources);
+            realResourceName = mixedResources[r]; 
+        end
+        surface.create_entity({name=realResourceName, amount=startAmount, position=tile})
     end
-    return false;
+end
+
+function GenerateStartingResources(surface, chunkArea, spawnPos)
+    --local surface = player.surface
+    local pos = { x=spawnPos.x, y=spawnPos.y } 
+    for _, res in pairs( scenario.config.separateSpawns.resources ) do
+        -- resource may specify dx,dy or x,y relative to spawn
+        if res.x ~= nil then
+            pos.x = spawnPos.x + res.x
+        end
+        if res.y ~= nil then
+            pos.y = spawnPos.y + res.y
+        end
+        if res.dx ~= nil then
+            pos.x = pos.x + res.dx
+        end
+        if res.dy ~= nil then
+            pos.y = pos.y + res.dy
+        end
+        local tiles = TilesInShape( chunkArea, pos, res.shape, res.aspectRatio, res.size);
+        if (res.type ~= nil) then
+            CreateResources( surface, tiles, res.amount, res.type, res.mixedOres );
+        elseif (res.name ~= nil) then
+            CreateItems( surface, tiles, res.name, res.contents );
+        end
+    end   
 end
 
 function DoesPlayerHaveCustomSpawn(player)

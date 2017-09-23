@@ -55,18 +55,18 @@ scenario.config.startKit = {
             equipment = {
                   -- the order of these does matter.
                   {name = "fusion-reactor-equipment"},
-                  {name = "exoskeleton-equipment"},
-                  {name = "battery-mk2-equipment", count=3},
-                  {name = "personal-roboport-mk2-equipment", count=3},
-                  {name = "solar-panel-equipment", count = 7 }
+--                  {name = "exoskeleton-equipment"},
+--                  {name = "battery-mk2-equipment", count=1},
+                  {name = "personal-roboport-mk2-equipment", count=1},
+--                  {name = "solar-panel-equipment", count = 7 }
             }
         },
         {name = "belt-immunity-equipment", count = 1},
-        {name = "night-vision-equipment", count = 1},
-        {name = "construction-robot", count = 50},
+--        {name = "night-vision-equipment", count = 1},
+        {name = "construction-robot", count = 20},
         {name = "steel-axe", count = 5},
-        {name = "roboport", count = 3},
-        {name = "logistic-chest-storage", count = 3},
+        {name = "roboport", count = 1},
+        {name = "logistic-chest-storage", count = 1},
 		{name = "burner-mining-drill", count = 1},
 		{name = "stone-furnace", count = 1},
 		{name = "submachine-gun", count=1},
@@ -95,7 +95,7 @@ scenario.config.mapSettings = {
 scenario.config.teleporter = {
     enabled = true,
     -- where in the spawn to place the teleporter
-	spawnPosition = { x=30, y=-23 },
+	spawnPosition = { x=30, y=-23-32 },
 
     -- where in the silo chunk to place the teleporter
     -- this should not be 0,0 if there is the possibility that the default spawn will be used
@@ -204,22 +204,27 @@ scenario.config.separateSpawns = {
 -- x = right, left
 -- y = up, down
 
-    land = 58,
-    trees = 2,  -- included in the land
-    moat = 6,   -- additional to land
-    size = 64,  -- should be > land + moat
+    land = 88,
+    trees = 3,  -- included in the land
+    moat = 0,   -- additional to land
+    size = 96,  -- should be > land + moat
 	
     resources = {
-        { shape="rect", type="coal", x=-16, y=-41, size=18, aspectRatio=1.17, amount=4000,  },
-        { shape="rect", type="stone", x=9, y=-32, size=9, aspectRatio=2.0, amount=4000,  },
-        { shape="rect", type="copper-ore", x=-43, y=-17, size=21, aspectRatio=1.7, amount=4000,  },
-        { shape="rect", type="iron-ore", x=5, y=-17, size=21, aspectRatio=1.7, amount=4000,  },
+        { shape="rect", name="steel-chest", x=-5,   y=-17-16, size=4, aspectRatio=1, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-5,   y=-12-16, size=3, aspectRatio=1, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-5,   y=-8-16,  size=3, aspectRatio=1, contents = { {name = "coal", count=2400 } }  },
+        { shape="rect", name="steel-chest", x=-5,   y=-4-16,  size=1, aspectRatio=1, contents = { {name = "stone", count=2400 } },  },
+    
+        { shape="rect", type="coal", x=-16, y=-41-16, size=16, aspectRatio=1.17, amount=2400,  },
+        { shape="rect", type="stone", x=9, y=-32-16, size=7, aspectRatio=2.0, amount=2400,  },
+        { shape="rect", type="copper-ore", x=-43, y=-17-16, size=17, aspectRatio=1.7, amount=2400,  },
+        { shape="rect", type="iron-ore", x=5, y=-17-16, size=17, aspectRatio=1.7, amount=2400,  },
         
-        { shape="rect", type="crude-oil", x=8, y=-43, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=11, y=-43, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=14, y=-43, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=8, y=-43-16, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=11, y=-43-16, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=14, y=-43-16, size=1, amount=1000000,  },
         
-        { shape="rect", type="uranium-ore", x=-29, y=-33, size=10, aspectRatio=1.0, amount=1800,  },
+        { shape="rect", type="uranium-ore", x=-29, y=-33-16, size=10, aspectRatio=1.0, amount=18000,  },
     },
 }
 
@@ -227,15 +232,16 @@ scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
     firstSpawnPoint = 20,
-        
-    spacing = 288,  -- because of "no good reasons" this should be an odd multiple of 32 (chunk width)
+    moat=100,       -- horizontal offset relative to center of spawn
+    moatWidth=8,    
+    spacing = 384,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
     barrier = 52,	-- width of impenetrable barrier
     rail = 3*512+3,	-- generate a north-south railway starting here
     rail2 = -3*512-32+3, -- generate a north-south railway starting here
     
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    freezeTime = 0.5,   -- see https://wiki.factorio.com/Game-day
+    -- freezeTime = 0.0,   -- see https://wiki.factorio.com/Game-day
 }
 
 
