@@ -41,6 +41,10 @@ require("bps")
 require("statuscommand")
 require("kitcommand")
 require("rgcommand")
+toxicJungle = require("ToxicJungle")
+
+spawnGenerator = require("FermatSpiralSpawns");
+-- spawnGenerator = require("RiverworldSpawns");
 
 
 --------------------------------------------------------------------------------
@@ -98,7 +102,11 @@ script.on_init(function(event)
     else
         CreateGameSurface(VANILLA_MODE)
     end
-
+    
+    if spawnGenerator.ConfigureGameSurface then
+        spawnGenerator.ConfigureGameSurface()
+    end
+    
     ConfigureAlienStartingParams()
 
     if ENABLE_SEPARATE_SPAWNS then
@@ -138,6 +146,14 @@ end)
 script.on_event(defines.events.on_chunk_generated, function(event)
     if ENABLE_UNDECORATOR then
         UndecorateOnChunkGenerate(event)
+    end
+
+    if scenario.config.toxicJungle.enabled then
+        toxicJungle.ChunkGenerated(event);
+    end    
+
+    if scenario.config.riverworld.enabled then
+        spawnGenerator.ChunkGenerated(event);
     end
 
     if ENABLE_RSO then
@@ -243,6 +259,13 @@ end)
 script.on_event(defines.events.on_built_entity, function(event)
     if ENABLE_AUTOFILL then
         Autofill(event)
+    end
+
+    local type = event.created_entity.type    
+    if type == "entity-ghost" or type == "tile-ghost" or type == "item-request-proxy" then
+        if GHOST_TIME_TO_LIVE ~= 0 then
+            event.created_entity.time_to_live = GHOST_TIME_TO_LIVE
+        end
     end
 end)
 

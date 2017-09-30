@@ -369,6 +369,12 @@ function AntiGriefing(force)
     force.friendly_fire=false
 end
 
+function SetForceGhostTimeToLive(force)
+    if GHOST_TIME_TO_LIVE ~= 0 then
+        force.ghost_time_to_live = GHOST_TIME_TO_LIVE+1
+    end
+end
+
 -- Return steel chest entity (or nil)
 function DropEmptySteelChest(player)
     local pos = player.surface.find_non_colliding_position("steel-chest", player.position, 15, 1)

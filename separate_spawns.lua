@@ -3,7 +3,6 @@
 -- Code that handles everything regarding giving each player a separate spawn
 -- Includes the GUI stuff
 
-
 --------------------------------------------------------------------------------
 -- EVENT RELATED FUNCTIONS
 --------------------------------------------------------------------------------
@@ -117,7 +116,7 @@ function DistanceFromPoint( spawnPos, p)
 end
 
 -- return the spawn from table t,  nearest position p
-function NearestSpawn( t, p )
+function NearestSpawns( t, p )
   local candidates = {}
   for key, spawnPos in pairs(t) do
     if spawnPos ~= nil then
@@ -127,7 +126,12 @@ function NearestSpawn( t, p )
     end
   end
   table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
-  return candidates[1]
+  return candidates
+end
+  
+function NearestSpawn( t, p )
+    local candidates = NearestSpawns(t,p);
+    return candidates[1]
 end
 
 
@@ -250,36 +254,10 @@ end
 -- NON-EVENT RELATED FUNCTIONS
 -- These should be local functions where possible!
 --------------------------------------------------------------------------------
-  
-function PolarToCartesian( p )
-    return { x = p.r * math.sin( p.theta ), y = p.r * math.cos( p.theta) }
-end
-
-function FermatSpiralPoint(n)
-    -- Vogel's model. see https://en.wikipedia.org/wiki/Fermat%27s_spiral
-    local n = scenario.config.separateSpawns.firstSpawnPoint + n
-    local spacing = scenario.config.separateSpawns.spacing
-    return PolarToCartesian({ r=spacing * math.sqrt(n), theta= (n * 137.508 * math.pi/180) })
-end
-
-  
-function CenterInChunk(a)
-	return { x = a.x-math.fmod(a.x, 32)+16, y=a.y-math.fmod(a.y, 32)+16 }
-end
-
-function InitSpawnPoint(n)
-   local a = FermatSpiralPoint(n)
-   local spawn = CenterInChunk(a);
-   spawn.generated = false;
-   spawn.used = false;
-   spawn.seq = n
-   table.insert(global.unusedSpawns, spawn );
-   table.insert(global.allSpawns, spawn)
-end
-
 function InitSpawnGlobalsAndForces()
     -- Contains an array of all player spawns
     -- A secondary array tracks whether the character will respawn there.
+    
     
     if (global.allSpawns == nil) then
         global.allSpawns = {}
@@ -297,11 +275,11 @@ function InitSpawnGlobalsAndForces()
         global.unusedSpawns = {}
         -- InitSpawnPoint( 0, 0, 0);
         for n = 1,scenario.config.separateSpawns.numSpawnPoints do
-              InitSpawnPoint( n )
+              spawnGenerator.InitSpawnPoint( n )
         end
         -- another spawn for admin. admin gets the last spawn
 		if scenario.config.separateSpawns.extraSpawn ~= nil then
-	        InitSpawnPoint( scenario.config.separateSpawns.extraSpawn);
+	        spawnGenerator.InitSpawnPoint( scenario.config.separateSpawns.extraSpawn);
 		end
     end
     if (global.playerCooldowns == nil) then
@@ -316,6 +294,39 @@ function InitSpawnGlobalsAndForces()
     
     SetCeaseFireBetweenAllForces()
     AntiGriefing(gameForce)
+    SetForceGhostTimeToLive(gameForce)
+end
+
+function CheckIfInChunk(x, y, chunkArea)
+    if x>=chunkArea.left_top.x and x<chunkArea.right_bottom.x
+    and y>=chunkArea.left_top.y and y<chunkArea.right_bottom.y then
+        return true;
+    end
+    return false;
+end
+
+local function CreateItems( surface, tiles, itemName, contents )
+    for _, tile in pairs(tiles) do
+        local chest = surface.create_entity({name=itemName, position=tile, force=MAIN_FORCE})
+        if contents~=nil then
+            for _,item in pairs(contents) do
+                chest.insert(item)
+            end
+        end
+    end
+end
+
+local mixedResources = { "iron-ore", "copper-ore", "coal", "iron-ore", "copper-ore", "coal", "stone" }
+
+local function CreateResources( surface, tiles, startAmount, resourceName, mixedOres )
+    for _, tile in pairs(tiles) do
+        local realResourceName = resourceName
+        if mixedOres and math.random() < 0.2 then
+            local r = math.random(#mixedResources);
+            realResourceName = mixedResources[r]; 
+        end
+        surface.create_entity({name=realResourceName, amount=startAmount, position=tile})
+    end
 end
 
 function GenerateStartingResources(surface, chunkArea, spawnPos)
@@ -335,53 +346,13 @@ function GenerateStartingResources(surface, chunkArea, spawnPos)
         if res.dy ~= nil then
             pos.y = pos.y + res.dy
         end
-        CreateResources( surface, chunkArea, pos, res.shape, res.aspectRatio, res.size, res.amount, res.type, res.mixedOres );
-    end   
-end
-
-local mixedResources = { "iron-ore", "copper-ore", "coal", "iron-ore", "copper-ore", "coal", "stone" }
-
-function CreateResources( surface, chunkArea, pos, shape, aspectRatio, size, startAmount, resourceName, mixedOres )
-    if aspectRatio == nil then
-        aspectRatio = 1.0;
-    end
-    local xsize = size * aspectRatio
-    local ysize = size
-    local xRadiusSq = (xsize/2)^2;
-    local yRadiusSq = (ysize/2)^2;
-    local midPointY = math.floor(size/2)
-    local midPointX = math.floor(xsize/2)
-    for y=1, size do
-        for x=1, xsize do
-            local inShape = false;
-            if (shape == "ellipse") then
-
-                if (((x-midPointX)^2/xRadiusSq + (y-midPointY)^2/yRadiusSq < 1)) then
-                    inShape = true;
-                end
-            end
-            if (shape == "rect") then
-                inShape = true;
-            end
-            if inShape and CheckIfInChunk( pos.x+x, pos.y+y, chunkArea) then 
-                local realResourceName = resourceName
-                if mixedOres and math.random() < 0.2 then
-                    local r = math.random(#mixedResources);
-                    realResourceName = mixedResources[r]; 
-                end
-                surface.create_entity({name=realResourceName, amount=startAmount,
-                    position={pos.x+x, pos.y+y}})
-            end
+        local tiles = TilesInShape( chunkArea, pos, res.shape, res.aspectRatio, res.size);
+        if (res.type ~= nil) then
+            CreateResources( surface, tiles, res.amount, res.type, res.mixedOres );
+        elseif (res.name ~= nil) then
+            CreateItems( surface, tiles, res.name, res.contents );
         end
-    end
-end
-
-function CheckIfInChunk(x, y, chunkArea)
-    if x>=chunkArea.left_top.x and x<chunkArea.right_bottom.x
-    and y>=chunkArea.left_top.y and y<chunkArea.right_bottom.y then
-        return true;
-    end
-    return false;
+    end   
 end
 
 function DoesPlayerHaveCustomSpawn(player)

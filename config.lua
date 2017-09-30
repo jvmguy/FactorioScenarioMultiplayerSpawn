@@ -42,7 +42,7 @@ scenario.config.welcomeMessages = {
 
 scenario.config.bots = {
     worker_robots_storage_bonus = 5;
-    worker_robots_speed_modifier = 1.5,
+    worker_robots_speed_modifier = 1.0,
 }
 
 scenario.config.silo = {
@@ -55,23 +55,23 @@ scenario.config.startKit = {
             equipment = {
                   -- the order of these does matter.
                   {name = "fusion-reactor-equipment"},
-                  {name = "exoskeleton-equipment"},
-                  {name = "battery-mk2-equipment", count=3},
-                  {name = "personal-roboport-mk2-equipment", count=3},
-                  {name = "solar-panel-equipment", count = 7 }
+--                  {name = "exoskeleton-equipment"},
+--                  {name = "battery-mk2-equipment", count=1},
+                  {name = "personal-roboport-mk2-equipment", count=1},
+--                  {name = "solar-panel-equipment", count = 7 }
             }
         },
         {name = "belt-immunity-equipment", count = 1},
-        {name = "night-vision-equipment", count = 1},
-        {name = "construction-robot", count = 50},
+--        {name = "night-vision-equipment", count = 1},
+        {name = "construction-robot", count = 10},
         {name = "steel-axe", count = 5},
-        {name = "roboport", count = 3},
-        {name = "logistic-chest-storage", count = 3},
+        {name = "roboport", count = 1},
+        {name = "logistic-chest-storage", count = 1},
 		{name = "burner-mining-drill", count = 1},
 		{name = "stone-furnace", count = 1},
 		{name = "submachine-gun", count=1},
 --		{name = "car", count=1},
-		{name = "raw-wood", count=100},
+--		{name = "raw-wood", count=100},
 		{name = "firearm-magazine", count=100},
 --		{name = "landfill", count=200}
 }
@@ -81,23 +81,33 @@ scenario.config.mapSettings = {
 --    RSO_WATER = "high", -- Size of water patches
     
     -- jvmguy uses these settings sometimes
-    RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
-    RSO_WATER = "very-high", -- Size of water patches
+--    RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
+--    RSO_WATER = "very-high", -- Size of water patches
+
+    -- jvmguy uses these settings for riverworld
+    -- RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
+    -- RSO_WATER = "very-low", -- Size of water patches
     
+    -- jvmguy uses these settings for toxic jungle
+    RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
+    RSO_WATER = "low", -- Size of water patches
+
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
 }
 
 scenario.config.teleporter = {
-    enabled = true,
+    enabled = false,
     -- where in the spawn to place the teleporter
 	spawnPosition = { x=30, y=-23 },
 
     -- where in the silo chunk to place the teleporter
-    siloPosition = { x=0, y=0 },
+    -- this should not be 0,0 if there is the possibility that the default spawn will be used
+    siloPosition = { x=2, y=0 },
     
     -- where in the silo chunk the teleporter takes you
-    siloTeleportPosition = { x=-2, y=0 },
+    -- this should be different than the silo position
+    siloTeleportPosition = { x=0, y=0 },
     
     startItems = {
         {name= "coal", count=50},
@@ -175,6 +185,11 @@ NEAR_MAX_DIST = 100 --125
 -- Far Distance in chunks
 FAR_MIN_DIST = 100 --50
 FAR_MAX_DIST = 200 --125
+
+scenario.config.toxicJungle = {
+    enabled = true,
+    tree_chance = 0.2
+}    
                    --
 ---------------------------------------
 -- Resource Options
@@ -189,31 +204,55 @@ scenario.config.separateSpawns = {
     -- if we use fermat spirals 
     --     nearest base is sqrt(25)*spacing = 5000
     --     most distant base is sqrt(25+42)*spacing = 8000
+    preferFar = false,
     firstSpawnPoint = 25,
-    numSpawnPoints = 42,
-    extraSpawn = 120,    -- admin spawn really far away
-    spacing = 1000,
+    numSpawnPoints = 24,
+    -- extraSpawn = 120,    -- admin spawn really far away
+    spacing = 800,
     
 -- x = right, left
 -- y = up, down
 
     land = 58,
     trees = 2,  -- included in the land
-    moat = 6,   -- additional to land
-    size = 64,  -- should be land + moat
+    moat = 0,   -- additional to land
+    size = 58,  -- should be land + moat
+	
+	water = { shape="rect", x=-5, y=-50, size=5, aspectRatio=3.0 }, 
 	
     resources = {
-        { shape="rect", type="coal", x=-16, y=-41, size=18, aspectRatio=1.17, amount=4000,  },
-        { shape="rect", type="stone", x=9, y=-32, size=9, aspectRatio=2.0, amount=4000,  },
-        { shape="rect", type="copper-ore", x=-43, y=-17, size=21, aspectRatio=1.7, amount=4000,  },
-        { shape="rect", type="iron-ore", x=5, y=-17, size=21, aspectRatio=1.7, amount=4000,  },
+        { shape="rect", name="steel-chest", x=-5,   y=-17, size=2, aspectRatio=1, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-5,   y=-12, size=2, aspectRatio=1, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-5,   y=-8,  size=2, aspectRatio=1, contents = { {name = "coal", count=2400 } }  },
+        { shape="rect", name="steel-chest", x=-5,   y=-4,  size=1, aspectRatio=1, contents = { {name = "stone", count=2400 } },  },
+    
+        { shape="rect", type="coal",         x=-43+14, y=-41, size=18, aspectRatio=1.17, amount=4000,  },
+        { shape="rect", type="stone",        x=-43+17, y=-21, size=9,  aspectRatio=2.0,  amount=4000,  },
+        { shape="rect", type="copper-ore",   x=-43, y=-10, size=21, aspectRatio=1.7,  amount=4000,  },
+        { shape="rect", type="iron-ore",     x=-43, y =12, size=21, aspectRatio=1.7,  amount=4000,  },
+        { shape="rect", type="uranium-ore",  x=-43, y= -41+19, size=10, aspectRatio=1.0,  amount=1800,  },
         
-        { shape="rect", type="crude-oil", x=8, y=-43, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=11, y=-43, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=14, y=-43, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=-47, y=-3, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=-47, y= 0, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=-47, y= 3, size=1, amount=1000000,  },
         
-        { shape="rect", type="uranium-ore", x=-29, y=-33, size=10, aspectRatio=1.0, amount=1800,  },
     },
+}
+
+scenario.config.riverworld = {
+    -- this mostly inherits the separateSpawns config, but has a few minor differences
+    enabled = false,
+    firstSpawnPoint = 16,
+    -- moat=0,         -- horizontal offset relative to center of spawn
+    -- moatWidth=8,    
+    spacing = 320,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
+    barrier = 10,	-- width of impenetrable barrier
+    rail = 3*512+3,	-- generate a north-south railway starting here
+    rail2 = -3*512-32+3, -- generate a north-south railway starting here
+    
+    -- freeze time of day
+    -- you might get night vision at the start, but you have to decide whether it's worth using it.
+    -- freezeTime = 0.0,   -- see https://wiki.factorio.com/Game-day
 }
 
 
@@ -260,6 +299,12 @@ ENABLE_DEFAULT_SPAWN = false
 ENABLE_SHARED_SPAWNS = true
 MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 3
 
+---------------------------------------
+-- Ghost Time to live
+-- 
+-- Set this to zero for infinite ghosts
+---------------------------------------
+GHOST_TIME_TO_LIVE = 10 * TICKS_PER_MINUTE
 
 ---------------------------------------
 -- Special Action Cooldowns
@@ -284,7 +329,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = false
+ENEMY_EXPANSION = true
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
 ENEMY_POLLUTION_FACTOR_DIVISOR = 3

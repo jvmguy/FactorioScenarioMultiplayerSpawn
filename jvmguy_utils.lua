@@ -34,22 +34,34 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
     surface.set_tiles(dirtTiles)
 
     -- create the moat
-    local dirtTiles = {}
-    for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
-        for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
-
-            local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
-            local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
-            local distVar = math.max(distVar1, distVar2 * 0.707);
-
-            -- Create a water ring
-            if ((distVar > landRadius) and 
-                (distVar <= landRadius+moatWidth)) then
-                table.insert(dirtTiles, {name = "water", position ={i,j}})
+    if (moatWidth>0) then
+        local waterTiles = {}
+        for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
+            for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
+    
+                local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
+                local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
+                local distVar = math.max(distVar1, distVar2 * 0.707);
+    
+                -- Create a water ring
+                if ((distVar > landRadius) and 
+                    (distVar <= landRadius+moatWidth)) then
+                    table.insert(waterTiles, {name = "water", position ={i,j}})
+                end
             end
         end
+	    surface.set_tiles(waterTiles)
     end
-    surface.set_tiles(dirtTiles)
+    
+    local water = scenario.config.separateSpawns.water;
+    if water ~= nil then
+        local waterTiles = {}   
+        local shapeTiles = TilesInShape( chunkArea, {x=centerPos.x + water.x, y=centerPos.y + water.y }, water.shape, water.aspectRatio, water.size );
+        for _,tile in pairs(shapeTiles) do
+            table.insert(waterTiles, {name = "water", position ={tile.x,tile.y}})
+        end
+        surface.set_tiles(waterTiles)
+    end
 end
 
 function CreateWaterStrip(surface, spawnPos, width, height)
@@ -167,5 +179,36 @@ function SurfaceSettings(surface)
     game.player.print("surface terrain_segmentation=" .. settings.terrain_segmentation);
     game.player.print("surface water=" .. settings.water);
     game.player.print("surface seed=" .. settings.seed);
+end
+
+function TilesInShape( chunkArea, pos, shape, aspectRatio, size )
+    local tiles = {}
+    if aspectRatio == nil then
+        aspectRatio = 1.0;
+    end
+    local xsize = size * aspectRatio
+    local ysize = size
+    local xRadiusSq = (xsize/2)^2;
+    local yRadiusSq = (ysize/2)^2;
+    local midPointY = math.floor(size/2)
+    local midPointX = math.floor(xsize/2)
+    for y=1, size do
+        for x=1, xsize do
+            local inShape = false;
+            if (shape == "ellipse") then
+
+                if (((x-midPointX)^2/xRadiusSq + (y-midPointY)^2/yRadiusSq < 1)) then
+                    inShape = true;
+                end
+            end
+            if (shape == "rect") then
+                inShape = true;
+            end
+            if inShape and CheckIfInChunk( pos.x+x, pos.y+y, chunkArea) then
+                table.insert( tiles, { x=pos.x+x, y=pos.y+y }) 
+            end
+        end
+    end
+    return tiles
 end
 

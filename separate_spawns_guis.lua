@@ -250,7 +250,7 @@ function SpawnOptsGuiClick(event)
 
         local newSpawn = nil;
         -- Create a new spawn point
-        if player.index == 1 then
+        if player.index == 1 and scenario.config.separateSpawns.extraSpawn ~= nil then
             newSpawn = global.unusedSpawns[scenario.config.separateSpawns.numSpawnPoints];
             global.unusedSpawns[scenario.config.separateSpawns.numSpawnPoints]= nil;
         end
@@ -267,7 +267,8 @@ function SpawnOptsGuiClick(event)
         if newSpawn == nil then
             player.print("Sorry! You have been assigned to the default spawn.")
             ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME))
-            SendBroadcastMsg(player.name .. " joined the main force!")
+            SendPlayerToSpawn(player)
+            SendBroadcastMsg(player.name .. " joined the default spawn!")
             ChartArea(player.force, player.position, 4)
         else
             local used = newSpawn.used;
@@ -337,11 +338,19 @@ function PickRandomSpawn( t, far )
   for key, spawnPos in pairs(t) do
     if spawnPos ~= nil and SpawnIsCompatible( spawnPos, far ) then
         spawnPos.key = key;
-        spawnPos.dist = DistanceFromUsedSpawns(spawnPos)
+	if scenario.config.separateSpawns.preferFar then
+            spawnPos.dist = DistanceFromUsedSpawns(spawnPos)
+        else
+            spawnPos.dist = math.abs(spawnPos.y)
+        end
         table.insert( candidates, spawnPos );
     end
   end
-  table.sort (candidates, function (k1, k2) return k1.dist > k2.dist end )
+  if scenario.config.separateSpawns.preferFar then
+    table.sort (candidates, function (k1, k2) return k1.dist > k2.dist end )
+  else
+    table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
+  end
   local ncandidates = TableLength(candidates)
   if ncandidates > 5 then
         ncandidates = math.floor((ncandidates+1)/3)
