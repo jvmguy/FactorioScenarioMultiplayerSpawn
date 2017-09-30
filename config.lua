@@ -204,21 +204,21 @@ scenario.config.separateSpawns = {
 -- x = right, left
 -- y = up, down
 
-    land = 88,
-    trees = 3,  -- included in the land
-    moat = 0,   -- additional to land
-    size = 96,  -- should be > land + moat
+    land = 140,
+    trees = 4,  -- included in the land
+    moat = 8,   -- additional to land
+    size = 150,  -- should be > land + moat
 	
     resources = {
-        { shape="rect", name="steel-chest", x=-5,   y=-17-16, size=4, aspectRatio=1, contents = { {name = "iron-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=-5,   y=-12-16, size=3, aspectRatio=1, contents = { {name = "copper-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=-5,   y=-8-16,  size=3, aspectRatio=1, contents = { {name = "coal", count=2400 } }  },
+        { shape="rect", name="steel-chest", x=-5,   y=-17-16, size=2, aspectRatio=1, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-5,   y=-12-16, size=2, aspectRatio=1, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-5,   y=-8-16,  size=2, aspectRatio=1, contents = { {name = "coal", count=2400 } }  },
         { shape="rect", name="steel-chest", x=-5,   y=-4-16,  size=1, aspectRatio=1, contents = { {name = "stone", count=2400 } },  },
     
         { shape="rect", type="coal", x=-16, y=-41-16, size=16, aspectRatio=1.17, amount=2400,  },
         { shape="rect", type="stone", x=9, y=-32-16, size=7, aspectRatio=2.0, amount=2400,  },
-        { shape="rect", type="copper-ore", x=-43, y=-17-16, size=17, aspectRatio=1.7, amount=2400,  },
-        { shape="rect", type="iron-ore", x=5, y=-17-16, size=17, aspectRatio=1.7, amount=2400,  },
+        { shape="rect", type="copper-ore", x=-43, y=-17-16, size=18, aspectRatio=1.7, amount=2400,  },
+        { shape="rect", type="iron-ore", x=5, y=-17-16, size=18, aspectRatio=1.7, amount=2400,  },
         
         { shape="rect", type="crude-oil", x=8, y=-43-16, size=1, amount=1000000,  },
         { shape="rect", type="crude-oil", x=11, y=-43-16, size=1, amount=1000000,  },
@@ -231,11 +231,11 @@ scenario.config.separateSpawns = {
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
-    firstSpawnPoint = 20,
-    moat=100,       -- horizontal offset relative to center of spawn
-    moatWidth=8,    
-    spacing = 384,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
-    barrier = 52,	-- width of impenetrable barrier
+    firstSpawnPoint = 16,
+    -- moat=0,         -- horizontal offset relative to center of spawn
+    -- moatWidth=8,    
+    spacing = 320,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
+    barrier = 10,	-- width of impenetrable barrier
     rail = 3*512+3,	-- generate a north-south railway starting here
     rail2 = -3*512-32+3, -- generate a north-south railway starting here
     
@@ -257,11 +257,11 @@ ENABLE_SPAWN_FORCE_GRASS = true
 
 -- Safe area has no aliens
 -- +/- this in x and y direction
-SAFE_AREA_TILE_DIST = CHUNK_SIZE*12
+SAFE_AREA_TILE_DIST = CHUNK_SIZE*10
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
-WARNING_AREA_TILE_DIST = CHUNK_SIZE*14
+WARNING_AREA_TILE_DIST = CHUNK_SIZE*12
 
 -- 1 : X (spawners alive : spawners destroyed) in this area
 WARN_AREA_REDUCTION_RATIO = 15

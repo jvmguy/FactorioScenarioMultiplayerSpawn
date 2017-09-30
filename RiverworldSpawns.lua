@@ -159,7 +159,7 @@ function M.ChunkGenerated(event)
                 
         local railsRect2 = MakeRect( scenario.config.riverworld.rail2, 28, -20000, 40000);
         railsRect2 = ChunkIntersection( chunkArea, railsRect2);
-        if dy < spacing and scenario.config.riverworld.moatWidth>0 then
+        if dy < spacing and scenario.config.riverworld.moat ~= nil and scenario.config.riverworld.moatWidth>0 then
             local w = scenario.config.riverworld.moatWidth
             local h = spacing - barrier
             -- left moat
