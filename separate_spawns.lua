@@ -305,37 +305,6 @@ function CheckIfInChunk(x, y, chunkArea)
     return false;
 end
 
-local function TilesInShape( chunkArea, pos, shape, aspectRatio, size )
-    local tiles = {}
-    if aspectRatio == nil then
-        aspectRatio = 1.0;
-    end
-    local xsize = size * aspectRatio
-    local ysize = size
-    local xRadiusSq = (xsize/2)^2;
-    local yRadiusSq = (ysize/2)^2;
-    local midPointY = math.floor(size/2)
-    local midPointX = math.floor(xsize/2)
-    for y=1, size do
-        for x=1, xsize do
-            local inShape = false;
-            if (shape == "ellipse") then
-
-                if (((x-midPointX)^2/xRadiusSq + (y-midPointY)^2/yRadiusSq < 1)) then
-                    inShape = true;
-                end
-            end
-            if (shape == "rect") then
-                inShape = true;
-            end
-            if inShape and CheckIfInChunk( pos.x+x, pos.y+y, chunkArea) then
-                table.insert( tiles, { x=pos.x+x, y=pos.y+y }) 
-            end
-        end
-    end
-    return tiles
-end
-
 local function CreateItems( surface, tiles, itemName, contents )
     for _, tile in pairs(tiles) do
         local chest = surface.create_entity({name=itemName, position=tile, force=MAIN_FORCE})

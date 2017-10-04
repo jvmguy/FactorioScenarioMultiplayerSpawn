@@ -41,8 +41,9 @@ require("bps")
 require("statuscommand")
 require("kitcommand")
 require("rgcommand")
+toxicJungle = require("ToxicJungle")
 
---spawnGenerator = require("FermatSpiralSpawns");
+-- spawnGenerator = require("FermatSpiralSpawns");
 spawnGenerator = require("RiverworldSpawns");
 
 
@@ -147,6 +148,14 @@ script.on_event(defines.events.on_chunk_generated, function(event)
         UndecorateOnChunkGenerate(event)
     end
     
+    if scenario.config.riverworld.enabled then
+        spawnGenerator.ChunkGenerated(event);
+    end
+
+    if scenario.config.toxicJungle.enabled then
+        toxicJungle.ChunkGenerated(event);
+    end    
+
     if scenario.config.riverworld.enabled then
         spawnGenerator.ChunkGenerated(event);
     end

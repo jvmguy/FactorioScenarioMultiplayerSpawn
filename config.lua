@@ -42,7 +42,7 @@ scenario.config.welcomeMessages = {
 
 scenario.config.bots = {
     worker_robots_storage_bonus = 5;
-    worker_robots_speed_modifier = 1.5,
+    worker_robots_speed_modifier = 1.0,
 }
 
 scenario.config.silo = {
@@ -63,7 +63,7 @@ scenario.config.startKit = {
         },
         {name = "belt-immunity-equipment", count = 1},
 --        {name = "night-vision-equipment", count = 1},
-        {name = "construction-robot", count = 20},
+        {name = "construction-robot", count = 10},
         {name = "steel-axe", count = 5},
         {name = "roboport", count = 1},
         {name = "logistic-chest-storage", count = 1},
@@ -77,25 +77,18 @@ scenario.config.startKit = {
 }
 
 scenario.config.mapSettings = {
---    RSO_TERRAIN_SEGMENTATION = "very-low", -- Frequency of water
---    RSO_WATER = "high", -- Size of water patches
-    
-    -- jvmguy uses these settings sometimes
---    RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
---    RSO_WATER = "very-high", -- Size of water patches
-
     -- jvmguy uses these settings for riverworld
     RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
     RSO_WATER = "very-low", -- Size of water patches
-    
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
+
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
 }
 
 scenario.config.teleporter = {
     enabled = true,
     -- where in the spawn to place the teleporter
-	spawnPosition = { x=30, y=-23-32 },
+	spawnPosition = { x=20, y=-47 },
 
     -- where in the silo chunk to place the teleporter
     -- this should not be 0,0 if there is the possibility that the default spawn will be used
@@ -181,6 +174,11 @@ NEAR_MAX_DIST = 100 --125
 -- Far Distance in chunks
 FAR_MIN_DIST = 100 --50
 FAR_MAX_DIST = 200 --125
+
+scenario.config.toxicJungle = {
+    enabled = false,
+    tree_chance = 0.2
+}    
                    --
 ---------------------------------------
 -- Resource Options
@@ -204,27 +202,29 @@ scenario.config.separateSpawns = {
 -- x = right, left
 -- y = up, down
 
-    land = 140,
-    trees = 4,  -- included in the land
+    land = 56,
+    trees = 2,  -- included in the land
     moat = 8,   -- additional to land
-    size = 150,  -- should be > land + moat
+    size = 56,  -- should be land + moat
+	
+	water = { shape="rect", x=-5, y=-50, size=5, aspectRatio=3.0 }, 
 	
     resources = {
-        { shape="rect", name="steel-chest", x=-5,   y=-17-16, size=2, aspectRatio=1, contents = { {name = "iron-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=-5,   y=-12-16, size=2, aspectRatio=1, contents = { {name = "copper-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=-5,   y=-8-16,  size=2, aspectRatio=1, contents = { {name = "coal", count=2400 } }  },
-        { shape="rect", name="steel-chest", x=-5,   y=-4-16,  size=1, aspectRatio=1, contents = { {name = "stone", count=2400 } },  },
+        { shape="rect", name="steel-chest", x=-5,   y=-17, size=2, aspectRatio=1, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-5,   y=-12, size=2, aspectRatio=1, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-5,   y=-8,  size=2, aspectRatio=1, contents = { {name = "coal", count=2400 } }  },
+        { shape="rect", name="steel-chest", x=-5,   y=-4,  size=1, aspectRatio=1, contents = { {name = "stone", count=2400 } },  },
     
-        { shape="rect", type="coal", x=-16, y=-41-16, size=16, aspectRatio=1.17, amount=2400,  },
-        { shape="rect", type="stone", x=9, y=-32-16, size=7, aspectRatio=2.0, amount=2400,  },
-        { shape="rect", type="copper-ore", x=-43, y=-17-16, size=18, aspectRatio=1.7, amount=2400,  },
-        { shape="rect", type="iron-ore", x=5, y=-17-16, size=18, aspectRatio=1.7, amount=2400,  },
+        { shape="rect", type="coal",         x=-43+14, y=-41, size=18, aspectRatio=1.17, amount=4000,  },
+        { shape="rect", type="stone",        x=-43+17, y=-21, size=9,  aspectRatio=2.0,  amount=4000,  },
+        { shape="rect", type="copper-ore",   x=-43, y=-10, size=21, aspectRatio=1.7,  amount=4000,  },
+        { shape="rect", type="iron-ore",     x=-43, y =12, size=21, aspectRatio=1.7,  amount=4000,  },
+        { shape="rect", type="uranium-ore",  x=-43, y= -41+19, size=10, aspectRatio=1.0,  amount=1800,  },
         
-        { shape="rect", type="crude-oil", x=8, y=-43-16, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=11, y=-43-16, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=14, y=-43-16, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=-47, y=-3, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=-47, y= 0, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=-47, y= 3, size=1, amount=1000000,  },
         
-        { shape="rect", type="uranium-ore", x=-29, y=-33-16, size=10, aspectRatio=1.0, amount=18000,  },
     },
 }
 
@@ -235,7 +235,7 @@ scenario.config.riverworld = {
     -- moat=0,         -- horizontal offset relative to center of spawn
     -- moatWidth=8,    
     spacing = 320,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
-    barrier = 10,	-- width of impenetrable barrier
+    barrier = 64,	-- width of impenetrable barrier
     rail = 3*512+3,	-- generate a north-south railway starting here
     rail2 = -3*512-32+3, -- generate a north-south railway starting here
     
@@ -318,7 +318,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = false
+ENEMY_EXPANSION = true
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
 ENEMY_POLLUTION_FACTOR_DIVISOR = 3
