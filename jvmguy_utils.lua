@@ -56,7 +56,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
     local water = scenario.config.separateSpawns.water;
     if water ~= nil then
         local waterTiles = {}   
-        local shapeTiles = TilesInShape( chunkArea, {x=centerPos.x + water.x, y=centerPos.y + water.y }, water.shape, water.aspectRatio, water.size );
+        local shapeTiles = TilesInShape( chunkArea, {x=centerPos.x + water.x, y=centerPos.y + water.y }, water.shape, water.height, water.width );
         for _,tile in pairs(shapeTiles) do
             table.insert(waterTiles, {name = "water", position ={tile.x,tile.y}})
         end
@@ -181,18 +181,18 @@ function SurfaceSettings(surface)
     game.player.print("surface seed=" .. settings.seed);
 end
 
-function TilesInShape( chunkArea, pos, shape, aspectRatio, size )
+function TilesInShape( chunkArea, pos, shape, height, width )
     local tiles = {}
-    if aspectRatio == nil then
-        aspectRatio = 1.0;
+    local ysize = height
+    local xsize = width;
+    if width == nil then
+        xsize = height;
     end
-    local xsize = size * aspectRatio
-    local ysize = size
     local xRadiusSq = (xsize/2)^2;
     local yRadiusSq = (ysize/2)^2;
-    local midPointY = math.floor(size/2)
+    local midPointY = math.floor(ysize/2)
     local midPointX = math.floor(xsize/2)
-    for y=1, size do
+    for y=1, ysize do
         for x=1, xsize do
             local inShape = false;
             if (shape == "ellipse") then

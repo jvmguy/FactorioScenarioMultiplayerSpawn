@@ -346,7 +346,7 @@ function GenerateStartingResources(surface, chunkArea, spawnPos)
         if res.dy ~= nil then
             pos.y = pos.y + res.dy
         end
-        local tiles = TilesInShape( chunkArea, pos, res.shape, res.aspectRatio, res.size);
+        local tiles = TilesInShape( chunkArea, pos, res.shape, res.height, res.width);
         if (res.type ~= nil) then
             CreateResources( surface, tiles, res.amount, res.type, res.mixedOres );
         elseif (res.name ~= nil) then

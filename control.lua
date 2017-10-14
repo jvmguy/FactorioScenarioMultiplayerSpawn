@@ -224,6 +224,8 @@ script.on_event(defines.events.on_player_created, function(event)
         GivePlayerLongReach(game.players[event.player_index])
     end
 
+    GivePlayerBonuses(game.players[event.player_index])
+
     if not ENABLE_SEPARATE_SPAWNS then
         PlayerSpawnItems(event)
     else

@@ -41,8 +41,12 @@ scenario.config.welcomeMessages = {
 }
 
 scenario.config.bots = {
-    worker_robots_storage_bonus = 5;
+    worker_robots_storage_bonus = 5,
     worker_robots_speed_modifier = 1.0,
+}
+
+scenario.config.playerBonus = {
+    character_crafting_speed_modifier = -0.97,
 }
 
 scenario.config.silo = {
@@ -74,6 +78,20 @@ scenario.config.startKit = {
 --		{name = "raw-wood", count=100},
 		{name = "firearm-magazine", count=100},
 --		{name = "landfill", count=200}
+
+        -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
+        {name = "offshore-pump", count = 1},
+        {name = "boiler", count = 1},
+        {name = "steam-engine", count = 1},
+        {name = "pipe", count=5},
+        {name = "pipe-to-ground", count=2},
+        {name = "small-electric-pole", count = 10},
+        {name = "inserter", count=13},
+        {name = "assembling-machine-2", count=4},
+        
+--        {name = "electric-mining-drill", count = 8},
+--        {name = "small-electric-pole", count = 50},
+--        {name = "transport-belt", count=400},
 }
 
 scenario.config.mapSettings = {
@@ -103,6 +121,7 @@ scenario.config.teleporter = {
         {name= "stone-furnace", count=2},
         {name= "burner-mining-drill", count=2},
         {name= "landfill", count=50},
+        
 --        {name = "offshore-pump", count = 1},
 --        {name = "boiler", count = 10},
 --        {name = "steam-engine", count = 20},
@@ -207,23 +226,23 @@ scenario.config.separateSpawns = {
     moat = 8,   -- additional to land
     size = 56,  -- should be land + moat
 	
-	water = { shape="rect", x=-5, y=-50, size=5, aspectRatio=3.0 }, 
+	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
 	
     resources = {
-        { shape="rect", name="steel-chest", x=-5,   y=-17, size=2, aspectRatio=1, contents = { {name = "iron-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=-5,   y=-12, size=2, aspectRatio=1, contents = { {name = "copper-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=-5,   y=-8,  size=2, aspectRatio=1, contents = { {name = "coal", count=2400 } }  },
-        { shape="rect", name="steel-chest", x=-5,   y=-4,  size=1, aspectRatio=1, contents = { {name = "stone", count=2400 } },  },
+        { shape="rect", name="steel-chest", x=-4,   y=-17, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-4,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-4,   y=-8,  height=2, width=2, contents = { {name = "coal", count=2400 } }  },
+        { shape="rect", name="steel-chest", x=-4,   y=-4,  height=1, width=1, contents = { {name = "stone", count=2400 } },  },
     
-        { shape="rect", type="coal",         x=-43+14, y=-41, size=18, aspectRatio=1.17, amount=4000,  },
-        { shape="rect", type="stone",        x=-43+17, y=-21, size=9,  aspectRatio=2.0,  amount=4000,  },
-        { shape="rect", type="copper-ore",   x=-43, y=-10, size=21, aspectRatio=1.7,  amount=4000,  },
-        { shape="rect", type="iron-ore",     x=-43, y =12, size=21, aspectRatio=1.7,  amount=4000,  },
-        { shape="rect", type="uranium-ore",  x=-43, y= -41+19, size=10, aspectRatio=1.0,  amount=1800,  },
+        { shape="rect", type="coal",         x=0,  y=-41, height=14, width=24,  amount=5000,  },
+        { shape="rect", type="stone",        x=0,  y=-24, height=14, width=24,  amount=3000,  },
+        { shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
+        { shape="rect", type="copper-ore",   x=0,  y=-7,  height=21, width=36,  amount=3000,  },
+        { shape="rect", type="iron-ore",     x=0,  y =17, height=21, width=36,  amount=3000,  },
         
-        { shape="rect", type="crude-oil", x=-47, y=-3, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=-47, y= 0, size=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=-47, y= 3, size=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=42, y=-6, height=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=42, y= 0, height=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=42, y= 6, height=1, amount=1000000,  },
         
     },
 }
@@ -234,7 +253,7 @@ scenario.config.riverworld = {
     firstSpawnPoint = 16,
     -- moat=0,         -- horizontal offset relative to center of spawn
     -- moatWidth=8,    
-    spacing = 320,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
+    spacing = 416,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
     barrier = 64,	-- width of impenetrable barrier
     rail = 3*512+3,	-- generate a north-south railway starting here
     rail2 = -3*512-32+3, -- generate a north-south railway starting here
@@ -245,7 +264,7 @@ scenario.config.riverworld = {
 }
 
 
-SPAWN_TREE_DENSITY = 0.2
+SPAWN_TREE_DENSITY = 0.3
 
 
 -- Force the land area circle at the spawn to be fully grass
@@ -318,11 +337,11 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = true
+ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
-ENEMY_POLLUTION_FACTOR_DIVISOR = 3
-ENEMY_DESTROY_FACTOR_DIVISOR = 3
+ENEMY_POLLUTION_FACTOR_DIVISOR = 5
+ENEMY_DESTROY_FACTOR_DIVISOR = 5
 
 --------------------------------------------------------------------------------
 -- Frontier Rocket Silo Options
