@@ -87,7 +87,8 @@ scenario.config.startKit = {
         {name = "pipe-to-ground", count=2},
         {name = "small-electric-pole", count = 10},
         {name = "inserter", count=13},
-        {name = "assembling-machine-2", count=4},
+        {name = "assembling-machine-1", count=5},
+        {name = "assembling-machine-3", count=1},
         
 --        {name = "electric-mining-drill", count = 8},
 --        {name = "small-electric-pole", count = 50},
