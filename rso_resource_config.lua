@@ -97,21 +97,21 @@ local function fillVanillaConfig()
         starting={richness=2000, size=10, probability=0},
     }
 
-    config["crude-oil"] = {
-        type="resource-liquid",
-        minimum_amount=60000,
-        allotment=40,   -- 80
-        spawns_per_region={min=1, max=1},
-        richness={min=60000, max=70000}, -- richness per resource spawn
-        size={min=2, max=3},
-        
-        starting={richness=20000, size=2, probability=0},
-        
-        multi_resource_chance=0.20,
-        multi_resource={
-            ["coal"] = 4,
-        }
-    }
+--    config["crude-oil"] = {
+--        type="resource-liquid",
+--        minimum_amount=60000,
+--        allotment=40,   -- 80
+--        spawns_per_region={min=1, max=1},
+--        richness={min=60000, max=70000}, -- richness per resource spawn
+--        size={min=2, max=3},
+--        
+--        starting={richness=20000, size=2, probability=0},
+--        
+--        multi_resource_chance=0.20,
+--        multi_resource={
+--            ["coal"] = 4,
+--        }
+--    }
 end
 
 local function fillEnemies()

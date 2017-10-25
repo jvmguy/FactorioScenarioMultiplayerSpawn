@@ -46,12 +46,12 @@ scenario.config.bots = {
 }
 
 scenario.config.playerBonus = {
-    character_crafting_speed_modifier = -0.97,
+    character_crafting_speed_modifier = 1.0/30-1.0,
 }
 
 scenario.config.silo = {
-    addBeacons = true,
-    addPower = true,
+    addBeacons = false,
+    addPower = false,
 }
 
 scenario.config.startKit = {
@@ -85,9 +85,9 @@ scenario.config.startKit = {
         {name = "steam-engine", count = 1},
         {name = "pipe", count=5},
         {name = "pipe-to-ground", count=2},
-        {name = "small-electric-pole", count = 10},
-        {name = "inserter", count=13},
-        {name = "assembling-machine-1", count=5},
+        {name = "small-electric-pole", count = 20},
+        {name = "inserter", count=20},
+        {name = "assembling-machine-1", count=9},
         {name = "assembling-machine-3", count=1},
         
 --        {name = "electric-mining-drill", count = 8},
@@ -251,6 +251,7 @@ scenario.config.separateSpawns = {
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
+	stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
     firstSpawnPoint = 16,
     -- moat=0,         -- horizontal offset relative to center of spawn
     -- moatWidth=8,    
