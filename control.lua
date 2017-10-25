@@ -254,6 +254,7 @@ script.on_event(defines.events.on_player_respawned, function(event)
     if ENABLE_LONGREACH then
         GivePlayerLongReach(game.players[event.player_index])
     end
+    GivePlayerBonuses(game.players[event.player_index])
 end)
 
 script.on_event(defines.events.on_player_left_game, function(event)
@@ -297,7 +298,6 @@ script.on_event(defines.events.on_research_finished, function(event)
     -- Example of how to remove a particular recipe:
     -- RemoveRecipe(event, "beacon")
 end)
-
 
 ----------------------------------------
 -- BPS Specific Event
