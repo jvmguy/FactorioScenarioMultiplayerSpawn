@@ -41,7 +41,7 @@ scenario.config.welcomeMessages = {
 }
 
 scenario.config.regrow = {
-    enabled=true
+    enabled=false
 }
 
 scenario.config.bots = {
@@ -113,7 +113,7 @@ scenario.config.mapSettings = {
 }
 
 scenario.config.teleporter = {
-    enabled = false,
+    enabled = true,
     -- where in the spawn to place the teleporter
 	spawnPosition = { x=20, y=-47 },
 
