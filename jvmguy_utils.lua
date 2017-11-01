@@ -82,8 +82,7 @@ function CreateTeleporter(surface, teleporterPosition, dest)
     for _,item in pairs(scenario.config.teleporter.startItems) do
         car.insert(item);
     end
-    -- resource extraction    
-    table.insert(global.portal, { position=spawnPos, car = car, dest=dest });
+    table.insert(global.portal, { dest=dest, unit_number = car.unit_number });
 end
 
 function TeleportPlayer( player )
@@ -91,7 +90,7 @@ function TeleportPlayer( player )
     if car ~= nil then
         local dest = nil
         for _,portal in pairs(global.portal) do
-            if car == portal.car then
+            if car.unit_number == portal.unit_number then
                 if portal.dest == nil then
                     -- teleport from silo back to player spawn.
                     player.print("teleport back to player spawn");

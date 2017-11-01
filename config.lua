@@ -40,6 +40,10 @@ scenario.config.welcomeMessages = {
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
 }
 
+scenario.config.regrow = {
+    enabled=true
+}
+
 scenario.config.bots = {
     worker_robots_storage_bonus = 5,
     worker_robots_speed_modifier = 1.0,
@@ -52,6 +56,10 @@ scenario.config.playerBonus = {
 scenario.config.silo = {
     addBeacons = false,
     addPower = false,
+}
+
+scenario.config.research = {
+    coalLiquefactionResearched = true,
 }
 
 scenario.config.startKit = {
@@ -105,7 +113,7 @@ scenario.config.mapSettings = {
 }
 
 scenario.config.teleporter = {
-    enabled = true,
+    enabled = false,
     -- where in the spawn to place the teleporter
 	spawnPosition = { x=20, y=-47 },
 
@@ -214,18 +222,18 @@ scenario.config.separateSpawns = {
     --     nearest base is sqrt(25)*spacing = 5000
     --     most distant base is sqrt(25+42)*spacing = 8000
     preferFar = false,
-    firstSpawnPoint = 25,
-    numSpawnPoints = 24,
+    firstSpawnPoint = 20,
+    numSpawnPoints = 36,
     -- extraSpawn = 31,    -- admin spawn really far away
     spacing = 1000,
     
 -- x = right, left
 -- y = up, down
 
-    land = 56,
+    land = 152,
     trees = 2,  -- included in the land
     moat = 8,   -- additional to land
-    size = 56,  -- should be land + moat
+    size = 160,  -- should be land + moat
 	
 	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
 	
@@ -241,9 +249,9 @@ scenario.config.separateSpawns = {
         { shape="rect", type="copper-ore",   x=0,  y=-7,  height=21, width=36,  amount=3000,  },
         { shape="rect", type="iron-ore",     x=0,  y =17, height=21, width=36,  amount=3000,  },
         
-        { shape="rect", type="crude-oil", x=42, y=-6, height=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=42, y= 0, height=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=42, y= 6, height=1, amount=1000000,  },
+--        { shape="rect", type="crude-oil", x=42, y=-6, height=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=42, y= 0, height=1, amount=100000,  },
+--        { shape="rect", type="crude-oil", x=42, y= 6, height=1, amount=1000000,  },
         
     },
 }

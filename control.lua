@@ -46,6 +46,8 @@ toxicJungle = require("ToxicJungle")
 -- spawnGenerator = require("FermatSpiralSpawns");
 spawnGenerator = require("RiverworldSpawns");
 
+regrow = require("jvm-regrowth");
+
 
 --------------------------------------------------------------------------------
 -- Rocket Launch Event Code
@@ -123,8 +125,16 @@ script.on_init(function(event)
         ChartRocketSiloArea(game.forces[MAIN_FORCE])
     end
 
+    if scenario.config.research.coalLiquefactionResearched then
+        game.forces[MAIN_FORCE].technologies['coal-liquefaction'].researched=true;
+    end
+    
     if ENABLE_ALL_RESEARCH_DONE then
         game.forces[MAIN_FORCE].research_all_technologies()
+    end
+
+    if scenario.config.regrow.enabled then
+        regrow.init()
     end
     
 end)
@@ -144,6 +154,11 @@ end)
 -- Chunk Generation
 ----------------------------------------
 script.on_event(defines.events.on_chunk_generated, function(event)
+    local shouldGenerateResources = true
+    if scenario.config.regrow.enabled then
+        shouldGenerateResources = regrow.shouldGenerateResources(event);
+        regrow.onChunkGenerated(event)
+    end
     if ENABLE_UNDECORATOR then
         UndecorateOnChunkGenerate(event)
     end
@@ -161,7 +176,9 @@ script.on_event(defines.events.on_chunk_generated, function(event)
     end
 
     if ENABLE_RSO then
-        RSO_ChunkGenerated(event)
+        if shouldGenerateResources then
+            RSO_ChunkGenerated(event)
+        end
     end
 
     if FRONTIER_ROCKET_SILO_MODE then
@@ -171,6 +188,10 @@ script.on_event(defines.events.on_chunk_generated, function(event)
     -- This MUST come after RSO generation!
     if ENABLE_SEPARATE_SPAWNS then
         SeparateSpawnsGenerateChunk(event)
+    end
+    
+    if scenario.config.regrow.enabled then
+        regrow.afterResourceGeneration(event)
     end
 end)
 
@@ -268,11 +289,21 @@ script.on_event(defines.events.on_built_entity, function(event)
         Autofill(event)
     end
 
+    if scenario.config.regrow.enabled then
+        regrow.onBuiltEntity(event);
+    end
+
     local type = event.created_entity.type    
     if type == "entity-ghost" or type == "tile-ghost" or type == "item-request-proxy" then
         if GHOST_TIME_TO_LIVE ~= 0 then
             event.created_entity.time_to_live = GHOST_TIME_TO_LIVE
         end
+    end
+end)
+
+script.on_event(defines.events.on_tick, function(event)
+    if scenario.config.regrow.enabled then
+        regrow.onTick(event)
     end
 end)
 
@@ -298,6 +329,25 @@ script.on_event(defines.events.on_research_finished, function(event)
     -- Example of how to remove a particular recipe:
     -- RemoveRecipe(event, "beacon")
 end)
+
+if scenario.config.regrow.enabled then
+    script.on_event(defines.events.on_sector_scanned, function (event)
+        regrow.onSectorScan(event)
+    end)
+
+    script.on_event(defines.events.on_robot_built_entity, function (event)
+        regrow.onRobotBuiltEntity(event)
+    end)
+
+    script.on_event(defines.events.on_player_mined_entity, function(event)
+        regrow.onPlayerMinedEntity(event)
+    end)
+    
+    script.on_event(defines.events.on_robot_mined_entity, function(event)
+        regrow.onRobotMinedEntity(event)
+    end)
+
+end
 
 ----------------------------------------
 -- BPS Specific Event

@@ -51,7 +51,7 @@ local function fillVanillaConfig()
         
         allotment=85,
         
-        spawns_per_region={min=1, max=1},
+        spawns_per_region={min=2, max=2},
         size={min=20, max=25},
         richness=3500,
         min_amount=350,
