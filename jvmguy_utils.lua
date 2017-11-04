@@ -8,8 +8,8 @@ end
 function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth, moatWidth)
 
     local dirtTiles = {}
-    for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
-        for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
+    for i=chunkArea.left_top.x,chunkArea.right_bottom.x-1,1 do
+        for j=chunkArea.left_top.y,chunkArea.right_bottom.y-1,1 do
 
             local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
             local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
@@ -36,8 +36,8 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
     -- create the moat
     if (moatWidth>0) then
         local waterTiles = {}
-        for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
-            for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
+        for i=chunkArea.left_top.x,chunkArea.right_bottom.x-1,1 do
+            for j=chunkArea.left_top.y,chunkArea.right_bottom.y-1,1 do
     
                 local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
                 local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))

@@ -16,9 +16,15 @@ local jvmHeap = require("jvm-chunkheap");
 local M = {};
 
 local config = {
-    chunkTimeoutTicks = 1 * TICKS_PER_MINUTE,
-    cleanupIntervalTicks = 10 * TICKS_PER_SECOND,
-    -- cleanupIntervalTicks = 1 * TICKS_PER_MINUTE,
+    -- chunks touched by a player's presence last for a short while if nothing is built on it, there are no resources, and no enemies
+    chunkTimeoutTicks = 60 * TICKS_PER_MINUTE,
+    
+     -- chunks scanned by radar live for 8 hours because a single radar will not scan it again for almost 8 hours.
+    radarTimeoutTicks = 8 * 60 * TICKS_PER_MINUTE,
+     
+    cleanupIntervalTicks = 1 * TICKS_PER_MINUTE,
+    
+    -- the most we will examine and try to remove in a single cleanup
     maxGarbage = 400
 }
 
@@ -43,29 +49,23 @@ local CS_NORMAL=0
 local CS_PERM=1     -- permanent chunk. will not be collected
 local CS_FORCE=2    -- forced removal. will definitely be collected
 
-local function addToLRUFront(mapEntry)
-    local map = global.regrow.map
-    local lru = global.regrow.lru;
-    
-    mapEntry.inLRU = true
-    mapEntry.lruTime = 0
-    jvmHeap.insert( lru, mapEntry )
+
+local function defaultExpiry()
+    return game.tick + config.chunkTimeoutTicks
 end
 
-local function addToLRUEnd(mapEntry)
-    local lru = global.regrow.lru;
-    mapEntry.inLRU = true
-    mapEntry.lruTime = game.tick + config.chunkTimeoutTicks
-    jvmHeap.insert( lru, mapEntry )
+local function radarExpiry()
+    return game.tick + config.radarTimeoutTicks;
 end
 
-
-local function addToLRU(mapEntry)
+local function addToLRU(mapEntry, expiry)
     if mapEntry.status == CS_FORCE then
-        addToLRUFront(mapEntry)
-    else
-        addToLRUEnd(mapEntry)
+        mapEntry.lruTime = 0;
     end
+    local lru = global.regrow.lru;
+    mapEntry.inLRU = true
+    mapEntry.lruTime = math.max(mapEntry.lruTime, expiry);
+    jvmHeap.insert( lru, mapEntry )
 end
 
 local function removeFromLRU(mapEntry)
@@ -107,23 +107,23 @@ local function chunkToTile(pos)
     return { x=32*pos.x, y= 32*pos.y }
 end
 
-local function markChunk( chunkPosition )
+local function markChunk( chunkPosition, expiry )
     local mapEntry = getMapEntry(chunkPosition)
     if mapEntry ~= nil then
         if mapEntry.inLRU then
             removeFromLRU(mapEntry)
         end
         if mapEntry.status ~= CS_PERM then 
-            addToLRU(mapEntry)
+            addToLRU(mapEntry, expiry)
         end
     end
 end
 
-local function markRange( center, chunkRadius )
+local function markRange( center, chunkRadius, expiry )
     for x=-chunkRadius, chunkRadius do
         for y=-chunkRadius, chunkRadius do
             local chunkPosition = { x=center.x+x, y=center.y+y }
-            markChunk(chunkPosition);
+            markChunk(chunkPosition, expiry);
         end
     end
 end
@@ -157,7 +157,11 @@ local function markForForcedCollection( center, chunkRadius )
                 removeFromLRU(mapEntry);
             end
             mapEntry.status = CS_FORCE;
+<<<<<<< HEAD
             addToLRU(mapEntry);
+=======
+            addToLRU(mapEntry, 0);
+>>>>>>> master
         end
     end
 end
@@ -193,7 +197,11 @@ local function refreshPlayerArea()
     local player = game.connected_players[global.regrow.playerRefreshIndex] 
     if (player) then
         local chunkPos = tileToChunk(player.position)
+<<<<<<< HEAD
         markRange(chunkPos, 4)
+=======
+        markRange(chunkPos, 4, defaultExpiry())
+>>>>>>> master
     end
 
 end
@@ -205,6 +213,10 @@ local function removeGarbageChunks()
     local removed = 0
     local map = global.regrow.map
     local lru = global.regrow.lru
+<<<<<<< HEAD
+=======
+    local expiry = defaultExpiry();
+>>>>>>> master
     while true do
         local mapEntry = jvmHeap.head(lru);
         if mapEntry == nil or mapEntry.lruTime > time or count > config.maxGarbage then
@@ -224,7 +236,7 @@ local function removeGarbageChunks()
                 removed = removed + 1
             else
                 -- game.print("still in use: " .. mapEntry.x .. "," .. mapEntry.y .. " count " .. inUseCount )
-                addToLRU(mapEntry)
+                addToLRU(mapEntry, expiry)
             end
         else
             -- game.print("removeGarbage: not in LRU! " .. mapEntry.x .. "," .. mapEntry.y )
@@ -285,8 +297,8 @@ function M.collect()
 end
 
 function M.onSectorScan(event)
-    markRange(event.radar.position, 14);
-    markChunk(event.chunk_position); 
+--    markRange(event.radar.position, 14, defaultExpiry());
+    markChunk(event.chunk_position, radarExpiry()); 
 end
 
 -- This is used to decide whether to generate RSO resources when a chunk is generated
@@ -334,7 +346,7 @@ function M.onChunkGenerated(event)
         removeFromLRU(mapEntry)
     end
     if mapEntry.status ~= CS_PERM then
-        addToLRU(mapEntry);
+        addToLRU(mapEntry, defaultExpiry());
 --    else
 --        game.print("map entry is permanent: " .. chunkPos.x .. "," .. chunkPos.y)
     end
@@ -346,7 +358,7 @@ function M.onBuiltEntity(event)
     end 
     local pos = event.created_entity.position; 
     local chunkPos = tileToChunk(pos);
-    markChunk(chunkPos); 
+    markChunk(chunkPos, defaultExpiry()); 
 end
 
 function M.onRobotBuiltEntity(event)
@@ -355,7 +367,7 @@ function M.onRobotBuiltEntity(event)
     end 
     local pos = event.created_entity.position 
     local chunkPos = tileToChunk(pos);
-    markChunk(chunkPos); 
+    markChunk(chunkPos, defaultExpiry()); 
 end
 
 function M.onRobotMinedEntity(event)

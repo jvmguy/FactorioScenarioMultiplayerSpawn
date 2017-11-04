@@ -213,7 +213,7 @@ scenario.config.toxicJungle = {
 ---------------------------------------
 -- everyone gets a separate start area
 scenario.config.separateSpawns = {
---    enabled = true,
+    enabled = true,
 --
 --    shape = "octagon",
 --    treeDensity = 0.2,
