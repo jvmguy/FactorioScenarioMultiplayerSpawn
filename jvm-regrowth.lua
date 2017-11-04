@@ -3,11 +3,22 @@
 -- a few trivial differences.
 
 
+-- xxx todo. when reviving chunks. allow enemies to be generated, but not ores.
+-- possible optimization to avoid examining chunks. don't put them in the lru if they might have entities.
+--    xxx building on a chunk removes from lru
+--    xxx deconstructing on a chunk adds it to lru if not in lru and if it's not CS_PERM and marks it "to-be-examined"
+--    when sweeping, any chunks marked "to-be-examined" must be examined.
+--         if its not collectible because of buildings, remove from lru
+
+
+local jvmHeap = require("jvm-chunkheap");
+
 local M = {};
 
 local config = {
     chunkTimeoutTicks = 1 * TICKS_PER_MINUTE,
-    cleanupIntervalTicks = 1 * TICKS_PER_MINUTE,
+    cleanupIntervalTicks = 10 * TICKS_PER_SECOND,
+    -- cleanupIntervalTicks = 1 * TICKS_PER_MINUTE,
     maxGarbage = 400
 }
 
@@ -21,7 +32,7 @@ global.regrow = {
     map = {},
     
     -- list of chunks in LRU order 
-    lru = { first=0, last=0, count=0 },
+    lru = jvmHeap.new(nil);
     
     playerRefreshIndex = 1,
     forceRemovalTime = -1,
@@ -32,68 +43,20 @@ local CS_NORMAL=0
 local CS_PERM=1     -- permanent chunk. will not be collected
 local CS_FORCE=2    -- forced removal. will definitely be collected
 
-local function checkLRU()
-    local count = 0
-    local map = global.regrow.map
-    local lru = global.regrow.lru;
-    local p = map[lru.first]
-    while p ~= nil do
-        count = count + 1
-        if p.next ~= 0 then
-            if map[p.next].prev ~= p then
-                game.print("FOOBAR");
-            end
-            if p.lruTime > p.next.lruTime then
-                game.print("FOOBAR4");
-            end
-        else
-            if lru.last ~= p then
-                game.print("FOOBAR2");
-            end
-        end
-        p = map[p.next]
-    end
-    if count ~= lru.count then
-        game.print("FOOBAR3");
-    end
-end
-
 local function addToLRUFront(mapEntry)
     local map = global.regrow.map
     local lru = global.regrow.lru;
-
-    mapEntry.prev = 0
-    mapEntry.next = global.regrow.lru.first
     
-    if mapEntry.next ~= 0 then
-        map[mapEntry.next].prev = mapEntry.id
-    end
-    lru.first = mapEntry.id
-    if lru.last == 0 then
-        lru.last = mapEntry.id;
-    end
-        
     mapEntry.inLRU = true
     mapEntry.lruTime = 0
-    lru.count = lru.count+1
---    checkLRU()    
+    jvmHeap.insert( lru, mapEntry )
 end
 
 local function addToLRUEnd(mapEntry)
-    local map = global.regrow.map
     local lru = global.regrow.lru;
-    if lru.first == 0 then
-        lru.first = mapEntry.id
-    else
-        map[lru.last].next = mapEntry.id
-    end    
-    mapEntry.prev = lru.last
-    mapEntry.next = 0
-    lru.last = mapEntry.id
     mapEntry.inLRU = true
     mapEntry.lruTime = game.tick + config.chunkTimeoutTicks
-    lru.count = lru.count+1
---    checkLRU()    
+    jvmHeap.insert( lru, mapEntry )
 end
 
 
@@ -106,25 +69,9 @@ local function addToLRU(mapEntry)
 end
 
 local function removeFromLRU(mapEntry)
-    local map = global.regrow.map
     local lru = global.regrow.lru;
-    local prev = mapEntry.prev
-    local next = mapEntry.next
-    if prev == 0 then
-        lru.first = next
-    else
-        map[prev].next = next
-    end
-    if next == 0 then
-        lru.last = prev
-    else
-        map[next].prev = prev
-    end
-    mapEntry.prev = 0
-    mapEntry.next = 0
+    jvmHeap.remove( lru, mapEntry )
     mapEntry.inLRU = false
-    lru.count = lru.count-1
---    checkLRU()    
 end
 
 local function zIndexFromChunkPos(chunkPos)
@@ -146,8 +93,7 @@ local function newMapEntry(chunkPos)
         status=CS_NORMAL,
         inLRU = false,
         lruTime=0,
-        prev=0,
-        next=0,
+        index=0,    -- used by the heap
     }
     global.regrow.map[zindex] = result
     return result
@@ -217,26 +163,16 @@ local function markForForcedCollection( center, chunkRadius )
 end
 
 
--- Entities in a chunk, excluding mobile entities
+-- Entities in a chunk
 local function countChunkEntities(chunkPos)
     local search_top_left = {x=chunkPos.x*32, y=chunkPos.y*32}
     local search_area = {search_top_left, {x=search_top_left.x+32,y=search_top_left.y+32}}
     local total = 0
     for f,_ in pairs(game.forces) do
-        if f ~= "neutral" and f ~= "enemy" then
+        --if f ~= "neutral" and f ~= "enemy" then
+        if f ~= "neutral" then
             local entities = game.surfaces[GAME_SURFACE_NAME].find_entities_filtered{area = search_area, force=f}
             total = total + #entities
---            if (#entities > 0) then
---                
---                for _,e in pairs(entities) do
---                    if ((e.type == "player") or
---                         (e.type == "car") or
---                         (e.type == "logistic-robot") or
---                         (e.type == "construction-robot")) then
---                        total = total - 1
---                    end
---                end
---            end
         end
     end
     return total
@@ -270,18 +206,18 @@ local function removeGarbageChunks()
     local map = global.regrow.map
     local lru = global.regrow.lru
     while true do
-        if lru.first == 0 then
-            break
-        end
-        local mapEntry = map[lru.first]
+        local mapEntry = jvmHeap.head(lru);
         if mapEntry == nil or mapEntry.lruTime > time or count > config.maxGarbage then
             break
         end
         if mapEntry.inLRU then
             removeFromLRU(mapEntry)
-            local inUseCount = countChunkEntities(mapEntry)
             local pollution = game.surfaces[GAME_SURFACE_NAME].get_pollution(chunkToTile(mapEntry))
-            local doRemove = (inUse == 0) and (pollution == 0);
+            local inUseCount = 0
+            if (pollution == 0) then
+                inUseCount = countChunkEntities(mapEntry)
+            end
+            local doRemove = (inUseCount == 0) and (pollution == 0);
             if doRemove  or ( mapEntry.status == CS_FORCE ) then
                 -- game.print("removed chunk: " .. mapEntry.x .. "," .. mapEntry.y .. " status; " .. mapEntry.status )
                 game.surfaces[GAME_SURFACE_NAME].delete_chunk(mapEntry)
@@ -296,11 +232,16 @@ local function removeGarbageChunks()
         end
         count = count + 1
     end
-    if lru.first ~= 0 then
-        local mapEntry = map[lru.first]
-        local timeToLive = (mapEntry.lruTime - time) / TICKS_PER_SECOND
-        game.print("removeGarbageChunks: collected " .. removed .. " of " .. count .. " next map entry:" .. mapEntry.x .. "," .. mapEntry.y .. " expires in " .. timeToLive)
-    end
+--    local mapEntry = jvmHeap.head(lru)
+--    if mapEntry ~= nil then
+--        local timeToLive = (mapEntry.lruTime - time) / TICKS_PER_SECOND
+--        game.print("removeGarbageChunks: collected " .. removed
+--         .. " of " .. count 
+--         .. " next map entry:" .. mapEntry.x .. "," .. mapEntry.y 
+--         .. " expires in " .. timeToLive
+--         .. " lru size=" .. jvmHeap.size(lru)
+--         )
+--    end
 end
 
 
@@ -317,16 +258,13 @@ function M.onTick()
     -- check a few chunks to see if they can be collected
     --checkLRUList()
 
-    if false then
-        return
-    end
 --    -- Send a broadcast warning before it happens.
 --    if ((game.tick % config.cleanupIntervalTicks) == config.cleanupIntervalTicks-601) then
 --        SendBroadcastMsg("Map cleanup in 10 seconds...")
 --    end
 
     -- Delete all listed chunks
-    if ((game.tick % config.cleanupIntervalTicks) == config.cleanupIntervalTicks-1) then
+    if (((game.tick+1) % config.cleanupIntervalTicks) == 0) then
         removeGarbageChunks()
 --        SendBroadcastMsg("Map cleanup done...")
     end
@@ -347,8 +285,8 @@ function M.collect()
 end
 
 function M.onSectorScan(event)
-    markArea(event.radar.position, 14, game.tick);
-    markChunk(event.chunk_position, game.tick); 
+    markRange(event.radar.position, 14);
+    markChunk(event.chunk_position); 
 end
 
 -- This is used to decide whether to generate RSO resources when a chunk is generated
@@ -429,13 +367,12 @@ function M.onPlayerMinedEntity(event)
 end
 
 function M.markForRemoval(pos)
-    markForForcedCollection( tileToChunk(pos), 10)
+    markForForcedCollection( tileToChunk(pos), 5)
     global.regrow.forceRemovalTime = game.tick
 end
 
 function M.forceCollectSpawn(spawnNumber)
-    markForForcedCollection( global.allSpawns[spawnNumber], 10)
-    global.regrow.forceRemovalTime = game.tick
+    M.markForRemoval(global.allSpawns[spawnNumber])
 end
 
 function M.regrowStatus(x,y)
@@ -445,10 +382,12 @@ function M.regrowStatus(x,y)
         local inLRU = "n"
         if mapEntry.inLRU then inLRU = "y" end
         local timeToLive = mapEntry.lruTime - game.tick
+        local lru = global.regrow.lru
         game.print("chunk " .. mapEntry.x .. "," .. mapEntry.y
          .. " status: " .. mapEntry.status
          .. " inLRU: " .. inLRU
          .. " ttl: " .. timeToLive
+         .. " lruSize: " .. jvmHeap.size(lru)
          );
      else
         game.print("not in map")     
