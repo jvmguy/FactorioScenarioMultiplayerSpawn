@@ -483,6 +483,11 @@ function GivePlayerLongReach(player)
     player.character.character_reach_distance_bonus = REACH_DIST_BONUS
     player.character.character_resource_reach_distance_bonus  = RESOURCE_DIST_BONUS
 end
+    
+function GivePlayerBonuses(player)
+    player.character.character_crafting_speed_modifier = scenario.config.playerBonus.character_crafting_speed_modifier;
+end
+
 
 -- This creates a random silo position, stored to global.siloPosition
 -- It uses the config setting SILO_CHUNK_DISTANCE and spawns the silo somewhere

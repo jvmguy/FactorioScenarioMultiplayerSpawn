@@ -116,8 +116,15 @@ local function GenerateWalls(surface, wallRect, railsRect, railsRect2)
     local tiles = {};
     for y=wallRect.left_top.y, wallRect.right_bottom.y-1 do
         for x = wallRect.left_top.x, wallRect.right_bottom.x-1 do
---                          table.insert(tiles, {name = "out-of-map",position = {x,y}})
-                    table.insert(tiles, {name = "grass",position = {x,y}})
+			if scenario.config.riverworld.stoneWalls then
+                table.insert(tiles, {name = "grass",position = {x,y}})
+			else
+		        if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
+		                table.insert(tiles, {name = "out-of-map",position = {x,y}})
+		        else
+		                table.insert(tiles, {name = "grass",position = {x,y}})
+		        end
+			end
         end
     end
     surface.set_tiles(tiles)
@@ -126,13 +133,15 @@ local function GenerateWalls(surface, wallRect, railsRect, railsRect2)
         entity.destroy()  
     end
     
-    for y=wallRect.left_top.y, wallRect.right_bottom.y-1 do
-        for x = wallRect.left_top.x, wallRect.right_bottom.x-1 do
-            if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
-                makeIndestructibleEntity(surface, {name="stone-wall", position={x, y}, force=MAIN_FORCE});
-            end
-        end
-    end
+	if scenario.config.riverworld.stoneWalls then
+      for y=wallRect.left_top.y, wallRect.right_bottom.y-1 do
+          for x = wallRect.left_top.x, wallRect.right_bottom.x-1 do
+              if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
+                  makeIndestructibleEntity(surface, {name="stone-wall", position={x, y}, force=MAIN_FORCE});
+              end
+          end
+      end
+	end
 end
 
 function M.ChunkGenerated(event)

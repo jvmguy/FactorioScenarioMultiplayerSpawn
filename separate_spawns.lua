@@ -102,7 +102,10 @@ function GenerateSpawnChunk( event, spawnPos)
             GenerateStartingResources( surface, chunkArea, spawnPos);
             if scenario.config.teleporter.enabled then
                 local pos = { x=spawnPos.x+scenario.config.teleporter.spawnPosition.x, y=spawnPos.y+scenario.config.teleporter.spawnPosition.y }
-                CreateTeleporter(surface, pos, scenario.config.teleporter.siloTeleportPosition)
+                if CheckIfInChunk(pos.x, pos.y, chunkArea) then
+                    local dest = scenario.config.teleporter.siloTeleportPosition
+                    CreateTeleporter(surface, pos, { x=dest.x, y=dest.y })
+                end
             end 
         end
     end
@@ -161,9 +164,16 @@ function RemovePlayer(player)
 
     -- If a uniqueSpawn was created for the player, mark it as unused.
     if (global.uniqueSpawns[player.name] ~= nil) then
-        table.insert(global.unusedSpawns, global.uniqueSpawns[player.name]);
-        global.uniqueSpawns[player.name] = nil;
-        SendBroadcastMsg(player.name .. " base was freed up.");
+        if scenario.config.regrow.enabled then
+            local spawnPos = global.uniqueSpawns[player.name];
+            SendBroadcastMsg(player.name .. " base was abandoned.");
+            regrow.markForRemoval(spawnPos)
+            global.uniqueSpawns[player.name] = nil
+        else
+            table.insert(global.unusedSpawns, global.uniqueSpawns[player.name]);
+            global.uniqueSpawns[player.name] = nil;
+            SendBroadcastMsg(player.name .. " base was freed up.");
+        end
     end
     
     -- Remove from shared spawns
@@ -346,7 +356,7 @@ function GenerateStartingResources(surface, chunkArea, spawnPos)
         if res.dy ~= nil then
             pos.y = pos.y + res.dy
         end
-        local tiles = TilesInShape( chunkArea, pos, res.shape, res.aspectRatio, res.size);
+        local tiles = TilesInShape( chunkArea, pos, res.shape, res.height, res.width);
         if (res.type ~= nil) then
             CreateResources( surface, tiles, res.amount, res.type, res.mixedOres );
         elseif (res.name ~= nil) then

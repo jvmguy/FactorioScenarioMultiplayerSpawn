@@ -8,7 +8,7 @@ commands.add_command("kit", "give a start kit", function(command)
             target = game.players[command.parameter]
         end
         if target ~= nil then
-            GivePlayerStarterItems(player);
+            GivePlayerStarterItems(target);
             player.print("gave a kit to " .. target.name);
             target.print("you have been given a start kit");
         else

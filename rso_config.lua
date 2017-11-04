@@ -50,6 +50,6 @@ ignoreMapGenSettings = true -- stops the default behaviour of reading map gen se
 
 fluidResourcesFactor = 20 -- temporary factor for calculation of resource %-ages for fluids
 
-useResourceCollisionDetection = true	-- enables avoidace calculations to reduce ores overlaping of each other
+useResourceCollisionDetection = false	-- enables avoidace calculations to reduce ores overlaping of each other
 resourceCollisionDetectionRatio = 0.8	-- at least this much of ore field needs to be placable to spawn it
 resourceCollisionFieldSkip = true		-- determines if ore field should be skipped completely if placement based on ratio failed

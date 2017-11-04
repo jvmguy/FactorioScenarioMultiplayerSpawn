@@ -8,8 +8,8 @@ end
 function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth, moatWidth)
 
     local dirtTiles = {}
-    for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
-        for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
+    for i=chunkArea.left_top.x,chunkArea.right_bottom.x-1,1 do
+        for j=chunkArea.left_top.y,chunkArea.right_bottom.y-1,1 do
 
             local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
             local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
@@ -36,8 +36,8 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
     -- create the moat
     if (moatWidth>0) then
         local waterTiles = {}
-        for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
-            for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
+        for i=chunkArea.left_top.x,chunkArea.right_bottom.x-1,1 do
+            for j=chunkArea.left_top.y,chunkArea.right_bottom.y-1,1 do
     
                 local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
                 local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
@@ -56,7 +56,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
     local water = scenario.config.separateSpawns.water;
     if water ~= nil then
         local waterTiles = {}   
-        local shapeTiles = TilesInShape( chunkArea, {x=centerPos.x + water.x, y=centerPos.y + water.y }, water.shape, water.aspectRatio, water.size );
+        local shapeTiles = TilesInShape( chunkArea, {x=centerPos.x + water.x, y=centerPos.y + water.y }, water.shape, water.height, water.width );
         for _,tile in pairs(shapeTiles) do
             table.insert(waterTiles, {name = "water", position ={tile.x,tile.y}})
         end
@@ -82,8 +82,7 @@ function CreateTeleporter(surface, teleporterPosition, dest)
     for _,item in pairs(scenario.config.teleporter.startItems) do
         car.insert(item);
     end
-    -- resource extraction    
-    table.insert(global.portal, { position=spawnPos, car = car, dest=dest });
+    table.insert(global.portal, { dest=dest, unit_number = car.unit_number });
 end
 
 function TeleportPlayer( player )
@@ -91,7 +90,7 @@ function TeleportPlayer( player )
     if car ~= nil then
         local dest = nil
         for _,portal in pairs(global.portal) do
-            if car == portal.car then
+            if car.unit_number == portal.unit_number then
                 if portal.dest == nil then
                     -- teleport from silo back to player spawn.
                     player.print("teleport back to player spawn");
@@ -181,18 +180,18 @@ function SurfaceSettings(surface)
     game.player.print("surface seed=" .. settings.seed);
 end
 
-function TilesInShape( chunkArea, pos, shape, aspectRatio, size )
+function TilesInShape( chunkArea, pos, shape, height, width )
     local tiles = {}
-    if aspectRatio == nil then
-        aspectRatio = 1.0;
+    local ysize = height
+    local xsize = width;
+    if width == nil then
+        xsize = height;
     end
-    local xsize = size * aspectRatio
-    local ysize = size
     local xRadiusSq = (xsize/2)^2;
     local yRadiusSq = (ysize/2)^2;
-    local midPointY = math.floor(size/2)
+    local midPointY = math.floor(ysize/2)
     local midPointX = math.floor(xsize/2)
-    for y=1, size do
+    for y=1, ysize do
         for x=1, xsize do
             local inShape = false;
             if (shape == "ellipse") then
