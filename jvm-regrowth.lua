@@ -157,11 +157,7 @@ local function markForForcedCollection( center, chunkRadius )
                 removeFromLRU(mapEntry);
             end
             mapEntry.status = CS_FORCE;
-<<<<<<< HEAD
-            addToLRU(mapEntry);
-=======
             addToLRU(mapEntry, 0);
->>>>>>> master
         end
     end
 end
@@ -197,11 +193,7 @@ local function refreshPlayerArea()
     local player = game.connected_players[global.regrow.playerRefreshIndex] 
     if (player) then
         local chunkPos = tileToChunk(player.position)
-<<<<<<< HEAD
-        markRange(chunkPos, 4)
-=======
         markRange(chunkPos, 4, defaultExpiry())
->>>>>>> master
     end
 
 end
@@ -213,10 +205,7 @@ local function removeGarbageChunks()
     local removed = 0
     local map = global.regrow.map
     local lru = global.regrow.lru
-<<<<<<< HEAD
-=======
     local expiry = defaultExpiry();
->>>>>>> master
     while true do
         local mapEntry = jvmHeap.head(lru);
         if mapEntry == nil or mapEntry.lruTime > time or count > config.maxGarbage then

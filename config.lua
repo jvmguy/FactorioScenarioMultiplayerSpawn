@@ -41,7 +41,7 @@ scenario.config.welcomeMessages = {
 }
 
 scenario.config.regrow = {
-    enabled=true
+    enabled=false
 }
 
 scenario.config.bots = {
