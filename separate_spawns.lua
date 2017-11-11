@@ -164,7 +164,12 @@ function RemovePlayer(player)
 
     -- If a uniqueSpawn was created for the player, mark it as unused.
     if (global.uniqueSpawns[player.name] ~= nil) then
-        if scenario.config.regrow.enabled then
+        if scenario.config.wipespawn.enabled then
+            local spawnPos = global.uniqueSpawns[player.name];
+            SendBroadcastMsg(player.name .. " base was reclaimed.");
+            wipespawn.markForRemoval(spawnPos)
+            global.uniqueSpawns[player.name] = nil
+        elseif scenario.config.regrow.enabled then
             local spawnPos = global.uniqueSpawns[player.name];
             SendBroadcastMsg(player.name .. " base was abandoned.");
             regrow.markForRemoval(spawnPos)

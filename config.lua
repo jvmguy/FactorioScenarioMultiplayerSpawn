@@ -40,6 +40,10 @@ scenario.config.welcomeMessages = {
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
 }
 
+scenario.config.wipespawn = {
+    enabled=true
+}
+
 scenario.config.regrow = {
     enabled=false
 }
@@ -224,16 +228,16 @@ scenario.config.separateSpawns = {
     preferFar = false,
     firstSpawnPoint = 20,
     numSpawnPoints = 36,
-    -- extraSpawn = 31,    -- admin spawn really far away
+    -- extraSpawn = 60,    -- admin spawn really far away
     spacing = 1000,
     
 -- x = right, left
 -- y = up, down
 
-    land = 152,
+    land = 88,
     trees = 2,  -- included in the land
     moat = 8,   -- additional to land
-    size = 160,  -- should be land + moat
+    size = 96,  -- should be land + moat
 	
 	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
 	
