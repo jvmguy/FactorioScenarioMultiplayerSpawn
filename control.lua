@@ -41,13 +41,14 @@ require("bps")
 require("statuscommand")
 require("kitcommand")
 require("rgcommand")
+require("spawnscommand")
 toxicJungle = require("ToxicJungle")
 
 spawnGenerator = require("FermatSpiralSpawns");
 -- spawnGenerator = require("RiverworldSpawns");
 
 regrow = require("jvm-regrowth");
-
+wipespawn = require("jvm-wipespawn");
 
 --------------------------------------------------------------------------------
 -- Rocket Launch Event Code
@@ -133,7 +134,9 @@ script.on_init(function(event)
         game.forces[MAIN_FORCE].research_all_technologies()
     end
 
-    if scenario.config.regrow.enabled then
+    if scenario.config.wipespawn.enabled then
+        wipespawn.init()
+    elseif scenario.config.regrow.enabled then
         regrow.init()
     end
     
@@ -155,7 +158,9 @@ end)
 ----------------------------------------
 script.on_event(defines.events.on_chunk_generated, function(event)
     local shouldGenerateResources = true
-    if scenario.config.regrow.enabled then
+    if scenario.config.wipespawn.enabled then
+        regrow.onChunkGenerated(event)
+    elseif scenario.config.regrow.enabled then
         shouldGenerateResources = regrow.shouldGenerateResources(event);
         regrow.onChunkGenerated(event)
     end
@@ -302,7 +307,9 @@ script.on_event(defines.events.on_built_entity, function(event)
 end)
 
 script.on_event(defines.events.on_tick, function(event)
-    if scenario.config.regrow.enabled then
+    if scenario.config.wipespawn.enabled then
+        wipespawn.onTick(event)
+    elseif scenario.config.regrow.enabled then
         regrow.onTick(event)
     end
 end)

@@ -40,8 +40,12 @@ scenario.config.welcomeMessages = {
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
 }
 
-scenario.config.regrow = {
+scenario.config.wipespawn = {
     enabled=true
+}
+
+scenario.config.regrow = {
+    enabled=false
 }
 
 scenario.config.bots = {
