@@ -94,10 +94,9 @@ end
 function M.InitSpawnPoint(n)
    local a = SpawnPoint(n)
    local spawn = CenterInChunk(a);
-   spawn.generated = false;
+   spawn.createdFor = nil;
    spawn.used = false;
    spawn.seq = n
-   table.insert(global.unusedSpawns, spawn );
    table.insert(global.allSpawns, spawn)
 end
 

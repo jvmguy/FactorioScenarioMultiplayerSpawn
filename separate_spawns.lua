@@ -153,6 +153,16 @@ function SeparateSpawnsGenerateChunk(event)
     end
 end
 
+function GetUniqueSpawn(name)
+    for _,spawn in pairs(global.allSpawns) do
+        if spawn ~= nil and spawn.createdFor == name then
+            return spawn
+        end
+    end
+    return nil;
+end 
+
+
 function RemovePlayer(player)
 
     -- TODO dump items into a chest.
@@ -162,21 +172,22 @@ function RemovePlayer(player)
         global.playerSpawns[player.name] = nil;
     end
 
+    local uniqueSpawn = GetUniqueSpawn(player.name);
+    
     -- If a uniqueSpawn was created for the player, mark it as unused.
-    if (global.uniqueSpawns[player.name] ~= nil) then
+    if (uniqueSpawn ~= nil) then
         if scenario.config.wipespawn.enabled then
-            local spawnPos = global.uniqueSpawns[player.name];
             SendBroadcastMsg(player.name .. " base was reclaimed.");
-            wipespawn.markForRemoval(spawnPos)
-            global.uniqueSpawns[player.name] = nil
+            wipespawn.markForRemoval(uniqueSpawn)
+            uniqueSpawn.used = false;
+            uniqueSpawn.createdFor = nil;
         elseif scenario.config.regrow.enabled then
-            local spawnPos = global.uniqueSpawns[player.name];
             SendBroadcastMsg(player.name .. " base was abandoned.");
-            regrow.markForRemoval(spawnPos)
-            global.uniqueSpawns[player.name] = nil
+            uniqueSpawn.used = false;
+            uniqueSpawn.createdFor = nil;
         else
-            table.insert(global.unusedSpawns, global.uniqueSpawns[player.name]);
-            global.uniqueSpawns[player.name] = nil;
+            uniqueSpawn.used = false;
+            uniqueSpawn.createdFor = nil;
             SendBroadcastMsg(player.name .. " base was freed up.");
         end
     end
@@ -215,8 +226,11 @@ end
 
 
 function CreateNewSharedSpawn(player)
+    local playerSpawn = global.playerSpawns[player.name];
     global.sharedSpawns[player.name] = {openAccess=true,
-                                    position=global.playerSpawns[player.name],
+                                    position={x=playerSpawn.x,y=playerSpawn.y},
+                                    surface=playerSpawn.surface,
+                                    seq=playerSpawn.seq,
                                     players={}}
 end
 
@@ -264,6 +278,17 @@ function GetNumberOfAvailableSharedSpawns()
     return count
 end
 
+function GetNumberOfAvailableSoloSpawns()
+    local count = 0
+
+    for _,spawn in pairs(global.allSpawns) do
+        if spawn ~= nil and not spawn.used then
+            count = count+1
+        end
+    end
+
+    return count
+end
 
 --------------------------------------------------------------------------------
 -- NON-EVENT RELATED FUNCTIONS
@@ -280,23 +305,20 @@ function InitSpawnGlobalsAndForces()
     if (global.playerSpawns == nil) then
         global.playerSpawns = {}
     end
-    if (global.uniqueSpawns == nil) then
-        global.uniqueSpawns = {}
-    end
     if (global.sharedSpawns == nil) then
         global.sharedSpawns = {}
     end
-    if (global.unusedSpawns == nil) then
-        global.unusedSpawns = {}
-        -- InitSpawnPoint( 0, 0, 0);
-        for n = 1,scenario.config.separateSpawns.numSpawnPoints do
-              spawnGenerator.InitSpawnPoint( n )
-        end
-        -- another spawn for admin. admin gets the last spawn
-		if scenario.config.separateSpawns.extraSpawn ~= nil then
-	        spawnGenerator.InitSpawnPoint( scenario.config.separateSpawns.extraSpawn);
-		end
+
+    -- InitSpawnPoint( 0, 0, 0);
+    for n = 1,scenario.config.separateSpawns.numSpawnPoints do
+          spawnGenerator.InitSpawnPoint( n )
+          global.lastSpawn = n
     end
+    -- another spawn for admin. admin gets the last spawn
+	if scenario.config.separateSpawns.extraSpawn ~= nil then
+        spawnGenerator.InitSpawnPoint( scenario.config.separateSpawns.extraSpawn);
+	end
+	
     if (global.playerCooldowns == nil) then
         global.playerCooldowns = {}
     end
@@ -310,6 +332,17 @@ function InitSpawnGlobalsAndForces()
     SetCeaseFireBetweenAllForces()
     AntiGriefing(gameForce)
     SetForceGhostTimeToLive(gameForce)
+end
+
+function AddSpawn()
+    -- used as a command to expand in-game number of spawns
+    -- if extraSpawn is configured, this does not work correctly
+    local n = global.lastSpawn + 1;
+    if scenario.config.separateSpawns.extraSpawn ~= nil and n == scenario.config.separateSpawns.extraSpawn then
+        n = n + 1
+    end
+    spawnGenerator.InitSpawnPoint( n )
+    global.lastSpawn = n;
 end
 
 function CheckIfInChunk(x, y, chunkArea)
@@ -372,15 +405,15 @@ end
 
 function DoesPlayerHaveCustomSpawn(player)
     for name,spawnPos in pairs(global.playerSpawns) do
-        if (player.name == name) then
+        if (player.name == name and spawnPos ~= nil) then
             return true
         end
     end
     return false
 end
 
-function ChangePlayerSpawn(player, pos)
-    global.playerSpawns[player.name] = pos
+function ChangePlayerSpawn(player, pos, surfaceName, seq)
+    global.playerSpawns[player.name] = { x=pos.x, y=pos.y, surface=surfaceName, seq=seq }
 end
 
 function SendPlayerToNewSpawnAndCreateIt(player, spawn)
@@ -394,7 +427,6 @@ function SendPlayerToNewSpawnAndCreateIt(player, spawn)
 
     -- If we get a valid spawn point, setup the area
     if ((spawn.x ~= 0) and (spawn.y ~= 0)) then
-        global.uniqueSpawns[player.name] = spawn
         ClearNearbyEnemies(player, SAFE_AREA_TILE_DIST)
     else      
         DebugPrint("THIS SHOULD NOT EVER HAPPEN! Spawn failed!")
@@ -409,61 +441,3 @@ function SendPlayerToSpawn(player)
         player.teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), game.surfaces[GAME_SURFACE_NAME])
     end
 end
-
-function SendPlayerToRandomSpawn(player)
-    local numSpawns = TableLength(global.uniqueSpawns)
-    local rndSpawn = math.random(0,numSpawns)
-    local counter = 0
-
-    if (rndSpawn == 0) then
-        player.teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), game.surfaces[GAME_SURFACE_NAME])
-    else
-        counter = counter + 1
-        for name,spawnPos in pairs(global.uniqueSpawns) do
-            if (counter == rndSpawn) then
-                player.teleport(spawnPos, game.surfaces[GAME_SURFACE_NAME])
-                break
-            end
-            counter = counter + 1
-        end 
-    end
-end
-
-
-
-
---------------------------------------------------------------------------------
--- UNUSED CODE
--- Either didn't work, or not used or not tested....
---------------------------------------------------------------------------------
-
-
-
--- local tick_counter = 0
--- function ShareVision(event)
---     if (tick_counter > (TICKS_PER_SECOND*30)) then
---         ShareVisionForAllForces()
---         tick_counter = 0
---     end
---     tick_counter = tick_counter + 1
--- end
-
--- function CreatePlayerCustomForce(player)
---     local newForce = nil
-    
---     -- Check if force already exists
---     if (game.forces[player.name] ~= nil) then
---         return game.forces[player.name]
-
---     -- Create a new force using the player's name
---     elseif (TableLength(game.forces) < MAX_FORCES) then
---         newForce = game.create_force(player.name)
---         player.force = newForce
---         SetCeaseFireBetweenAllForces()        
---     else
---         player.force = MAIN_FORCE
---         player.print("Sorry, no new teams can be created. You were assigned to the default team instead.")
---     end
-
---     return newForce
--- end

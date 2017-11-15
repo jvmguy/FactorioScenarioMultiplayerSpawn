@@ -133,23 +133,28 @@ function DisplaySpawnOptions(player)
                     caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
     ApplyStyle(sGui.normal_spawn_spacer, my_spacer_style)
 
-
-    -- The main spawning options. Solo near and solo far.
---    sGui.add{name = "isolated_spawn_near",
---                    type = "button",
---                    caption="Solo Spawn (Near)"}
-    sGui.add{name = "isolated_spawn_far",
-                    type = "button",
-                    caption="Solo Spawn (Far)"}
-    sGui.add{name = "isolated_spawn_lbl1", type = "label",
-                    caption="You are spawned in a new area, with some starting resources."}
-    sGui.add{name = "isolated_spawn_lbl2", type = "label",
-                    caption="You will still be part of the default team."}
-    sGui.add{name = "isolated_spawn_spacer", type = "label",
-                    caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
-    ApplyStyle(sGui.isolated_spawn_lbl1, my_label_style)
-    ApplyStyle(sGui.isolated_spawn_lbl2, my_label_style)
-    ApplyStyle(sGui.isolated_spawn_spacer, my_spacer_style)
+    if GetNumberOfAvailableSoloSpawns() > 0 then  
+        -- The main spawning options. Solo near and solo far.
+    --    sGui.add{name = "isolated_spawn_near",
+    --                    type = "button",
+    --                    caption="Solo Spawn (Near)"}
+        sGui.add{name = "isolated_spawn_far",
+                        type = "button",
+                        caption="Solo Spawn (Far)"}
+        sGui.add{name = "isolated_spawn_lbl1", type = "label",
+                        caption="You are spawned in a new area, with some starting resources."}
+        sGui.add{name = "isolated_spawn_lbl2", type = "label",
+                        caption="You will still be part of the default team."}
+        sGui.add{name = "isolated_spawn_spacer", type = "label",
+                        caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
+        ApplyStyle(sGui.isolated_spawn_lbl1, my_label_style)
+        ApplyStyle(sGui.isolated_spawn_lbl2, my_label_style)
+        ApplyStyle(sGui.isolated_spawn_spacer, my_spacer_style)
+    else
+        sGui.add{name = "isolated_spawn_lbl1", type = "label",
+                        caption="There are no more solo spawns available."}
+        ApplyStyle(sGui.normal_spawn_lbl1, my_warning_style)
+    end
 
 
     -- Spawn options to join another player's base.
@@ -240,7 +245,7 @@ function SpawnOptsGuiClick(event)
     if (buttonClicked == "default_spawn_btn") then
         CreateSpawnCtrlGui(player)
         GivePlayerStarterItems(player)
-        ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME))
+        ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME, 0)
         SendPlayerToSpawn(player)
         SendBroadcastMsg(player.name .. " joined the main force!")
         ChartArea(player.force, player.position, 4)
@@ -251,37 +256,36 @@ function SpawnOptsGuiClick(event)
         local newSpawn = nil;
         -- Create a new spawn point
         if player.index == 1 and scenario.config.separateSpawns.extraSpawn ~= nil then
-            newSpawn = global.unusedSpawns[scenario.config.separateSpawns.numSpawnPoints];
-            global.unusedSpawns[scenario.config.separateSpawns.numSpawnPoints]= nil;
+            newSpawn = global.allSpawns[#global.allSpawns];
         end
         if newSpawn == nil then
-            newSpawn = PickRandomSpawn( global.unusedSpawns, buttonClicked == "isolated_spawn_far");
+            newSpawn = PickRandomSpawn( global.allSpawns, buttonClicked == "isolated_spawn_far");
         end
         if newSpawn == nil then
             -- no spawn of the type requested. just pick one
-            newSpawn = PickRandomSpawn( global.unusedSpawns, buttonClicked ~= "isolated_spawn_far");
+            newSpawn = PickRandomSpawn( global.allSpawns, buttonClicked ~= "isolated_spawn_far");
         end
         
         
         GivePlayerStarterItems(player)
         if newSpawn == nil then
             player.print("Sorry! You have been assigned to the default spawn.")
-            ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME))
+            ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME, 0)
             SendPlayerToSpawn(player)
             SendBroadcastMsg(player.name .. " joined the default spawn!")
             ChartArea(player.force, player.position, 4)
         else
             local used = newSpawn.used;
             newSpawn.used = true;
-            global.uniqueSpawns[player.name] = newSpawn
+            newSpawn.createdFor = player.name
 
             if used then
-                ChangePlayerSpawn(player, newSpawn)
+                ChangePlayerSpawn(player, newSpawn, GAME_SURFACE_NAME, newSpawn.seq)
                 SendPlayerToSpawn(player)
                 player.print("Sorry! You have been assigned to an abandoned base! This is done to keep map size small.")
                 SendBroadcastMsg(player.name .. " joined an abandoned base!")
             else
-                ChangePlayerSpawn(player, newSpawn)
+                ChangePlayerSpawn(player, newSpawn, GAME_SURFACE_NAME, newSpawn.seq)
                 SendPlayerToNewSpawnAndCreateIt(player, newSpawn)
                 player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!")
                 SendBroadcastMsg(player.name .. " joined a new base!")
@@ -336,7 +340,7 @@ function PickRandomSpawn( t, far )
   -- local player = game.players[1];
   local candidates = {}
   for key, spawnPos in pairs(t) do
-    if spawnPos ~= nil and SpawnIsCompatible( spawnPos, far ) then
+    if spawnPos ~= nil and (not spawnPos.used) and SpawnIsCompatible( spawnPos, far ) then
         spawnPos.key = key;
 	if scenario.config.separateSpawns.preferFar then
             spawnPos.dist = DistanceFromUsedSpawns(spawnPos)
@@ -359,7 +363,6 @@ function PickRandomSpawn( t, far )
   if ncandidates > 0 then
     local pick = math.random(1,ncandidates)
     spawnPos = candidates[pick];
-    t[spawnPos.key] = nil;
     -- player.print("chose " .. spawnPos.x .. "," .. spawnPos.y .. " distance " .. spawnPos.dist);
     return spawnPos;
   end
@@ -420,7 +423,7 @@ function SharedSpwnOptsGuiClick(event)
         for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
             if (buttonClicked == spawnName) then
                 CreateSpawnCtrlGui(player)
-                ChangePlayerSpawn(player,sharedSpawn.position)
+                ChangePlayerSpawn(player,sharedSpawn.position, GAME_SURFACE_NAME, sharedSpawn.seq)
                 SendPlayerToSpawn(player)
                 GivePlayerStarterItems(player)
                 table.insert(sharedSpawn.players, player.name)
@@ -452,24 +455,6 @@ local function IsSharedSpawnActive(player)
 end
 
 
--- Get a random warp point to go to
-function GetRandomSpawnPoint()
-    local numSpawnPoints = TableLength(global.sharedSpawns)
-    if (numSpawnPoints > 0) then
-        local randSpawnNum = math.random(1,numSpawnPoints)
-        local counter = 1
-        for _,sharedSpawn in pairs(global.sharedSpawns) do
-            if (randSpawnNum == counter) then
-                return sharedSpawn.position
-            end
-            counter = counter + 1
-        end
-    end
-
-    return {x=0,y=0}
-end
-
-
 -- This is a toggle function, it either shows or hides the spawn controls
 function ExpandSpawnCtrlGui(player, tick)
     local spwnCtrlPanel = player.gui.left["spwn_ctrl_panel"]
@@ -485,7 +470,7 @@ function ExpandSpawnCtrlGui(player, tick)
         spwnCtrls.horizontal_scroll_policy = "never"
 
         if ENABLE_SHARED_SPAWNS then
-            if (global.uniqueSpawns[player.name] ~= nil) then
+            if (GetUniqueSpawn(player.name) ~= nil) then
                 -- This checkbox allows people to join your base when they first
                 -- start the game.
                 spwnCtrls.add{type="checkbox", name="accessToggle",
@@ -555,7 +540,8 @@ function SpawnCtrlGuiClick(event)
     -- Sets a new respawn point and resets the cooldown.
     if (name == "setRespawnLocation") then
         if DoesPlayerHaveCustomSpawn(player) then
-            ChangePlayerSpawn(player, player.position)
+            local playerSpawn = global.playerSpawns[player.name];
+            ChangePlayerSpawn(player, player.position, player.surface.name, playerSpawn.seq)
             global.playerCooldowns[player.name].setRespawn = event.tick
             ExpandSpawnCtrlGui(player, event.tick) 
             player.print("Re-spawn point updated!")

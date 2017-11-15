@@ -41,6 +41,7 @@ require("bps")
 require("statuscommand")
 require("kitcommand")
 require("rgcommand")
+require("spawnscommand")
 toxicJungle = require("ToxicJungle")
 
 -- spawnGenerator = require("FermatSpiralSpawns");
