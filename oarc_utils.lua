@@ -521,7 +521,7 @@ end
 -- Returns the number of items that were successfully transferred.
 -- Returns -1 if item not available.
 -- Returns -2 if can't place item into destInv (ERROR)
-function TransferItems(srcInv, destEntity, itemStack)
+function TransferItems(result, srcInv, destEntity, itemStack)
     -- Check if item is in srcInv
     if (srcInv.get_item_count(itemStack.name) == 0) then
         return -1
@@ -533,18 +533,21 @@ function TransferItems(srcInv, destEntity, itemStack)
     end
     
     -- Insert items
+    local itemTotal = srcInv.get_item_count(itemStack.name)
     local itemsRemoved = srcInv.remove(itemStack)
     itemStack.count = itemsRemoved
+    result.autofillItemRemaining = itemTotal - itemsRemoved
+    result.autofillItemName = itemStack.name
     return destEntity.insert(itemStack)
 end
 
 -- Attempts to transfer at least some of one type of item from an array of items.
 -- Use this to try transferring several items in order
 -- It returns once it successfully inserts at least some of one type.
-function TransferItemMultipleTypes(srcInv, destEntity, itemNameArray, itemCount)
+function TransferItemMultipleTypes(result, srcInv, destEntity, itemNameArray, itemCount)
     local ret = 0
     for _,itemName in pairs(itemNameArray) do
-        ret = TransferItems(srcInv, destEntity, {name=itemName, count=itemCount})
+        ret = TransferItems(result, srcInv, destEntity, {name=itemName, count=itemCount})
         if (ret > 0) then
             return ret -- Return the value succesfully transferred
         end
@@ -552,41 +555,84 @@ function TransferItemMultipleTypes(srcInv, destEntity, itemNameArray, itemCount)
     return ret -- Return the last error code
 end
 
--- Autofills a turret with ammo
-function AutofillTurret(player, turret)
-    local mainInv = player.get_inventory(defines.inventory.player_main)
+local vehicleFuel = {"rocket-fuel", "solid-fuel", "raw-wood", "coal"}
+local machineGunAmmo = {"uranium-rounds-magazine", "piercing-rounds-magazine","firearm-magazine"}
+local tankCannonAmmo = {"explosive-uranium-cannon-shell", "uranium-cannon-shell", "explosive-cannon-shell", "cannon-shell"}
+local tankFlamethrowerAmmo = {"flamethrower-ammo"}
 
-    -- Attempt to transfer some ammo
-    local ret = TransferItemMultipleTypes(mainInv, turret, {"uranium-rounds-magazine", "piercing-rounds-magazine", "firearm-magazine"}, AUTOFILL_TURRET_AMMO_QUANTITY)
+local localizedName = {
+    -- fuel
+    ["rocket-fuel"] = "Rocket Fuel", 
+    ["solid-fuel"] = "Solid Fuel",
+    ["raw-wood"] = "Raw Wood",
+    ["coal"] = "Coal",
 
+    -- machine gun / turret ammo
+    ["uranium-rounds-magazine"] = "Uranium Rounds Magazine", 
+    ["piercing-rounds-magazine"] = "Piercing Rounds Magazine",
+    ["firearm-magazine"] = "Firearm Magazine",
+
+    -- tank gun ammo
+    ["explosive-uranium-cannon-shell"] = "Explosive Uranium Cannon Shell",
+    ["uranium-cannon-shell"] = "Uranium Cannon Shell",
+    ["explosive-cannon-shell"] = "Explosive Cannon Shell",
+    ["cannon-shell"] = "Cannon Shell",
+    
+    -- flamethrower ammo
+    ["flamethrower-ammo"] = "Flamethrower Ammo"
+}
+
+local function ShowAutofillResult( ret, result, itemKind, position, offset)
     -- Check the result and print the right text to inform the user what happened.
     if (ret > 0) then
         -- Inserted ammo successfully
-        -- FlyingText("Inserted ammo x" .. ret, turret.position, my_color_red, player.surface)
+        local color = {r=255,g=255,b=255}
+        local ammoName = localizedName[ result.autofillItemName ];
+        if ammoName ~= nil then
+            FlyingText("+" .. ret .. " " .. ammoName .. " (" .. result.autofillItemRemaining .. ")", { position.x, position.y + offset}, color)
+        end
     elseif (ret == -1) then
-        FlyingText("Out of ammo!", turret.position, my_color_red, player.surface) 
+        local color = {r=255,g=255,b=255}
+        FlyingText("No " .. itemKind .. " in Main Inventory to Transfer", { position.x, position.y + offset}, color) 
     elseif (ret == -2) then
-        FlyingText("Autofill ERROR! - Report this bug!", turret.position, my_color_red, player.surface)
+        local color = {r=255,g=255,b=255}
+        FlyingText("Autofill ERROR! - Report this bug!", { position.x, position.y + offset}, color )
     end
+end
+
+-- Autofills a turret with ammo
+function AutofillTurret(player, turret)
+    local mainInv = player.get_inventory(defines.inventory.player_main)
+    local result = {}
+
+    -- Attempt to transfer some ammo
+    local ret = TransferItemMultipleTypes(result, mainInv, turret, machineGunAmmo, AUTOFILL_TURRET_AMMO_QUANTITY)
+    ShowAutofillResult( ret, result, "Ammo", turret.position, 0 );
 end
 
 -- Autofills a vehicle with fuel, bullets and shells where applicable
 function AutoFillVehicle(player, vehicle)
     local mainInv = player.get_inventory(defines.inventory.player_main)
+    local result = {}
 
     -- Attempt to transfer some fuel
     if ((vehicle.name == "car") or (vehicle.name == "tank") or (vehicle.name == "locomotive")) then
-        TransferItemMultipleTypes(mainInv, vehicle, {"rocket-fuel", "solid-fuel", "raw-wood", "coal"}, 50)
+      local ret = TransferItemMultipleTypes(result, mainInv, vehicle, vehicleFuel, AUTOFILL_FUEL_QUANTITY)
+      ShowAutofillResult( ret, result, "Fuel", vehicle.position, 0);
     end
 
     -- Attempt to transfer some ammo
     if ((vehicle.name == "car") or (vehicle.name == "tank")) then
-        TransferItemMultipleTypes(mainInv, vehicle, {"uranium-rounds-magazine", "piercing-rounds-magazine","firearm-magazine"}, AUTOFILL_TURRET_AMMO_QUANTITY)
+      local ret = TransferItemMultipleTypes(result, mainInv, vehicle, machineGunAmmo, AUTOFILL_MACHINEGUN_AMMO_QUANTITY)
+      ShowAutofillResult( ret, result, "Ammo", vehicle.position, 1 );
     end
 
     -- Attempt to transfer some tank shells
     if (vehicle.name == "tank") then
-        TransferItemMultipleTypes(mainInv, vehicle, {"explosive-cannon-shell", "cannon-shell"}, AUTOFILL_TURRET_AMMO_QUANTITY)
+      local ret = TransferItemMultipleTypes(result, mainInv, vehicle, tankCannonAmmo, AUTOFILL_CANNON_AMMO_QUANTITY)
+      ShowAutofillResult( ret, result, "Shells", vehicle.position, 2);
+      local ret = TransferItemMultipleTypes(result, mainInv, vehicle, tankFlamethrowerAmmo, AUTOFILL_FLAMETHROWER_AMMO_QUANTITY)
+      ShowAutofillResult( ret, result, "Flamethrower Ammo", vehicle.position, 3);
     end
 end
 

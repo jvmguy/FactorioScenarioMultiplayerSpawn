@@ -227,7 +227,7 @@ scenario.config.separateSpawns = {
     --     most distant base is sqrt(25+42)*spacing = 8000
     preferFar = false,
     firstSpawnPoint = 20,
-    numSpawnPoints = 36,
+    numSpawnPoints = 20,
     -- extraSpawn = 60,    -- admin spawn really far away
     spacing = 1000,
     
@@ -386,6 +386,10 @@ RESOURCE_DIST_BONUS = 3
 --------------------------------------------------------------------------------
 
 AUTOFILL_TURRET_AMMO_QUANTITY = 10
+AUTOFILL_FUEL_QUANTITY=50
+AUTOFILL_MACHINEGUN_AMMO_QUANTITY=20
+AUTOFILL_CANNON_AMMO_QUANTITY=20
+AUTOFILL_FLAMETHROWER_AMMO_QUANTITY=20
 
 --------------------------------------------------------------------------------
 -- Use rso_config and rso_resourece_config for RSO config settings
