@@ -233,10 +233,10 @@ scenario.config.separateSpawns = {
 -- x = right, left
 -- y = up, down
 
-    land = 152,
+    land = 88,
     trees = 2,  -- included in the land
     moat = 8,   -- additional to land
-    size = 160,  -- should be land + moat
+    size = 96,  -- should be land + moat
 	
 	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
 	
@@ -385,6 +385,10 @@ RESOURCE_DIST_BONUS = 3
 --------------------------------------------------------------------------------
 
 AUTOFILL_TURRET_AMMO_QUANTITY = 10
+AUTOFILL_FUEL_QUANTITY=50
+AUTOFILL_MACHINEGUN_AMMO_QUANTITY=20
+AUTOFILL_CANNON_AMMO_QUANTITY=20
+AUTOFILL_FLAMETHROWER_AMMO_QUANTITY=20
 
 --------------------------------------------------------------------------------
 -- Use rso_config and rso_resourece_config for RSO config settings
