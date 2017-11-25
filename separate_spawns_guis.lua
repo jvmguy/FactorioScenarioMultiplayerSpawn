@@ -256,7 +256,11 @@ function SpawnOptsGuiClick(event)
         local newSpawn = nil;
         -- Create a new spawn point
         if player.index == 1 and scenario.config.separateSpawns.extraSpawn ~= nil then
-            newSpawn = global.allSpawns[#global.allSpawns];
+            if (scenario.config.separateSpawns.extraSpawn < #global.allSpawns) then
+                newSpawn = global.allSpawns[scenario.config.separateSpawns.extraSpawn];
+            else
+                newSpawn = global.allSpawns[#global.allSpawns];
+            end
         end
         if newSpawn == nil then
             newSpawn = PickRandomSpawn( global.allSpawns, buttonClicked == "isolated_spawn_far");

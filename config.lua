@@ -63,7 +63,7 @@ scenario.config.silo = {
 }
 
 scenario.config.research = {
-    coalLiquefactionResearched = true,
+    coalLiquefactionResearched = false,
 }
 
 scenario.config.startKit = {
@@ -97,7 +97,7 @@ scenario.config.startKit = {
         {name = "steam-engine", count = 1},
         {name = "pipe", count=5},
         {name = "pipe-to-ground", count=2},
-        {name = "small-electric-pole", count = 20},
+        {name = "small-electric-pole", count = 10},
         {name = "inserter", count=20},
         {name = "assembling-machine-1", count=9},
         {name = "assembling-machine-3", count=1},
@@ -253,9 +253,9 @@ scenario.config.separateSpawns = {
         { shape="rect", type="copper-ore",   x=0,  y=-7,  height=21, width=36,  amount=3000,  },
         { shape="rect", type="iron-ore",     x=0,  y =17, height=21, width=36,  amount=3000,  },
         
---        { shape="rect", type="crude-oil", x=42, y=-6, height=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=42, y= 0, height=1, amount=100000,  },
---        { shape="rect", type="crude-oil", x=42, y= 6, height=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=42, y=-6, height=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=42, y= 0, height=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=42, y= 6, height=1, amount=1000000,  },
         
     },
 }
@@ -274,7 +274,7 @@ scenario.config.riverworld = {
     
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    -- freezeTime = 0.0,   -- see https://wiki.factorio.com/Game-day
+    freezeTime = 0.0,   -- see https://wiki.factorio.com/Game-day
 }
 
 

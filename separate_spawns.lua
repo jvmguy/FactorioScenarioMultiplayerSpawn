@@ -315,7 +315,7 @@ function InitSpawnGlobalsAndForces()
           global.lastSpawn = n
     end
     -- another spawn for admin. admin gets the last spawn
-	if scenario.config.separateSpawns.extraSpawn ~= nil then
+	if scenario.config.separateSpawns.extraSpawn ~= nil and scenario.config.separateSpawns.extraSpawn >  scenario.config.separateSpawns.numSpawnPoints then
         spawnGenerator.InitSpawnPoint( scenario.config.separateSpawns.extraSpawn);
 	end
 	
