@@ -93,6 +93,7 @@ end
 -- On Init - only runs once the first 
 --   time the game starts
 ----------------------------------------
+function jvm.on_init(event)
     -- Configures the map settings for enemies
     -- This controls evolution growth factors and enemy expansion settings.
     if ENABLE_RSO then
@@ -137,17 +138,20 @@ end
     
 end
 
+Event.register(-1, jvm.on_init)
     
 
 ----------------------------------------
 -- Freeplay rocket launch info
 -- Slightly modified for my purposes
 ----------------------------------------
+function jvm.on_rocket_launch(event)
     if FRONTIER_ROCKET_SILO_MODE then
         RocketLaunchEvent(event)
     end
 end
 
+Event.register(defines.events.on_rocket_launched, jvm.on_rocket_launch)
 
 ----------------------------------------
 -- Chunk Generation
@@ -196,6 +200,7 @@ function jvm.on_chunk_generated(event)
     end
 end
 
+Event.register(defines.events.on_chunk_generated, jvm.on_chunk_generated)
 
 ----------------------------------------
 -- Gui Click
