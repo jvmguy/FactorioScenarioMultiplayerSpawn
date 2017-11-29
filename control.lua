@@ -50,6 +50,15 @@ spawnGenerator = require("RiverworldSpawns");
 regrow = require("jvm-regrowth");
 wipespawn = require("jvm-wipespawn");
 
+function playerNameFromEvent(event)
+    return (event.player_index and game.players[event.player_index].name) or "<unknown>"
+end
+
+function logInfo(playerName, msg)
+    game.write_file("infolog.txt", game.tick .. ": " .. playerName .. ": " .. msg .. "\n", true, 0);
+end
+
+
 --------------------------------------------------------------------------------
 -- Rocket Launch Event Code
 -- Controls the "win condition"
@@ -159,7 +168,7 @@ end)
 script.on_event(defines.events.on_chunk_generated, function(event)
     local shouldGenerateResources = true
     if scenario.config.wipespawn.enabled then
-        regrow.onChunkGenerated(event)
+        wipespawn.onChunkGenerated(event)
     elseif scenario.config.regrow.enabled then
         shouldGenerateResources = regrow.shouldGenerateResources(event);
         regrow.onChunkGenerated(event)
@@ -226,6 +235,7 @@ end)
 -- Player Events
 ----------------------------------------
 script.on_event(defines.events.on_player_joined_game, function(event)
+    logInfo( playerNameFromEvent(event), "+++ player joined game" );
     
     PlayerJoinedMessages(event)
 
@@ -239,6 +249,7 @@ script.on_event(defines.events.on_player_joined_game, function(event)
 end)
 
 script.on_event(defines.events.on_player_created, function(event)
+    logInfo( playerNameFromEvent(event), "+++ player created" );
     if ENABLE_SPAWN_SURFACE then
         AssignPlayerToStartSurface(game.players[event.player_index])
     end
@@ -265,12 +276,14 @@ script.on_event(defines.events.on_player_created, function(event)
 end)
 
 script.on_event(defines.events.on_player_died, function(event)
+    logInfo( playerNameFromEvent(event), "+++ player died" );
     if ENABLE_GRAVESTONE_CHESTS then
         CreateGravestoneChestsOnDeath(event)
     end
 end)
 
 script.on_event(defines.events.on_player_respawned, function(event)
+    logInfo( playerNameFromEvent(event), "+++ player respawned" );
     if not ENABLE_SEPARATE_SPAWNS then
         PlayerRespawnItems(event)
     else 
@@ -284,6 +297,7 @@ script.on_event(defines.events.on_player_respawned, function(event)
 end)
 
 script.on_event(defines.events.on_player_left_game, function(event)
+    logInfo( playerNameFromEvent(event), "+++ player left game" );
     if ENABLE_SEPARATE_SPAWNS then
         FindUnusedSpawns(event)
     end
@@ -356,6 +370,9 @@ if scenario.config.regrow.enabled then
 
 end
 
+script.on_event(defines.events.on_console_chat, function (event)
+    logInfo( playerNameFromEvent(event), event.message );
+end)
 ----------------------------------------
 -- BPS Specific Event
 ----------------------------------------
