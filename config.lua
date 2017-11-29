@@ -227,7 +227,7 @@ scenario.config.separateSpawns = {
     --     most distant base is sqrt(25+42)*spacing = 8000
     preferFar = false,
     firstSpawnPoint = 20,
-    numSpawnPoints = 20,
+    numSpawnPoints = 30,
     -- extraSpawn = 60,    -- admin spawn really far away
     spacing = 1000,
     
@@ -274,7 +274,8 @@ scenario.config.riverworld = {
     
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    freezeTime = 0.0,   -- see https://wiki.factorio.com/Game-day
+    freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+	-- 0 is day. 0.5 is night. 0.35 is twilight.
 }
 
 
