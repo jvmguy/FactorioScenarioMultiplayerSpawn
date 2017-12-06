@@ -54,7 +54,7 @@ scenario.config.bots = {
 }
 
 scenario.config.playerBonus = {
-    character_crafting_speed_modifier = 1.0/30-1.0,
+    character_crafting_speed_modifier = 1.0/100-1.0,
 }
 
 scenario.config.silo = {
@@ -267,14 +267,14 @@ scenario.config.riverworld = {
     firstSpawnPoint = 16,
     -- moat=0,         -- horizontal offset relative to center of spawn
     -- moatWidth=8,    
-    spacing = 416,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
-    barrier = 64,	-- width of impenetrable barrier
+    spacing = 608,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
+    barrier = 256,	-- width of impenetrable barrier
     rail = 3*512+3,	-- generate a north-south railway starting here
     rail2 = -3*512-32+3, -- generate a north-south railway starting here
     
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
 	-- 0 is day. 0.5 is night. 0.35 is twilight.
 }
 
@@ -291,11 +291,11 @@ ENABLE_SPAWN_FORCE_GRASS = true
 
 -- Safe area has no aliens
 -- +/- this in x and y direction
-SAFE_AREA_TILE_DIST = CHUNK_SIZE*10
+SAFE_AREA_TILE_DIST = CHUNK_SIZE*4
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
-WARNING_AREA_TILE_DIST = CHUNK_SIZE*12
+WARNING_AREA_TILE_DIST = CHUNK_SIZE*6
 
 -- 1 : X (spawners alive : spawners destroyed) in this area
 WARN_AREA_REDUCTION_RATIO = 15
