@@ -378,3 +378,22 @@ end)
 ----------------------------------------
 --script.on_event(defines.events.on_robot_built_entity, function(event)
 --end)
+
+-- debug code from Mylon to detect possible causes for desync
+--Time for the debug code.  If any (not global.) globals are written to at this point, an error will be thrown.
+--eg, x = 2 will throw an error because it's not global.x or local x
+if false then
+    setmetatable(_G, {
+         __newindex = function(_, n, v)
+             log("Attempt to write to undeclared var " .. n)
+             game.print("Attempt to write to undeclared var " .. n)
+             global[n] = v;
+         end,
+         __index = function(_, n)
+             log("Attempt to read undeclared var " .. n)
+             game.print("Attempt to read undeclared var " .. n)
+            return global[n];
+         end
+     })
+end     
+
