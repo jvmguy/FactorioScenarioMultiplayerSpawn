@@ -24,6 +24,8 @@
 --      2. Put all config options in config.lua
 --      3. Put mods into their own files where possible (RSO has multiple)
 
+-- Event manager
+require "locale/utils/event" --This is so all of the modules play nice with each other.
 
 -- My Scenario Includes
 require("oarc_utils")
@@ -49,6 +51,8 @@ spawnGenerator = require("RiverworldSpawns");
 
 regrow = require("jvm-regrowth");
 wipespawn = require("jvm-wipespawn");
+
+jvm = {}
 
 function playerNameFromEvent(event)
     return (event.player_index and game.players[event.player_index].name) or "<unknown>"
@@ -95,18 +99,11 @@ function RocketLaunchEvent(event)
     end
 end
 
-
---------------------------------------------------------------------------------
--- ALL EVENT HANLDERS ARE HERE IN ONE PLACE!
---------------------------------------------------------------------------------
-
-
 ----------------------------------------
 -- On Init - only runs once the first 
 --   time the game starts
 ----------------------------------------
-script.on_init(function(event)
-
+function jvm.on_init(event)
     -- Configures the map settings for enemies
     -- This controls evolution growth factors and enemy expansion settings.
     if ENABLE_RSO then
@@ -149,23 +146,27 @@ script.on_init(function(event)
         regrow.init()
     end
     
-end)
+end
+
+Event.register(-1, jvm.on_init)
+    
 
 ----------------------------------------
 -- Freeplay rocket launch info
 -- Slightly modified for my purposes
 ----------------------------------------
-script.on_event(defines.events.on_rocket_launched, function(event)
+function jvm.on_rocket_launch(event)
     if FRONTIER_ROCKET_SILO_MODE then
         RocketLaunchEvent(event)
     end
-end)
+end
 
+Event.register(defines.events.on_rocket_launched, jvm.on_rocket_launch)
 
 ----------------------------------------
 -- Chunk Generation
 ----------------------------------------
-script.on_event(defines.events.on_chunk_generated, function(event)
+function jvm.on_chunk_generated(event)
     local shouldGenerateResources = true
     if scenario.config.wipespawn.enabled then
         wipespawn.onChunkGenerated(event)
@@ -207,12 +208,14 @@ script.on_event(defines.events.on_chunk_generated, function(event)
     if scenario.config.regrow.enabled then
         regrow.afterResourceGeneration(event)
     end
-end)
+end
+
+Event.register(defines.events.on_chunk_generated, jvm.on_chunk_generated)
 
 ----------------------------------------
 -- Gui Click
 ----------------------------------------
-script.on_event(defines.events.on_gui_click, function(event)
+function jvm.on_gui_click(event)
     if ENABLE_TAGS then
         TagGuiClick(event)
     end
@@ -228,13 +231,14 @@ script.on_event(defines.events.on_gui_click, function(event)
         SharedSpwnOptsGuiClick(event)
     end
 
-end)
+end
 
+Event.register(defines.events.on_gui_click, jvm.on_gui_click)
 
 ----------------------------------------
 -- Player Events
 ----------------------------------------
-script.on_event(defines.events.on_player_joined_game, function(event)
+function jvm.on_player_joined_game(event)
     logInfo( playerNameFromEvent(event), "+++ player joined game" );
     
     PlayerJoinedMessages(event)
@@ -246,9 +250,11 @@ script.on_event(defines.events.on_player_joined_game, function(event)
     if ENABLE_PLAYER_LIST then
         CreatePlayerListGui(event)
     end
-end)
+end
 
-script.on_event(defines.events.on_player_created, function(event)
+Event.register(defines.events.on_player_joined_game, jvm.on_player_joined_game)
+
+function jvm.on_player_created(event)
     logInfo( playerNameFromEvent(event), "+++ player created" );
     if ENABLE_SPAWN_SURFACE then
         AssignPlayerToStartSurface(game.players[event.player_index])
@@ -273,16 +279,21 @@ script.on_event(defines.events.on_player_created, function(event)
     if ENABLE_BLUEPRINT_STRING then
         bps_player_joined(event)
     end
-end)
+end
 
-script.on_event(defines.events.on_player_died, function(event)
+Event.register(defines.events.on_player_created, jvm.on_player_created)
+
+
+function jvm.on_player_died(event)
     logInfo( playerNameFromEvent(event), "+++ player died" );
     if ENABLE_GRAVESTONE_CHESTS then
         CreateGravestoneChestsOnDeath(event)
     end
-end)
+end
 
-script.on_event(defines.events.on_player_respawned, function(event)
+Event.register(defines.events.on_player_died, jvm.on_player_died)
+
+function jvm.on_player_respawned(event)
     logInfo( playerNameFromEvent(event), "+++ player respawned" );
     if not ENABLE_SEPARATE_SPAWNS then
         PlayerRespawnItems(event)
@@ -294,16 +305,20 @@ script.on_event(defines.events.on_player_respawned, function(event)
         GivePlayerLongReach(game.players[event.player_index])
     end
     GivePlayerBonuses(game.players[event.player_index])
-end)
+end
 
-script.on_event(defines.events.on_player_left_game, function(event)
+Event.register(defines.events.on_player_respawned, jvm.on_player_respawned)
+
+function jvm.on_player_left_game(event)
     logInfo( playerNameFromEvent(event), "+++ player left game" );
     if ENABLE_SEPARATE_SPAWNS then
         FindUnusedSpawns(event)
     end
-end)
+end
 
-script.on_event(defines.events.on_built_entity, function(event)
+Event.register(defines.events.on_player_left_game, jvm.on_player_left_game)
+
+function jvm.on_built_entity(event)
     if ENABLE_AUTOFILL then
         Autofill(event)
     end
@@ -318,27 +333,33 @@ script.on_event(defines.events.on_built_entity, function(event)
             event.created_entity.time_to_live = GHOST_TIME_TO_LIVE
         end
     end
-end)
+end
 
-script.on_event(defines.events.on_tick, function(event)
+Event.register(defines.events.on_built_entity, jvm.on_built_entity)
+
+function jvm.on_tick(event)
     if scenario.config.wipespawn.enabled then
         wipespawn.onTick(event)
     elseif scenario.config.regrow.enabled then
         regrow.onTick(event)
     end
-end)
+end
+
+Event.register(defines.events.on_tick, jvm.on_tick)
+
+function jvm.teleporter(event)
+    local player = game.players[event.player_index];
+    TeleportPlayer(player)
+end
 
 if scenario.config.teleporter.enabled then
-    script.on_event(defines.events.on_player_driving_changed_state, function(event)
-        local player = game.players[event.player_index];
-        TeleportPlayer(player)
-    end)
+    Event.register(defines.events.on_player_driving_changed_state, jvm.teleporter)
 end
 
 ----------------------------------------
 -- On Research Finished
 ----------------------------------------
-script.on_event(defines.events.on_research_finished, function(event)
+function jvm.on_research_finished(event)
     if FRONTIER_ROCKET_SILO_MODE then
         RemoveRocketSiloRecipe(event)
     end
@@ -349,30 +370,27 @@ script.on_event(defines.events.on_research_finished, function(event)
 
     -- Example of how to remove a particular recipe:
     -- RemoveRecipe(event, "beacon")
-end)
-
-if scenario.config.regrow.enabled then
-    script.on_event(defines.events.on_sector_scanned, function (event)
-        regrow.onSectorScan(event)
-    end)
-
-    script.on_event(defines.events.on_robot_built_entity, function (event)
-        regrow.onRobotBuiltEntity(event)
-    end)
-
-    script.on_event(defines.events.on_player_mined_entity, function(event)
-        regrow.onPlayerMinedEntity(event)
-    end)
-    
-    script.on_event(defines.events.on_robot_mined_entity, function(event)
-        regrow.onRobotMinedEntity(event)
-    end)
-
 end
 
-script.on_event(defines.events.on_console_chat, function (event)
+Event.register(defines.events.on_research_finished, jvm.on_research_finished)
+
+if scenario.config.regrow.enabled then
+    Event.register(defines.events.on_sector_scanned, regrow.onSectorScan)
+
+    Event.register(defines.events.on_robot_built_entity, regrow.onRobotBuiltEntity)
+    
+    Event.register(defines.events.on_player_mined_entity, regrow.onPlayerMinedEntity)
+    
+    Event.register(defines.events.on_robot_mined_entity, regrow.onRobotMinedEntity)
+    
+end
+
+function jvm.on_console_chat(event)
     logInfo( playerNameFromEvent(event), event.message );
-end)
+end
+
+Event.register(defines.events.on_console_chat, jvm.on_console_chat)
+
 ----------------------------------------
 -- BPS Specific Event
 ----------------------------------------
