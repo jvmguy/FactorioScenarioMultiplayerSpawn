@@ -1,5 +1,5 @@
 
-function StatusCommand_ShowStatus(player, xplayer)
+local function StatusCommand_ShowStatus(player, xplayer)
     if xplayer ~= nil then
        local status = string.format("%s played %s. Location %d,%d",
               xplayer.name,

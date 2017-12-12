@@ -33,6 +33,13 @@ require("jvmguy_utils")
 require("config")
 
 -- Include Mods
+require("locale/modules/autofill-jvm")
+require("locale/modules/adminlog")
+require("locale/modules/statuscommand")
+require("locale/modules/kitcommand")
+require("locale/modules/rgcommand")
+require("locale/modules/spawnscommand")
+
 require("rso_control")
 require("separate_spawns")
 require("separate_spawns_guis")
@@ -40,10 +47,6 @@ require("frontier_silo")
 require("tag")
 require("playerlist_gui")
 require("bps")
-require("statuscommand")
-require("kitcommand")
-require("rgcommand")
-require("spawnscommand")
 toxicJungle = require("ToxicJungle")
 
 -- spawnGenerator = require("FermatSpiralSpawns");
@@ -53,14 +56,6 @@ regrow = require("jvm-regrowth");
 wipespawn = require("jvm-wipespawn");
 
 jvm = {}
-
-function playerNameFromEvent(event)
-    return (event.player_index and game.players[event.player_index].name) or "<unknown>"
-end
-
-function logInfo(playerName, msg)
-    game.write_file("infolog.txt", game.tick .. ": " .. playerName .. ": " .. msg .. "\n", true, 0);
-end
 
 
 --------------------------------------------------------------------------------
@@ -174,9 +169,9 @@ function jvm.on_chunk_generated(event)
         shouldGenerateResources = regrow.shouldGenerateResources(event);
         regrow.onChunkGenerated(event)
     end
-    if ENABLE_UNDECORATOR then
-        UndecorateOnChunkGenerate(event)
-    end
+--    if ENABLE_UNDECORATOR then
+--        UndecorateOnChunkGenerate(event)
+--    end
     
     if scenario.config.riverworld.enabled then
         spawnGenerator.ChunkGenerated(event);
@@ -239,8 +234,6 @@ Event.register(defines.events.on_gui_click, jvm.on_gui_click)
 -- Player Events
 ----------------------------------------
 function jvm.on_player_joined_game(event)
-    logInfo( playerNameFromEvent(event), "+++ player joined game" );
-    
     PlayerJoinedMessages(event)
 
     if ENABLE_TAGS then
@@ -255,7 +248,6 @@ end
 Event.register(defines.events.on_player_joined_game, jvm.on_player_joined_game)
 
 function jvm.on_player_created(event)
-    logInfo( playerNameFromEvent(event), "+++ player created" );
     if ENABLE_SPAWN_SURFACE then
         AssignPlayerToStartSurface(game.players[event.player_index])
     end
@@ -285,7 +277,6 @@ Event.register(defines.events.on_player_created, jvm.on_player_created)
 
 
 function jvm.on_player_died(event)
-    logInfo( playerNameFromEvent(event), "+++ player died" );
     if ENABLE_GRAVESTONE_CHESTS then
         CreateGravestoneChestsOnDeath(event)
     end
@@ -294,7 +285,6 @@ end
 Event.register(defines.events.on_player_died, jvm.on_player_died)
 
 function jvm.on_player_respawned(event)
-    logInfo( playerNameFromEvent(event), "+++ player respawned" );
     if not ENABLE_SEPARATE_SPAWNS then
         PlayerRespawnItems(event)
     else 
@@ -310,7 +300,6 @@ end
 Event.register(defines.events.on_player_respawned, jvm.on_player_respawned)
 
 function jvm.on_player_left_game(event)
-    logInfo( playerNameFromEvent(event), "+++ player left game" );
     if ENABLE_SEPARATE_SPAWNS then
         FindUnusedSpawns(event)
     end
@@ -384,12 +373,6 @@ if scenario.config.regrow.enabled then
     Event.register(defines.events.on_robot_mined_entity, regrow.onRobotMinedEntity)
     
 end
-
-function jvm.on_console_chat(event)
-    logInfo( playerNameFromEvent(event), event.message );
-end
-
-Event.register(defines.events.on_console_chat, jvm.on_console_chat)
 
 ----------------------------------------
 -- BPS Specific Event

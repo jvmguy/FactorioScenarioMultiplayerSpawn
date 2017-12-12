@@ -1,5 +1,5 @@
 
-function HoursAndMinutes(ticks)
+local function HoursAndMinutes(ticks)
     local seconds = ticks/TICKS_PER_SECOND
     local minutes = math.floor((seconds)/60)
     local hours = math.floor(minutes/60)
@@ -7,7 +7,7 @@ function HoursAndMinutes(ticks)
     return string.format("%3d:%02d", hours, minutes)
 end
 
-function StatusCommand_ShowStatus(player, xplayer)
+local function StatusCommand_ShowStatus(player, xplayer)
     if xplayer ~= nil then
        local status = string.format("%s played %s. Location %d,%d",
               xplayer.name,

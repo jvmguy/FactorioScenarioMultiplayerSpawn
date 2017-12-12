@@ -1,4 +1,4 @@
-function UndecorateOnChunkGenerate(event)
+local function UndecorateOnChunkGenerate(event)
     local surface = event.surface
     local chunkArea = event.area
     RemoveDecorationsArea(surface, chunkArea)

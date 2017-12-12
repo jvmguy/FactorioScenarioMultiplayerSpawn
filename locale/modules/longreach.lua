@@ -1,7 +1,7 @@
 --Values are defined in config.lua
 require "../../config.lua"
 
-function GivePlayerLongReach(event)
+local function GivePlayerLongReach(event)
     local player = game.players[event.player_index]
     if not player and player.valid then
         return
