@@ -52,8 +52,8 @@ toxicJungle = require("ToxicJungle")
 -- spawnGenerator = require("FermatSpiralSpawns");
 spawnGenerator = require("RiverworldSpawns");
 
-regrow = require("jvm-regrowth");
-wipespawn = require("jvm-wipespawn");
+regrow = require("locale/modules/jvm-regrowth");
+wipespawn = require("locale/modules/jvm-wipespawn");
 
 jvm = {}
 
