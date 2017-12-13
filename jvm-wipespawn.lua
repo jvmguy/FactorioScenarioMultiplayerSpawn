@@ -223,4 +223,9 @@ function M.status(x,y)
      end 
 end
 
+if scenario.config.wipespawn.enabled then
+        Event.register(defines.events.on_tick, M.onTick)
+        Event.register(-1, M.init)
+end
+
 return M;

@@ -395,4 +395,22 @@ function M.regrowStatus(x,y)
      end 
 end
 
+if scenario.config.regrow.enabled then
+    Event.register(-1, M.init)
+
+    Event.register(defines.events.on_sector_scanned, M.onSectorScan)
+
+    Event.register(defines.events.on_robot_built_entity, M.onRobotBuiltEntity)
+    
+    Event.register(defines.events.on_player_mined_entity, M.onPlayerMinedEntity)
+    
+    Event.register(defines.events.on_robot_mined_entity, M.onRobotMinedEntity)
+
+    Event.register(defines.events.on_built_entity, M.onBuiltEntity)
+
+    Event.register(defines.events.on_tick, M.onTick)
+end
+
+
+
 return M;
