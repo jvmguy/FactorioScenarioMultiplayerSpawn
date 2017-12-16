@@ -1,10 +1,20 @@
 -- config.lua
 -- Configuration Options
 
+
 if not scenario then scenario = {} end
 if not scenario.config then scenario.config = {} end
 
 scenario.config.mapsettings = scenario.config.mapsettings or {}
+
+--------------------------------------------------------------------------------
+-- Useful constants
+--------------------------------------------------------------------------------
+CHUNK_SIZE = 32
+MAX_FORCES = 64
+TICKS_PER_SECOND = 60
+TICKS_PER_MINUTE = TICKS_PER_SECOND * 60
+--------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Messages

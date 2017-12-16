@@ -25,14 +25,15 @@
 --      3. Put mods into their own files where possible (RSO has multiple)
 
 -- Event manager
+require("config")
 require "locale/utils/event" --This is so all of the modules play nice with each other.
 
 -- My Scenario Includes
 require("oarc_utils")
 require("jvmguy_utils")
-require("config")
 
 -- Include Mods
+require("locale/modules/longreach")
 require("locale/modules/autofill-jvm")
 require("locale/modules/adminlog")
 require("locale/modules/statuscommand")
@@ -271,10 +272,6 @@ function jvm.on_player_respawned(event)
         PlayerRespawnItems(event)
     else 
         SeparateSpawnsPlayerRespawned(event)
-    end
-
-    if ENABLE_LONGREACH then
-        GivePlayerLongReach(game.players[event.player_index])
     end
     GivePlayerBonuses(game.players[event.player_index])
 end

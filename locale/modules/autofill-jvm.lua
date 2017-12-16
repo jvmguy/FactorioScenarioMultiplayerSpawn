@@ -1,17 +1,3 @@
--- Autofill softmod
-local function Autofill(event)
-    local player = game.players[event.player_index]
-    local eventEntity = event.created_entity
-
-    if (eventEntity.name == "gun-turret") then
-        AutofillTurret(player, eventEntity)
-    end
-
-    if ((eventEntity.name == "car") or (eventEntity.name == "tank") or (eventEntity.name == "locomotive")) then
-        AutoFillVehicle(player, eventEntity)
-    end
-end
-
 --------------------------------------------------------------------------------
 -- Autofill Stuff
 --------------------------------------------------------------------------------
@@ -48,10 +34,12 @@ local function TransferItemMultipleTypes(result, srcInv, destEntity, itemNameArr
     for _,itemName in pairs(itemNameArray) do
         ret = TransferItems(result, srcInv, destEntity, {name=itemName, count=itemCount})
         if (ret > 0) then
-            return ret -- Return the value succesfully transferred
+            return ret
+             -- Return the value succesfully transferred
         end
     end
-    return ret -- Return the last error code
+    return ret
+     -- Return the last error code
 end
 
 local vehicleFuel = {"rocket-fuel", "solid-fuel", "raw-wood", "coal"}
@@ -132,6 +120,20 @@ local function AutoFillVehicle(player, vehicle)
       ShowAutofillResult( ret, result, "Shells", vehicle.position, 2);
       local ret = TransferItemMultipleTypes(result, mainInv, vehicle, tankFlamethrowerAmmo, AUTOFILL_FLAMETHROWER_AMMO_QUANTITY)
       ShowAutofillResult( ret, result, "Flamethrower Ammo", vehicle.position, 3);
+    end
+end
+
+-- Autofill softmod
+local function Autofill(event)
+    local player = game.players[event.player_index]
+    local eventEntity = event.created_entity
+
+    if (eventEntity.name == "gun-turret") then
+        AutofillTurret(player, eventEntity)
+    end
+
+    if ((eventEntity.name == "car") or (eventEntity.name == "tank") or (eventEntity.name == "locomotive")) then
+        AutoFillVehicle(player, eventEntity)
     end
 end
 

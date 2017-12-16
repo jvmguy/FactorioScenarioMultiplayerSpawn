@@ -6,16 +6,6 @@
 
 
 --------------------------------------------------------------------------------
--- Useful constants
---------------------------------------------------------------------------------
-CHUNK_SIZE = 32
-MAX_FORCES = 64
-TICKS_PER_SECOND = 60
-TICKS_PER_MINUTE = TICKS_PER_SECOND * 60
---------------------------------------------------------------------------------
-
-
---------------------------------------------------------------------------------
 -- GUI Label Styles
 --------------------------------------------------------------------------------
 my_fixed_width_style = {
@@ -84,6 +74,8 @@ my_player_list_style_spacer = {
 my_color_red = {r=1,g=0.1,b=0.1}
 
 
+
+
 --------------------------------------------------------------------------------
 -- General Helper Functions
 --------------------------------------------------------------------------------
@@ -136,6 +128,8 @@ function ChartArea(force, position, chunkDist)
         {position.x+(CHUNK_SIZE*chunkDist),
         position.y+(CHUNK_SIZE*chunkDist)}})
 end
+
+
 
 -- Give player these default items on restart.
 function GivePlayerItems(player)
@@ -477,13 +471,6 @@ function ConfigureAlienStartingParams()
     game.map_settings.enemy_expansion.enabled = ENEMY_EXPANSION
 end
 
--- Add Long Reach to Character
-function GivePlayerLongReach(player)
-    player.character.character_build_distance_bonus = BUILD_DIST_BONUS
-    player.character.character_reach_distance_bonus = REACH_DIST_BONUS
-    player.character.character_resource_reach_distance_bonus  = RESOURCE_DIST_BONUS
-end
-    
 function GivePlayerBonuses(player)
     player.character.character_crafting_speed_modifier = scenario.config.playerBonus.character_crafting_speed_modifier;
 end
