@@ -387,7 +387,7 @@ function DisplaySharedSpawnOptions(player)
     shGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
 --    shGui.style.minimal_width = SPAWN_GUI_MIN_WIDTH
 --    shGui.style.minimal_height = SPAWN_GUI_MIN_HEIGHT
-    shGui.horizontal_scroll_policy = "never"
+    shGui.can_scroll_horizontally = false
 
 
     for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
@@ -471,7 +471,7 @@ function ExpandSpawnCtrlGui(player, tick)
                             name="spwn_ctrl_panel", caption=""}
         ApplyStyle(spwnCtrls, my_fixed_width_style)
         spwnCtrls.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
-        spwnCtrls.horizontal_scroll_policy = "never"
+        spwnCtrls.can_scroll_horizontally = false
 
         if ENABLE_SHARED_SPAWNS then
             if (GetUniqueSpawn(player.name) ~= nil) then
@@ -483,6 +483,7 @@ function ExpandSpawnCtrlGui(player, tick)
                 spwnCtrls["accessToggle"].style.top_padding = 10
                 spwnCtrls["accessToggle"].style.bottom_padding = 10
                 ApplyStyle(spwnCtrls["accessToggle"], my_fixed_width_style)
+                spwnCtrls.add{type="button", name="accessToggle_ok_btn", caption=" Ok "}
             end
         end
 
@@ -513,7 +514,7 @@ end
 
 
 function SpawnCtrlGuiClick(event) 
-    if not (event and event.element and event.element.valid) then return end
+   if not (event and event.element and event.element.valid) then return end
         
     local player = game.players[event.element.player_index]
     local name = event.element.name
@@ -522,25 +523,29 @@ function SpawnCtrlGuiClick(event)
         ExpandSpawnCtrlGui(player, event.tick)       
     end
 
-    if (name == "accessToggle") then
-        if event.element.state then
+    if (name == "accessToggle_ok_btn") then
+      local spwnAccessState = player.gui.left["spwn_ctrl_panel"].spwn_ctrl_panel.accessToggle.state
+        if spwnAccessState then
             if DoesPlayerHaveCustomSpawn(player) then
                 if (global.sharedSpawns[player.name] == nil) then
                     CreateNewSharedSpawn(player)
+                    ExpandSpawnCtrlGui(player, event.tick)
+                    SendBroadcastMsg("New players can now join " .. player.name ..  "'s base!")
                 else
                     global.sharedSpawns[player.name].openAccess = true
+                    ExpandSpawnCtrlGui(player, event.tick)
+                    SendBroadcastMsg("New players can now join " .. player.name ..  "'s base!")
                 end
-                
-                SendBroadcastMsg("New players can now join " .. player.name ..  "'s base!")
             end
         else
             if (global.sharedSpawns[player.name] ~= nil) then
                 global.sharedSpawns[player.name].openAccess = false
+                ExpandSpawnCtrlGui(player, event.tick)
                 SendBroadcastMsg("New players can no longer join " .. player.name ..  "'s base!")
             end
         end
     end
-
+    
     -- Sets a new respawn point and resets the cooldown.
     if (name == "setRespawnLocation") then
         if DoesPlayerHaveCustomSpawn(player) then
