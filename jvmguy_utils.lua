@@ -18,7 +18,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
             -- Fill in all unexpected water in a circle
             if (distVar < landRadius) then
                 if (surface.get_tile(i,j).collides_with("water-tile") or ENABLE_SPAWN_FORCE_GRASS) then
-                    table.insert(dirtTiles, {name = "grass", position ={i,j}})
+                    table.insert(dirtTiles, {name = "grass-1", position ={i,j}})
                 end
             end
 
@@ -61,6 +61,16 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
             table.insert(waterTiles, {name = "water", position ={tile.x,tile.y}})
         end
         surface.set_tiles(waterTiles)
+    end
+
+    -- remove cliffs in the immediate areas?
+    for key, entity in pairs(surface.find_entities_filtered({area=chunkArea, type= "cliff"})) do
+        --Destroying some cliffs can cause a chain-reaction.  Validate inputs.
+        if entity and entity.valid then
+            if ((centerPos.x - entity.position.x)^2 + (centerPos.y - entity.position.y)^2 < landRadius^2) then
+                entity.destroy()
+            end
+        end
     end
 end
 
@@ -195,7 +205,6 @@ function TilesInShape( chunkArea, pos, shape, height, width )
         for x=1, xsize do
             local inShape = false;
             if (shape == "ellipse") then
-
                 if (((x-midPointX)^2/xRadiusSq + (y-midPointY)^2/yRadiusSq < 1)) then
                     inShape = true;
                 end
