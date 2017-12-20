@@ -18,7 +18,7 @@ local function CreateRocketSilo(surface, chunkArea)
         local i = 1
         for dx = -6,6 do
             for dy = -7,6 do
-                tiles[i] = {name = "grass", position = {global.siloPosition.x+dx, global.siloPosition.y+dy}}
+                tiles[i] = {name = "grass-1", position = {global.siloPosition.x+dx, global.siloPosition.y+dy}}
                 i=i+1
             end
         end
@@ -213,8 +213,8 @@ function GenerateRocketSiloChunk(event)
     end
 
     -- Create rocket silo
-    CreateRocketSilo(surface, chunkArea)
     CreateCropCircle(surface, global.siloPosition, chunkArea, 70)
+    CreateRocketSilo(surface, chunkArea)
 end
 
 function ChartRocketSiloArea(force)

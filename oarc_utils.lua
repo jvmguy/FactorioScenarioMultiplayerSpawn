@@ -459,6 +459,9 @@ function CreateCropCircle(surface, centerPos, chunkArea, tileRadius)
         end
     end
 
+    for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, type = "cliff"}) do
+        entity.destroy()
+    end
 
     surface.set_tiles(dirtTiles)
 end
