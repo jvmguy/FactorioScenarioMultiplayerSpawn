@@ -387,7 +387,7 @@ function DisplaySharedSpawnOptions(player)
     shGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
 --    shGui.style.minimal_width = SPAWN_GUI_MIN_WIDTH
 --    shGui.style.minimal_height = SPAWN_GUI_MIN_HEIGHT
-    shGui.can_scroll_horizontally = false
+--    shGui.can_scroll_horizontally = false
 
 
     for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
@@ -471,7 +471,7 @@ function ExpandSpawnCtrlGui(player, tick)
                             name="spwn_ctrl_panel", caption=""}
         ApplyStyle(spwnCtrls, my_fixed_width_style)
         spwnCtrls.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
-        spwnCtrls.can_scroll_horizontally = false
+        -- spwnCtrls.can_scroll_horizontally = false;
 
         if ENABLE_SHARED_SPAWNS then
             if (GetUniqueSpawn(player.name) ~= nil) then

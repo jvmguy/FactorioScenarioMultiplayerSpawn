@@ -252,7 +252,7 @@ scenario.config.separateSpawns = {
 	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
 	
     resources = {
-        { shape="rect", name="steel-chest", x=-4,   y=-17, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=-4,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=-4,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=-4,   y=-8,  height=2, width=2, contents = { {name = "coal", count=2400 } }  },
         { shape="rect", name="steel-chest", x=-4,   y=-4,  height=1, width=1, contents = { {name = "stone", count=2400 } },  },
@@ -284,7 +284,7 @@ scenario.config.riverworld = {
     
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
 	-- 0 is day. 0.5 is night. 0.35 is twilight.
 }
 
@@ -301,11 +301,11 @@ ENABLE_SPAWN_FORCE_GRASS = true
 
 -- Safe area has no aliens
 -- +/- this in x and y direction
-SAFE_AREA_TILE_DIST = CHUNK_SIZE*4
+SAFE_AREA_TILE_DIST = CHUNK_SIZE*6
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
-WARNING_AREA_TILE_DIST = CHUNK_SIZE*6
+WARNING_AREA_TILE_DIST = CHUNK_SIZE*10
 
 -- 1 : X (spawners alive : spawners destroyed) in this area
 WARN_AREA_REDUCTION_RATIO = 15

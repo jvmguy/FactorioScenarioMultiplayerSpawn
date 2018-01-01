@@ -40,6 +40,7 @@ require("locale/modules/statuscommand")
 require("locale/modules/kitcommand")
 require("locale/modules/rgcommand")
 require("locale/modules/spawnscommand")
+require("locale/modules/itemcommand")
 
 require("rso_control")
 require("separate_spawns")
