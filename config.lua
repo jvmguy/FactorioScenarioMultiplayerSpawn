@@ -274,6 +274,7 @@ scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
 	stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
+	waterWalls = true,
     firstSpawnPoint = 16,
     -- moat=0,         -- horizontal offset relative to center of spawn
     -- moatWidth=8,    
@@ -284,7 +285,7 @@ scenario.config.riverworld = {
     
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
 	-- 0 is day. 0.5 is night. 0.35 is twilight.
 }
 
