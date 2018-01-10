@@ -192,11 +192,6 @@ function RemovePlayer(player)
         end
     end
     
-    -- Remove from shared spawns
-    if (global.sharedSpawns[player.name] ~= nil) then
-        global.sharedSpawns[player.name] = nil;
-    end
-
     -- remove that player's cooldown setting
     if (global.playerCooldowns[player.name] ~= nil) then
         global.playerCooldowns[player.name] = nil;
@@ -224,29 +219,39 @@ function FindUnusedSpawns(event)
     end
 end
 
+function FindSharedSpawn(forPlayerName)
+    for _,sharedSpawn in pairs(global.sharedSpawns) do
+        for key,playerName in pairs(sharedSpawn.players) do
+            if (forPlayerName == playerName) then
+                return sharedSpawn
+            end
+        end
+    end
+    return nil;
+end
 
 function CreateNewSharedSpawn(player)
     local playerSpawn = global.playerSpawns[player.name];
-    global.sharedSpawns[player.name] = {openAccess=true,
+    local sharedSpawn = FindSharedSpawn(player.name);
+    if sharedSpawn == nil then
+        sharedSpawn = {openAccess=true,
                                     position={x=playerSpawn.x,y=playerSpawn.y},
                                     surface=playerSpawn.surface,
                                     seq=playerSpawn.seq,
-                                    players={}}
+                                    players={ player.name }}
+        global.sharedSpawns[player.name] = sharedSpawn;
+    end
+    return sharedSpawn;                                   
 end
 
-function GetOnlinePlayersAtSharedSpawn(ownerName)
-    if (global.sharedSpawns[ownerName] ~= nil) then
+function GetOnlinePlayersAtSharedSpawn2(sharedSpawn)
+    if (sharedSpawn ~= nil) then
 
-        -- Does not count base owner
         local count = 0
 
         -- For each player in the shared spawn, check if online and add to count.
         for _,player in pairs(game.connected_players) do
-            if (ownerName == player.name) then
-                count = count + 1
-            end
-
-            for _,playerName in pairs(global.sharedSpawns[ownerName].players) do
+            for _,playerName in pairs(sharedSpawn.players) do
             
                 if (playerName == player.name) then
                     count = count + 1
@@ -267,9 +272,9 @@ end
 function GetNumberOfAvailableSharedSpawns()
     local count = 0
 
-    for ownerName,sharedSpawn in pairs(global.sharedSpawns) do
+    for _,sharedSpawn in pairs(global.sharedSpawns) do
         if (sharedSpawn.openAccess) then
-            if (GetOnlinePlayersAtSharedSpawn(ownerName) < MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN) then
+            if (GetOnlinePlayersAtSharedSpawn2(sharedSpawn) < MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN) then
                 count = count+1
             end
         end

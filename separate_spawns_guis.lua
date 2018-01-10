@@ -11,19 +11,19 @@ local SPAWN_GUI_MAX_HEIGHT = 1000
 -- local SPAWN_GUI_MIN_HEIGHT = 400
 
 -- Use this for testing shared spawns...
--- local sharedSpawnExample1 = {openAccess=true,
---                             position={x=50,y=50},
---                             players={"ABC", "DEF"}}
--- local sharedSpawnExample2 = {openAccess=true,
---                             position={x=200,y=200},
---                             players={"ABC", "DEF"}}
--- local sharedSpawnExample3 = {openAccess=true,
---                             position={x=-200,y=-200},
---                             owner="testName1",
---                             players={"A", "B", "C", "D"}}
--- global.sharedSpawns = {testName1=sharedSpawnExample1,
---                        testName2=sharedSpawnExample2,
---                        testName3=sharedSpawnExample3}
+ local sharedSpawnExample1 = {openAccess=true,
+                             position={x=50,y=50},
+                             players={"ABC", "DEF"}}
+ local sharedSpawnExample2 = {openAccess=true,
+                             position={x=200,y=200},
+                             players={"ABC", "DEF"}}
+ local sharedSpawnExample3 = {openAccess=true,
+                             position={x=-200,y=-200},
+                             owner="testName1",
+                             players={"A", "B", "C", "D"}}
+global.sharedSpawns = {testName1=sharedSpawnExample1,
+                        testName2=sharedSpawnExample2,
+                        testName3=sharedSpawnExample3}
 
 
 -- A display gui message
@@ -408,7 +408,7 @@ function DisplaySharedSpawnOptions(player)
 
     for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
         if sharedSpawn.openAccess then
-            local spotsRemaining = MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN - GetOnlinePlayersAtSharedSpawn(spawnName)
+            local spotsRemaining = MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN - GetOnlinePlayersAtSharedSpawn2(sharedSpawn)
             if (spotsRemaining > 0) then
                 local spawnFrame = shGui.add({ type="frame", direction="vertical"});
                 ApplyStyle( spawnFrame, spawnFrameStyle );
@@ -480,12 +480,8 @@ end
 
 
 local function IsSharedSpawnActive(player)
-    if ((global.sharedSpawns[player.name] == nil) or
-        (global.sharedSpawns[player.name].openAccess == false)) then
-        return false
-    else
-        return true
-    end
+    local sharedSpawn = FindSharedSpawn(player.name);
+    return sharedSpawn ~= nil and sharedSpawn.openAccess;
 end
 
 
@@ -498,7 +494,7 @@ function ExpandSpawnCtrlGui(player, tick)
         local spwnCtrlPanel = player.gui.left.add{type="frame",
                             name="spwn_ctrl_panel", caption="Spawn Controls:"}
         local spwnCtrls = spwnCtrlPanel.add{type="scroll-pane",
-                            name="spwn_ctrl_panel", caption=""}
+                            name="spwn_ctrl_scroll_pane", caption=""}
         ApplyStyle(spwnCtrls, my_fixed_width_style)
         spwnCtrls.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
         -- spwnCtrls.can_scroll_horizontally = false;
@@ -513,7 +509,6 @@ function ExpandSpawnCtrlGui(player, tick)
                 spwnCtrls["accessToggle"].style.top_padding = 10
                 spwnCtrls["accessToggle"].style.bottom_padding = 10
                 ApplyStyle(spwnCtrls["accessToggle"], my_fixed_width_style)
-                spwnCtrls.add{type="button", name="accessToggle_ok_btn", caption=" Ok "}
             end
         end
 
@@ -553,29 +548,6 @@ function SpawnCtrlGuiClick(event)
         ExpandSpawnCtrlGui(player, event.tick)       
     end
 
-    if (name == "accessToggle_ok_btn") then
-      local spwnAccessState = player.gui.left["spwn_ctrl_panel"].spwn_ctrl_panel.accessToggle.state
-        if spwnAccessState then
-            if DoesPlayerHaveCustomSpawn(player) then
-                if (global.sharedSpawns[player.name] == nil) then
-                    CreateNewSharedSpawn(player)
-                    ExpandSpawnCtrlGui(player, event.tick)
-                    SendBroadcastMsg("New players can now join " .. player.name ..  "'s base!")
-                else
-                    global.sharedSpawns[player.name].openAccess = true
-                    ExpandSpawnCtrlGui(player, event.tick)
-                    SendBroadcastMsg("New players can now join " .. player.name ..  "'s base!")
-                end
-            end
-        else
-            if (global.sharedSpawns[player.name] ~= nil) then
-                global.sharedSpawns[player.name].openAccess = false
-                ExpandSpawnCtrlGui(player, event.tick)
-                SendBroadcastMsg("New players can no longer join " .. player.name ..  "'s base!")
-            end
-        end
-    end
-    
     -- Sets a new respawn point and resets the cooldown.
     if (name == "setRespawnLocation") then
         if DoesPlayerHaveCustomSpawn(player) then
@@ -584,6 +556,32 @@ function SpawnCtrlGuiClick(event)
             global.playerCooldowns[player.name].setRespawn = event.tick
             ExpandSpawnCtrlGui(player, event.tick) 
             player.print("Re-spawn point updated!")
+        end
+    end
+end
+
+function SpawnCtrlGuiCheckStateChanged(event)
+   if not (event and event.element and event.element.valid) then return end
+        
+    local player = game.players[event.element.player_index]
+    local name = event.element.name
+
+    if (name == "accessToggle") then
+        local spwnAccessState = event.element.state
+        local sharedSpawn = FindSharedSpawn(player.name)
+        if spwnAccessState then
+            if sharedSpawn == nil then
+                sharedSpawn = CreateNewSharedSpawn(player)
+            end
+            sharedSpawn.openAccess = true
+            SendBroadcastMsg("New players can now join " .. player.name ..  "'s base!")
+            ExpandSpawnCtrlGui(player, event.tick)
+        else
+            if sharedSpawn ~= nil then
+                sharedSpawn.openAccess = false
+            end
+            SendBroadcastMsg("New players can no longer join " .. player.name ..  "'s base!")
+            ExpandSpawnCtrlGui(player, event.tick)
         end
     end
 end

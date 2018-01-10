@@ -211,6 +211,12 @@ end
 
 Event.register(defines.events.on_gui_click, jvm.on_gui_click)
 
+function jvm.on_gui_checked_state_changed(event)
+        SpawnCtrlGuiCheckStateChanged(event)
+end
+
+Event.register(defines.events.on_gui_checked_state_changed, jvm.on_gui_checked_state_changed)
+
 ----------------------------------------
 -- Player Events
 ----------------------------------------
