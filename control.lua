@@ -42,6 +42,7 @@ require("locale/modules/rgcommand")
 require("locale/modules/spawnscommand")
 require("locale/modules/itemcommand")
 require("locale/modules/playerlist")
+require("locale/modules/spawnlist")
 require("locale/modules/tag")
 
 require("rso_control")
