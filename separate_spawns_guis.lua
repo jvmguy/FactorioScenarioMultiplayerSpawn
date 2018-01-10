@@ -11,19 +11,19 @@ local SPAWN_GUI_MAX_HEIGHT = 1000
 -- local SPAWN_GUI_MIN_HEIGHT = 400
 
 -- Use this for testing shared spawns...
- local sharedSpawnExample1 = {openAccess=true,
-                             position={x=50,y=50},
-                             players={"ABC", "DEF"}}
- local sharedSpawnExample2 = {openAccess=true,
-                             position={x=200,y=200},
-                             players={"ABC", "DEF"}}
- local sharedSpawnExample3 = {openAccess=true,
-                             position={x=-200,y=-200},
-                             owner="testName1",
-                             players={"A", "B", "C", "D"}}
-global.sharedSpawns = {testName1=sharedSpawnExample1,
-                        testName2=sharedSpawnExample2,
-                        testName3=sharedSpawnExample3}
+-- local sharedSpawnExample1 = {openAccess=true,
+--                             position={x=50,y=50},
+--                             players={"ABC", "DEF"}}
+-- local sharedSpawnExample2 = {openAccess=true,
+--                             position={x=200,y=200},
+--                             players={"ABC", "DEF"}}
+-- local sharedSpawnExample3 = {openAccess=true,
+--                             position={x=-200,y=-200},
+--                             owner="testName1",
+--                             players={"A", "B", "C", "D"}}
+--global.sharedSpawns = {testName1=sharedSpawnExample1,
+--                        testName2=sharedSpawnExample2,
+--                        testName3=sharedSpawnExample3}
 
 
 -- A display gui message
