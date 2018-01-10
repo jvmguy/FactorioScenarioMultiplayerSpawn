@@ -41,13 +41,13 @@ require("locale/modules/kitcommand")
 require("locale/modules/rgcommand")
 require("locale/modules/spawnscommand")
 require("locale/modules/itemcommand")
+require("locale/modules/playerlist")
+require("locale/modules/tag")
 
 require("rso_control")
 require("separate_spawns")
 require("separate_spawns_guis")
 require("frontier_silo")
-require("tag")
-require("playerlist_gui")
 require("bps")
 toxicJungle = require("ToxicJungle")
 
@@ -199,14 +199,6 @@ Event.register(defines.events.on_chunk_generated, jvm.on_chunk_generated)
 -- Gui Click
 ----------------------------------------
 function jvm.on_gui_click(event)
-    if ENABLE_TAGS then
-        TagGuiClick(event)
-    end
-
-    if ENABLE_PLAYER_LIST then
-        PlayerListGuiClick(event)
-    end
-
     if ENABLE_SEPARATE_SPAWNS then
         WelcomeTextGuiClick(event)
         SpawnOptsGuiClick(event)
@@ -223,14 +215,6 @@ Event.register(defines.events.on_gui_click, jvm.on_gui_click)
 ----------------------------------------
 function jvm.on_player_joined_game(event)
     PlayerJoinedMessages(event)
-
-    if ENABLE_TAGS then
-        CreateTagGui(event)
-    end
-
-    if ENABLE_PLAYER_LIST then
-        CreatePlayerListGui(event)
-    end
 end
 
 Event.register(defines.events.on_player_joined_game, jvm.on_player_joined_game)

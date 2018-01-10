@@ -22,7 +22,9 @@ commands.remove_command("status");
 commands.add_command("status", "shows your location, time in game", function(command)
     local players = {}
     for _,p in pairs(game.players) do
-        players[_] = p;
+        if p ~= nil then
+            players[_] = p;
+        end
     end
     table.sort(players, 
         function(a,b) return a.online_time < b.online_time; end

@@ -1,4 +1,4 @@
-function CreateTagGui(event)
+local function CreateTagGui(event)
   local player = game.players[event.player_index]
   if player.gui.top.tag == nil then
   	  player.gui.top.add{name="tag", type="button", caption="Tag"}
@@ -35,7 +35,7 @@ local function ExpandTagGui(player)
     end
 end
 
-function TagGuiClick(event) 
+local function TagGuiClick(event) 
     if not (event and event.element and event.element.valid) then return end
     local player = game.players[event.element.player_index]
     local name = event.element.name
@@ -55,3 +55,7 @@ function TagGuiClick(event)
       end
 		end
 end
+
+
+Event.register(defines.events.on_gui_click, TagGuiClick)
+Event.register(defines.events.on_player_joined_game, CreateTagGui)

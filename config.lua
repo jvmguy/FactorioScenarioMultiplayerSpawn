@@ -190,12 +190,6 @@ ENABLE_UNDECORATOR = true
 -- enable player time/position status
 ENABLE_STATUS = true
 
--- Enable Tags
-ENABLE_TAGS = true
-
--- Enable GUI player list
-ENABLE_PLAYER_LIST = true
-
 -- Enable Long Reach
 ENABLE_LONGREACH = true
 
