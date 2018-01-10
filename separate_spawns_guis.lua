@@ -5,8 +5,8 @@
 
 require("separate_spawns")
 
-local SPAWN_GUI_MAX_WIDTH = 600
-local SPAWN_GUI_MAX_HEIGHT = 750
+local SPAWN_GUI_MAX_WIDTH = 1000
+local SPAWN_GUI_MAX_HEIGHT = 1000
 -- local SPAWN_GUI_MIN_WIDTH = 400
 -- local SPAWN_GUI_MIN_HEIGHT = 400
 
@@ -14,10 +14,11 @@ local SPAWN_GUI_MAX_HEIGHT = 750
 -- local sharedSpawnExample1 = {openAccess=true,
 --                             position={x=50,y=50},
 --                             players={"ABC", "DEF"}}
--- local sharedSpawnExample2 = {openAccess=false,
+-- local sharedSpawnExample2 = {openAccess=true,
 --                             position={x=200,y=200},
 --                             players={"ABC", "DEF"}}
 -- local sharedSpawnExample3 = {openAccess=true,
+--                             position={x=-200,y=-200},
 --                             owner="testName1",
 --                             players={"A", "B", "C", "D"}}
 -- global.sharedSpawns = {testName1=sharedSpawnExample1,
@@ -383,21 +384,50 @@ function DisplaySharedSpawnOptions(player)
     local shGuiFrame = player.gui.center.shared_spawn_opts
     local shGui = shGuiFrame.add{type="scroll-pane", name="spawns_scroll_pane", caption=""}
     ApplyStyle(shGui, my_fixed_width_style)
-    shGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
-    shGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
+    shGui.style.maximal_width = 1500; -- SPAWN_GUI_MAX_WIDTH
+    shGui.style.maximal_height = 700; -- SPAWN_GUI_MAX_HEIGHT
+    shGui.horizontal_scroll_policy = "always";
+    shGui.vertical_scroll_policy = "always";
 --    shGui.style.minimal_width = SPAWN_GUI_MIN_WIDTH
 --    shGui.style.minimal_height = SPAWN_GUI_MIN_HEIGHT
 --    shGui.can_scroll_horizontally = false
 
+    local camera_style = {
+        minimal_width = 1000,
+        maximal_width = 1000,
+        minimal_height = 500,
+        maximal_height = 500,
+    }
+
+    local spawnFrameStyle = {
+        minimal_width = 1000,
+        maximal_width = 1000,
+        minimal_height = 500,
+        maximal_height = 500,
+    }
 
     for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
         if sharedSpawn.openAccess then
             local spotsRemaining = MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN - GetOnlinePlayersAtSharedSpawn(spawnName)
             if (spotsRemaining > 0) then
-                shGui.add{type="button", caption=spawnName .. " (" .. spotsRemaining .. " spots remaining)", name=spawnName}
-                shGui.add{name = spawnName .. "spacer_lbl", type = "label", caption=" "}
-                ApplyStyle(shGui[spawnName], my_small_button_style)
-                ApplyStyle(shGui[spawnName .. "spacer_lbl"], my_spacer_style)
+                local spawnFrame = shGui.add({ type="frame", direction="vertical"});
+                ApplyStyle( spawnFrame, spawnFrameStyle );
+
+                spawnFrame.add{type="button", caption=spawnName .. " (" .. spotsRemaining .. " spots remaining)", name=spawnName}
+                ApplyStyle(spawnFrame[spawnName], my_small_button_style)
+
+                spawnFrame.add{name = spawnName .. "spacer_lbl", type = "label", caption=" "}
+                ApplyStyle(spawnFrame[spawnName .. "spacer_lbl"], my_spacer_style)
+
+                local playersAtSpawn = ""
+                for _,playerName in pairs( sharedSpawn.players ) do
+                    playersAtSpawn = playersAtSpawn .. " " .. playerName;
+                end
+                local playerList = spawnFrame.add{name = spawnName .. "players", type = "label", caption= playersAtSpawn }
+                ApplyStyle(playerList, my_note_style)
+
+                spawnFrame.add{name = spawnName .. "camera", type = "camera", caption=" ", position=sharedSpawn.position, surface=game.surfaces[GAME_SURFACE_NAME].index, zoom=0.2 }
+                ApplyStyle(spawnFrame[spawnName .. "camera"], camera_style)
             end
         end
     end
@@ -501,7 +531,7 @@ function ExpandSpawnCtrlGui(player, tick)
         else
             spwnCtrls.add{name = "respawn_cooldown_note1", type = "label",
                     caption="Set Respawn Cooldown Remaining: " .. formattime(RESPAWN_COOLDOWN_TICKS-(tick - global.playerCooldowns[player.name].setRespawn))}
-            spwnCtrls.add{name = "respawn_cooldown_note2", type = "label",
+             spwnCtrls.add{name = "respawn_cooldown_note2", type = "label",
                     caption="This will set your respawn point to your current location."}
             spwnCtrls.add{name = "respawn_cooldown_spacer1", type = "label",
                 caption=" "}
