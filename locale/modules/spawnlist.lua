@@ -46,7 +46,7 @@ local function ExpandSpawnListGui(player)
                                                 direction = "vertical"}
                 local text=spawnFrame.add{type="label", caption=spawnid, name=spawnid}
                 ApplyStyle(text, my_player_list_style)
-                local camera = spawnFrame.add{ type="camera", position=spawn, surface=game.surfaces[GAME_SURFACE_NAME].index, zoom=0.2 }
+                local camera = spawnFrame.add{ type="camera", position=spawn, surface_index=game.surfaces[GAME_SURFACE_NAME].index, zoom=0.2 }
                 ApplyStyle(camera, camera_style)
             -- end
             end

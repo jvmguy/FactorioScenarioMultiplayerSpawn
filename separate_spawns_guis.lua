@@ -10,20 +10,6 @@ local SPAWN_GUI_MAX_HEIGHT = 1000
 -- local SPAWN_GUI_MIN_WIDTH = 400
 -- local SPAWN_GUI_MIN_HEIGHT = 400
 
--- Use this for testing shared spawns...
--- local sharedSpawnExample1 = {openAccess=true,
---                             position={x=50,y=50},
---                             players={"ABC", "DEF"}}
--- local sharedSpawnExample2 = {openAccess=true,
---                             position={x=200,y=200},
---                             players={"ABC", "DEF"}}
--- local sharedSpawnExample3 = {openAccess=true,
---                             position={x=-200,y=-200},
---                             owner="testName1",
---                             players={"A", "B", "C", "D"}}
---global.sharedSpawns = {testName1=sharedSpawnExample1,
---                        testName2=sharedSpawnExample2,
---                        testName3=sharedSpawnExample3}
 
 
 -- A display gui message
@@ -160,7 +146,7 @@ function DisplaySpawnOptions(player)
 
     -- Spawn options to join another player's base.
     if ENABLE_SHARED_SPAWNS then
-        local numAvailSpawns = GetNumberOfAvailableSharedSpawns()
+        local numAvailSpawns = sharedSpawns.getNumberOfAvailableSharedSpawns()
         if (numAvailSpawns > 0) then
             sGui.add{name = "join_other_spawn",
                             type = "button",
@@ -406,9 +392,10 @@ function DisplaySharedSpawnOptions(player)
         maximal_height = 500,
     }
 
+    local spawnIndex = 0
     for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
         if sharedSpawn.openAccess then
-            local spotsRemaining = MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN - GetOnlinePlayersAtSharedSpawn2(sharedSpawn)
+            local spotsRemaining = MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN - sharedSpawns.getOnlinePlayersAtSharedSpawn(sharedSpawn)
             if (spotsRemaining > 0) then
                 local spawnFrame = shGui.add({ type="frame", direction="vertical"});
                 ApplyStyle( spawnFrame, spawnFrameStyle );
@@ -421,12 +408,14 @@ function DisplaySharedSpawnOptions(player)
 
                 local playersAtSpawn = ""
                 for _,playerName in pairs( sharedSpawn.players ) do
-                    playersAtSpawn = playersAtSpawn .. " " .. playerName;
+                    if playerName ~= nil then
+                        playersAtSpawn = playersAtSpawn .. " " .. playerName;
+                    end
                 end
                 local playerList = spawnFrame.add{name = spawnName .. "players", type = "label", caption= playersAtSpawn }
                 ApplyStyle(playerList, my_note_style)
 
-                spawnFrame.add{name = spawnName .. "camera", type = "camera", caption=" ", position=sharedSpawn.position, surface=game.surfaces[GAME_SURFACE_NAME].index, zoom=0.2 }
+                spawnFrame.add{name = spawnName .. "camera", type = "camera", position=sharedSpawn.position, surface_index=game.surfaces[GAME_SURFACE_NAME].index, zoom=0.2 }
                 ApplyStyle(spawnFrame[spawnName .. "camera"], camera_style)
             end
         end
@@ -460,7 +449,7 @@ function SharedSpwnOptsGuiClick(event)
                 ChangePlayerSpawn(player,sharedSpawn.position, GAME_SURFACE_NAME, sharedSpawn.seq)
                 SendPlayerToSpawn(player)
                 GivePlayerStarterItems(player)
-                table.insert(sharedSpawn.players, player.name)
+                sharedSpawns.addPlayerToSharedSpawn(sharedSpawn, player.name);
                 SendBroadcastMsg(player.name .. " joined " .. spawnName .. "'s base!")
                 if (player.gui.center.shared_spawn_opts ~= nil) then
                     player.gui.center.shared_spawn_opts.destroy()
@@ -480,7 +469,7 @@ end
 
 
 local function IsSharedSpawnActive(player)
-    local sharedSpawn = FindSharedSpawn(player.name);
+    local sharedSpawn = sharedSpawns.findSharedSpawn(player.name);
     return sharedSpawn ~= nil and sharedSpawn.openAccess;
 end
 
@@ -568,10 +557,10 @@ function SpawnCtrlGuiCheckStateChanged(event)
 
     if (name == "accessToggle") then
         local spwnAccessState = event.element.state
-        local sharedSpawn = FindSharedSpawn(player.name)
+        local sharedSpawn = sharedSpawns.findSharedSpawn(player.name)
         if spwnAccessState then
             if sharedSpawn == nil then
-                sharedSpawn = CreateNewSharedSpawn(player)
+                sharedSpawn = sharedSpawns.createNewSharedSpawn(player)
             end
             sharedSpawn.openAccess = true
             SendBroadcastMsg("New players can now join " .. player.name ..  "'s base!")

@@ -162,7 +162,6 @@ function GetUniqueSpawn(name)
     return nil;
 end 
 
-
 function RemovePlayer(player)
 
     -- TODO dump items into a chest.
@@ -197,15 +196,8 @@ function RemovePlayer(player)
         global.playerCooldowns[player.name] = nil;
     end
 
-    -- Remove from shared spawn player slots (need to search all)
-    for _,sharedSpawn in pairs(global.sharedSpawns) do
-        for key,playerName in pairs(sharedSpawn.players) do
-            if (player.name == playerName) then
-                sharedSpawn.players[key] = nil;
-            end
-        end
-    end
-
+    sharedSpawns.removePlayer(player.name);
+    
     -- Remove the character completely
     game.remove_offline_players({player});
 end
@@ -219,69 +211,6 @@ function FindUnusedSpawns(event)
     end
 end
 
-function FindSharedSpawn(forPlayerName)
-    for _,sharedSpawn in pairs(global.sharedSpawns) do
-        for key,playerName in pairs(sharedSpawn.players) do
-            if (forPlayerName == playerName) then
-                return sharedSpawn
-            end
-        end
-    end
-    return nil;
-end
-
-function CreateNewSharedSpawn(player)
-    local playerSpawn = global.playerSpawns[player.name];
-    local sharedSpawn = FindSharedSpawn(player.name);
-    if sharedSpawn == nil then
-        sharedSpawn = {openAccess=true,
-                                    position={x=playerSpawn.x,y=playerSpawn.y},
-                                    surface=playerSpawn.surface,
-                                    seq=playerSpawn.seq,
-                                    players={ player.name }}
-        global.sharedSpawns[player.name] = sharedSpawn;
-    end
-    return sharedSpawn;                                   
-end
-
-function GetOnlinePlayersAtSharedSpawn2(sharedSpawn)
-    if (sharedSpawn ~= nil) then
-
-        local count = 0
-
-        -- For each player in the shared spawn, check if online and add to count.
-        for _,player in pairs(game.connected_players) do
-            for _,playerName in pairs(sharedSpawn.players) do
-            
-                if (playerName == player.name) then
-                    count = count + 1
-                end
-            end
-        end
-
-        return count
-    else
-        return 0
-    end
-end
-
-
--- Get the number of currently available shared spawns
--- This means the base owner has enabled access AND the number of online players
--- is below the threshold.
-function GetNumberOfAvailableSharedSpawns()
-    local count = 0
-
-    for _,sharedSpawn in pairs(global.sharedSpawns) do
-        if (sharedSpawn.openAccess) then
-            if (GetOnlinePlayersAtSharedSpawn2(sharedSpawn) < MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN) then
-                count = count+1
-            end
-        end
-    end
-
-    return count
-end
 
 function GetNumberOfAvailableSoloSpawns()
     local count = 0
@@ -309,9 +238,6 @@ function InitSpawnGlobalsAndForces()
     end
     if (global.playerSpawns == nil) then
         global.playerSpawns = {}
-    end
-    if (global.sharedSpawns == nil) then
-        global.sharedSpawns = {}
     end
 
     -- InitSpawnPoint( 0, 0, 0);
