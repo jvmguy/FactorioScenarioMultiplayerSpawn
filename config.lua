@@ -120,7 +120,7 @@ scenario.config.startKit = {
 scenario.config.mapSettings = {
     -- jvmguy uses these settings for riverworld
     RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
-    RSO_WATER = "very-low", -- Size of water patches
+    RSO_WATER = "low", -- Size of water patches
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
 
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
@@ -232,23 +232,23 @@ scenario.config.separateSpawns = {
     preferFar = false,
     firstSpawnPoint = 20,
     numSpawnPoints = 30,
-    -- extraSpawn = 60,    -- admin spawn really far away
+    extraSpawn = 32,    -- admin spawn really far away
     spacing = 1000,
     
 -- x = right, left
 -- y = up, down
 
-    land = 88,
+    land = 72,
     trees = 2,  -- included in the land
     moat = 8,   -- additional to land
-    size = 96,  -- should be land + moat
+    size = 80,  -- should be land + moat
 	
 	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
 	
     resources = {
         { shape="rect", name="steel-chest", x=-4,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=-4,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=-4,   y=-8,  height=2, width=2, contents = { {name = "coal", count=2400 } }  },
+        { shape="rect", name="steel-chest", x=-4,   y=-8,  height=1, width=1, contents = { {name = "coal", count=2400 } }  },
         { shape="rect", name="steel-chest", x=-4,   y=-4,  height=1, width=1, contents = { {name = "stone", count=2400 } },  },
     
         { shape="rect", type="coal",         x=0,  y=-41, height=14, width=24,  amount=5000,  },

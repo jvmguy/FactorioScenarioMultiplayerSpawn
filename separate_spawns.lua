@@ -172,9 +172,10 @@ function RemovePlayer(player)
     end
 
     local uniqueSpawn = GetUniqueSpawn(player.name);
+    local sharedSpawn = sharedSpawns.findSharedSpawn(player.name);
     
     -- If a uniqueSpawn was created for the player, mark it as unused.
-    if (uniqueSpawn ~= nil) then
+    if (uniqueSpawn ~= nil and sharedSpawn == nil) then
         if scenario.config.wipespawn.enabled then
             SendBroadcastMsg(player.name .. " base was reclaimed.");
             wipespawn.markForRemoval(uniqueSpawn)
@@ -203,7 +204,7 @@ function RemovePlayer(player)
 end
 
 -- Call this if a player leaves the game
--- Seems to be susceptiable to causing desyncs...
+-- Seems to be susceptible to causing desyncs...
 function FindUnusedSpawns(event)
     local player = game.players[event.player_index]
     if (event.player_index>1 and player.online_time < MIN_ONLINE_TIME) then

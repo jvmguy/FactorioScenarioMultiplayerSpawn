@@ -18,19 +18,26 @@ function M.init()
     if (global.sharedSpawns == nil) then
         global.sharedSpawns = {}
     end
+    global.sharedSpawnCount = 0
 end
 
 
 function M.removePlayer(forPlayerName)
     -- Remove from shared spawn player slots (need to search all)
-    for _,sharedSpawn in pairs(global.sharedSpawns) do
+    for key,sharedSpawn in pairs(global.sharedSpawns) do
+        local players = 0
         for key,playerName in pairs(sharedSpawn.players) do
+            if playerName ~= nil then
+                players = players + 1
+            end
             if (forPlayerName == playerName) then
                 sharedSpawn.players[key] = nil;
             end
         end
+        if players == 0 then
+            sharedSpawn.openAccess = true;
+        end
     end
-
 end
 
 
@@ -68,7 +75,9 @@ function M.createNewSharedSpawn(player)
                                     surfaceName=playerSpawn.surfaceName,
                                     seq=playerSpawn.seq,
                                     players={ player.name } }
-        global.sharedSpawns[player.name] = sharedSpawn;
+        global.sharedSpawnCount = global.sharedSpawnCount + 1;
+        local key = "shared_spawn_" .. global.sharedSpawnCount
+        global.sharedSpawns[key] = sharedSpawn;
     end
     return sharedSpawn;                                   
 end

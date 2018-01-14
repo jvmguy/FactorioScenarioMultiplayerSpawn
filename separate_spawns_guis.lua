@@ -400,7 +400,7 @@ function DisplaySharedSpawnOptions(player)
                 local spawnFrame = shGui.add({ type="frame", direction="vertical"});
                 ApplyStyle( spawnFrame, spawnFrameStyle );
 
-                spawnFrame.add{type="button", caption=spawnName .. " (" .. spotsRemaining .. " spots remaining)", name=spawnName}
+                spawnFrame.add{type="button", caption=" (" .. spotsRemaining .. " spots remaining)", name=spawnName }
                 ApplyStyle(spawnFrame[spawnName], my_small_button_style)
 
                 spawnFrame.add{name = spawnName .. "spacer_lbl", type = "label", caption=" "}
@@ -443,14 +443,14 @@ function SharedSpwnOptsGuiClick(event)
     -- Else check for which spawn was selected
     -- If a spawn is removed during this time, the button will not do anything
     else
-        for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
-            if (buttonClicked == spawnName) then
+        for spawnKey,sharedSpawn in pairs(global.sharedSpawns) do
+            if (buttonClicked == spawnKey) then
                 CreateSpawnCtrlGui(player)
                 ChangePlayerSpawn(player,sharedSpawn.position, GAME_SURFACE_NAME, sharedSpawn.seq)
                 SendPlayerToSpawn(player)
                 GivePlayerStarterItems(player)
                 sharedSpawns.addPlayerToSharedSpawn(sharedSpawn, player.name);
-                SendBroadcastMsg(player.name .. " joined " .. spawnName .. "'s base!")
+                SendBroadcastMsg(player.name .. " joined " .. spawnKey .. " !")
                 if (player.gui.center.shared_spawn_opts ~= nil) then
                     player.gui.center.shared_spawn_opts.destroy()
                 end
