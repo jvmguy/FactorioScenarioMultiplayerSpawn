@@ -83,13 +83,13 @@ scenario.config.startKit = {
                   {name = "fusion-reactor-equipment"},
 --                  {name = "exoskeleton-equipment"},
 --                  {name = "battery-mk2-equipment", count=1},
-                  {name = "personal-roboport-mk2-equipment", count=1},
+                  {name = "personal-roboport-mk2-equipment", count=2},
 --                  {name = "solar-panel-equipment", count = 7 }
             }
         },
         {name = "belt-immunity-equipment", count = 1},
 --        {name = "night-vision-equipment", count = 1},
-        {name = "construction-robot", count = 10},
+        {name = "construction-robot", count = 50},
         {name = "steel-axe", count = 5},
         {name = "roboport", count = 1},
         {name = "logistic-chest-storage", count = 1},
@@ -268,7 +268,7 @@ scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
 	stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
-	waterWalls = true,
+	waterWalls = false,
     firstSpawnPoint = 16,
     -- moat=0,         -- horizontal offset relative to center of spawn
     -- moatWidth=8,    
