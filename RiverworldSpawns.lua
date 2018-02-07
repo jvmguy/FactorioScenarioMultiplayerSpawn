@@ -115,7 +115,7 @@ local function GenerateMoat(surface, chunkArea, moatRect)
     surface.set_tiles(tiles)
 end
 
-local function GenerateWalls(surface, wallRect, railsRect, railsRect2)
+local function GenerateWalls(surface, wallRect, railsRect, railsRect2, wantWater)
     local tiles = {};
     for y=wallRect.left_top.y, wallRect.right_bottom.y-1 do
         for x = wallRect.left_top.x, wallRect.right_bottom.x-1 do
@@ -127,6 +127,10 @@ local function GenerateWalls(surface, wallRect, railsRect, railsRect2)
                 end
 			elseif scenario.config.riverworld.stoneWalls then
                 table.insert(tiles, {name = "grass-1",position = {x,y}})
+			elseif wantWater then
+                if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
+                        table.insert(tiles, {name = "water",position = {x,y}})
+                end
 			else
 		        if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
 		                table.insert(tiles, {name = "out-of-map",position = {x,y}})
@@ -166,11 +170,20 @@ function M.ChunkGenerated(event)
         local spacing = scenario.config.riverworld.spacing
         local barrier = scenario.config.riverworld.barrier
         local w = chunkArea.right_bottom.x - chunkArea.left_top.x
-        local wallRect = MakeRect( chunkArea.left_top.x, w, spawnPos.y - spacing/2 - barrier/2, barrier );
+        local y = spawnPos.y - spacing/2;
+        local wallRect = MakeRect( chunkArea.left_top.x, w, y, barrier/2 );
         wallRect = ChunkIntersection(chunkArea, wallRect);
+        y = y + barrier/2
+        local waterRect = MakeRect( chunkArea.left_top.x, w, y, 8 );
+        waterRect = ChunkIntersection(chunkArea, waterRect);
 
-        local wallRect2 = MakeRect( chunkArea.left_top.x, w, spawnPos.y + spacing/2 - barrier/2, barrier );
+        local y = spawnPos.y + spacing/2 - barrier/2 - 8;
+        local waterRect2 = MakeRect( chunkArea.left_top.x, w, y, 8 );
+        waterRect2 = ChunkIntersection(chunkArea, waterRect2);
+        y = y + 8        
+        local wallRect2 = MakeRect( chunkArea.left_top.x, w, y, barrier/2 );
         wallRect2 = ChunkIntersection(chunkArea, wallRect2);
+        
                 
         local railsRect = MakeRect( scenario.config.riverworld.rail, 28, -20000, 40000);
         railsRect = ChunkIntersection( chunkArea, railsRect);
@@ -189,8 +202,10 @@ function M.ChunkGenerated(event)
         end
         -- quick reject
         if (dy < spacing) then
-            GenerateWalls( surface, wallRect, railsRect, railsRect2 )
-            GenerateWalls( surface, wallRect2, railsRect, railsRect2 )
+            GenerateWalls( surface, wallRect, railsRect, railsRect2, false )
+            GenerateWalls( surface, waterRect, railsRect, railsRect2, true )
+            GenerateWalls( surface, waterRect2, railsRect, railsRect2, true )
+            GenerateWalls( surface, wallRect2, railsRect, railsRect2, false )
         end
 
         GenerateRails( surface, chunkArea, scenario.config.riverworld.rail, railsRect);        
