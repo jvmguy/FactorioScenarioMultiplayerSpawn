@@ -16,8 +16,8 @@ local function CreateRocketSilo(surface, chunkArea)
         -- Set tiles below the silo
         local tiles = {}
         local i = 1
-        for dx = -6,6 do
-            for dy = -7,6 do
+        for dx = -20,20 do
+            for dy = -20,20 do
                 tiles[i] = {name = "grass-1", position = {global.siloPosition.x+dx, global.siloPosition.y+dy}}
                 i=i+1
             end
@@ -25,8 +25,8 @@ local function CreateRocketSilo(surface, chunkArea)
         surface.set_tiles(tiles, false)
         tiles = {}
         i = 1
-        for dx = -5,5 do
-            for dy = -6,5 do
+        for dx = -20,20 do
+            for dy = -20,20 do
                 tiles[i] = {name = "concrete", position = {global.siloPosition.x+dx, global.siloPosition.y+dy}}
                 i=i+1
             end
@@ -34,7 +34,19 @@ local function CreateRocketSilo(surface, chunkArea)
         surface.set_tiles(tiles, true)
 
         -- Create silo and assign to main force
-        local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5, global.siloPosition.y}, force = MAIN_FORCE}
+        local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5-8, global.siloPosition.y-8}, force = MAIN_FORCE}
+        silo.destructible = false
+        silo.minable = false
+
+        local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5+8, global.siloPosition.y-8}, force = MAIN_FORCE}
+        silo.destructible = false
+        silo.minable = false
+
+        local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5-8, global.siloPosition.y+8}, force = MAIN_FORCE}
+        silo.destructible = false
+        silo.minable = false
+
+        local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5+8, global.siloPosition.y+8}, force = MAIN_FORCE}
         silo.destructible = false
         silo.minable = false
 
