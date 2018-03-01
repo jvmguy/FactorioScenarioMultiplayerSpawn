@@ -10,28 +10,28 @@
 --------------------------------------------------------------------------------
 my_fixed_width_style = {
     minimal_width = 500,
-    maximal_width = 500
+    maximal_width = 500,
 }
 my_label_style = {
     minimal_width = 500,
     maximal_width = 500,
-    maximal_height = 10,
+    maximal_height = 20,
     font_color = {r=1,g=1,b=1},
     top_padding = 0,
-    bottom_padding = 0
+    bottom_padding = 0,
 }
 my_note_style = {
     minimal_width = 500,
-    maximal_height = 10,
+    maximal_height = 15,
     font = "default-small-semibold",
     font_color = {r=1,g=0.5,b=0.5},
     top_padding = 0,
-    bottom_padding = 0
+    bottom_padding = 0,
 }
 my_warning_style = {
     minimal_width = 500,
     maximal_width = 500,
-    maximal_height = 10,
+    maximal_height = 20,
     font_color = {r=1,g=0.1,b=0.1},
     top_padding = 0,
     bottom_padding = 0
@@ -66,10 +66,10 @@ my_player_list_style = {
     minimal_width = 200,
     top_padding = 0,
     bottom_padding = 0,
-    maximal_height = 15
+    maximal_height = 20
 }
 my_player_list_style_spacer = {
-    maximal_height = 15
+    maximal_height = 20
 }
 my_color_red = {r=1,g=0.1,b=0.1}
 
