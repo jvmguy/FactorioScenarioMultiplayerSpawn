@@ -27,6 +27,7 @@
 -- Event manager
 require("config")
 require "locale/utils/event" --This is so all of the modules play nice with each other.
+require("locale/modules/scheduler");
 
 -- My Scenario Includes
 require("oarc_utils")
