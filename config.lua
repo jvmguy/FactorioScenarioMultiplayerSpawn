@@ -255,7 +255,7 @@ scenario.config.separateSpawns = {
         { shape="rect", type="stone",        x=0,  y=-24, height=14, width=24,  amount=3000,  },
         { shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
         { shape="rect", type="copper-ore",   x=0,  y=-7,  height=21, width=36,  amount=3000,  },
-        { shape="rect", type="iron-ore",     x=0,  y =17, height=21, width=36,  amount=3000,  },
+        { shape="rect", type="iron-ore",     x=0,  y =18, height=21, width=36,  amount=3000,  },
         
         { shape="rect", type="crude-oil", x=42, y=-6, height=1, amount=1000000,  },
         { shape="rect", type="crude-oil", x=42, y= 0, height=1, amount=1000000,  },
