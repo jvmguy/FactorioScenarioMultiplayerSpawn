@@ -19,6 +19,7 @@ function Scheduler.onTick(event)
     local entry = jvmHeap.head(Scheduler.queue);
     if (entry ~= nil and entry.lruTime <= game.tick) then
         pcall( entry.func, entry.arg);
+--        entry.func( entry.arg );
         entry = jvmHeap.remove(Scheduler.queue, entry);
         entry = jvmHeap.head(Scheduler.queue);
     end

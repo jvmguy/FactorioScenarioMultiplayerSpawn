@@ -49,6 +49,18 @@ local function makeIndestructibleEntity(surface, args)
     return entity;
 end
 
+local function toZCoord( area, position )
+    local x = position.x
+    local y = position.y
+    return (x-area.left_top.x) + (y-area.left_top.y) * 65536;
+end
+
+local function fromZCoord( area, z )
+    local x = z % 65536;
+    local y = (z - x) / 65536;
+    return { x=area.left_top.x+x, y=area.left_top.y+y }
+end
+
 local function GenerateRails(surface, chunkArea, railX, rails)
     if ChunkIntersects(chunkArea, rails) then
         local rect = ChunkIntersection( chunkArea, rails );
@@ -157,6 +169,75 @@ local function GenerateWalls(surface, wallRect, railsRect, railsRect2, wantWater
 	end
 end
 
+local function ReplaceLandWithWater(args)
+    local surface = args.surface
+    local area = args.area
+    local spawnPos = args.spawnPos
+    local extraBox = 3
+    local extraArea = { left_top = { x = area.left_top.x - extraBox, y = area.left_top.y - extraBox},
+            right_bottom = { x = area.right_bottom.x + extraBox, y = area.right_bottom.y + extraBox} }
+
+    local spacing = scenario.config.riverworld.spacing
+    local barrier = scenario.config.riverworld.barrier
+    local w = (spacing - barrier) / 2
+    
+    -- don't touch chunks near the spawn
+    local spawnRect = MakeRect( spawnPos.x-w/2, w, spawnPos.y-w/2, w);
+    if ChunkIntersects( area, spawnRect ) then
+        return
+    end
+
+    -- don't touch chunks near the silo
+    local siloRect = MakeRect( -w/2, w, -w/2, w);
+    if ChunkIntersects( area, siloRect ) then
+        return
+    end
+
+    -- construct a set of tiles that we want to keep as land.
+    -- We do that by using the entity bound box, expanded by an extraBox amount
+        
+    local land = {}
+    local count = 0    
+    for _, entity in pairs(surface.find_entities_filtered{area = extraArea}) do
+            count = count + 1
+        if entity.type == "tree" or entity.type == "fish" then
+        -- ignore trees and fish
+        -- entity.destroy();
+        else
+--            game.print(" entity " .. count .. " " .. entity.type .. ":" .. entity.name)
+            local box = entity.bounding_box
+            for x = math.floor(box.left_top.x-extraBox), math.ceil(box.right_bottom.x+extraBox)-1 do
+                for y = math.floor(box.left_top.y-extraBox), math.ceil(box.right_bottom.y+extraBox)-1 do
+                    local z = toZCoord( extraArea, { x=x, y=y } )
+                    land[z] = 1
+                end
+            end
+--             game.print("land: " .. z .. " " .. entity.position.x .. " " .. entity.position.y )
+--            if count<10 then
+--                game.print(" entity " .. count .. " " .. entity.type .. ":" .. entity.name)
+--            end
+        end
+    end
+    
+    -- destroy trees and rocks, and replace tiles with water
+    local tiles = {};
+    for y=area.left_top.y, area.right_bottom.y-1 do
+        for x = area.left_top.x, area.right_bottom.x-1 do
+            local z = toZCoord( extraArea, { x=x, y=y })
+            if land[z] ~= 1 then
+                local tile = surface.get_tile(x, y);
+                if (tile.name ~= "out-of-map") then
+                    table.insert(tiles, {name = "water",position = {x,y}})
+                end
+            end
+        end
+    end
+    surface.set_tiles(tiles)
+    local force = game.forces[MAIN_FORCE];
+    force.unchart_chunk( { x = area.left_top.x / 32, y = area.left_top.y / 32 }, surface )
+    -- force.chart( surface, area );
+end
+
 function M.ChunkGenerated(event)
     local surface = event.surface
     
@@ -210,6 +291,9 @@ function M.ChunkGenerated(event)
 
         GenerateRails( surface, chunkArea, scenario.config.riverworld.rail, railsRect);        
         GenerateRails( surface, chunkArea, scenario.config.riverworld.rail2, railsRect2);
+        if scenario.config.riverworld.seablock then        
+            Scheduler.schedule(game.tick+1, ReplaceLandWithWater, { surface= surface, area = chunkArea, spawnPos=spawnPos } );
+        end
     end
 end
 

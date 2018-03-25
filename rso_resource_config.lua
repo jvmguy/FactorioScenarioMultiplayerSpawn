@@ -6,7 +6,7 @@ local function fillVanillaConfig()
         
         -- general spawn params
         allotment=95, -- how common resource is
-        spawns_per_region={min=1, max=1}, --number of chunks
+        spawns_per_region={min=3, max=3}, --number of chunks
         richness=4000,        -- resource_ore has only one richness value - resource-liquid has min/max
         
         size={min=25, max=30}, -- rough radius of area, too high value can produce square shaped areas
@@ -30,7 +30,7 @@ local function fillVanillaConfig()
         type="resource-ore",
         
         allotment=90,
-        spawns_per_region={min=1, max=1},
+        spawns_per_region={min=3, max=3},
         richness=4000,
         size={min=25, max=30},
         min_amount=250,
@@ -51,7 +51,7 @@ local function fillVanillaConfig()
         
         allotment=85,
         
-        spawns_per_region={min=1, max=2},
+        spawns_per_region={min=3, max=5},
         size={min=20, max=25},
         richness=3500,
         min_amount=350,
@@ -70,7 +70,7 @@ local function fillVanillaConfig()
         type="resource-ore",
         
         allotment=60,
-        spawns_per_region={min=1, max=1},
+        spawns_per_region={min=3, max=5},
         richness=2500,
         size={min=19, max=22},
         min_amount=250,
@@ -89,7 +89,7 @@ local function fillVanillaConfig()
         type="resource-ore",
         
         allotment=40,
-        spawns_per_region={min=1, max=1},
+        spawns_per_region={min=2, max=3},
         richness=2500,
         size={min=15, max=20},
         min_amount=350,
@@ -101,7 +101,7 @@ local function fillVanillaConfig()
         type="resource-liquid",
         minimum_amount=60000,
         allotment=40,   -- 80
-        spawns_per_region={min=1, max=1},
+        spawns_per_region={min=3, max=5},
         richness={min=60000, max=70000}, -- richness per resource spawn
         size={min=2, max=3},
         
@@ -121,7 +121,7 @@ local function fillEnemies()
         force="enemy",
         clear_range = {6, 6},
         
-        spawns_per_region={min=2,max=4},
+        spawns_per_region={min=4,max=8},
         size={min=1,max=2},
         size_per_region_factor=1,
         richness=3,

@@ -249,7 +249,7 @@ scenario.config.separateSpawns = {
         { shape="rect", name="steel-chest", x=-4,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=-4,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=-4,   y=-8,  height=1, width=1, contents = { {name = "coal", count=2400 } }  },
-        { shape="rect", name="steel-chest", x=-4,   y=-4,  height=1, width=1, contents = { {name = "stone", count=2400 } },  },
+        { shape="rect", name="steel-chest", x=-4,   y=-4,  height=1, width=1, contents = { {name = "stone", count=99999 } },  },
     
         { shape="rect", type="coal",         x=0,  y=-41, height=14, width=24,  amount=5000,  },
         { shape="rect", type="stone",        x=0,  y=-24, height=14, width=24,  amount=3000,  },
@@ -267,6 +267,7 @@ scenario.config.separateSpawns = {
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
+    seablock = true,        -- behavior a little like the seablock mod. (well, not really)
 	stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
 	waterWalls = false,
     firstSpawnPoint = 16,
