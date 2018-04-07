@@ -260,7 +260,14 @@ scenario.config.separateSpawns = {
         { shape="rect", type="crude-oil", x=42, y=-6, height=1, amount=1000000,  },
         { shape="rect", type="crude-oil", x=42, y= 0, height=1, amount=1000000,  },
         { shape="rect", type="crude-oil", x=42, y= 6, height=1, amount=1000000,  },
-        
+    },
+    
+    researched = {
+        'automation',
+        'logistics',
+        'electronics',
+        'automation-2',    
+--        'coal-liquefaction',
     },
 }
 

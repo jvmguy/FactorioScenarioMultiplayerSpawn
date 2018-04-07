@@ -134,9 +134,8 @@ function jvm.on_init(event)
         ChartRocketSiloArea(game.forces[MAIN_FORCE])
     end
 
-    if scenario.config.research.coalLiquefactionResearched then
-        game.forces[MAIN_FORCE].technologies['coal-liquefaction'].researched=true;
-    end
+
+    EnableStartingResearch(game.forces[MAIN_FORCE]);
     
     if ENABLE_ALL_RESEARCH_DONE then
         game.forces[MAIN_FORCE].research_all_technologies()

@@ -128,8 +128,14 @@ function SameCoord(a, b)
     return a.x == b.x and a.y == b.y;
 end
 
-function EnableAutomatedConstruction(force)
+function EnableStartingResearch(force)
+    local researched = scenario.config.separateSpawns.researched;
+    if researched ~= nil then
 --    force.technologies['automated-construction'].researched=true;
+        for key, tech in pairs(researched) do
+            force.technologies[tech].researched=true;
+        end
+    end
 end
 
 function AssignPlayerToStartSurface(player)
