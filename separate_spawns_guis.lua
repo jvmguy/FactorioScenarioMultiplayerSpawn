@@ -122,9 +122,9 @@ function DisplaySpawnOptions(player)
 
     if GetNumberOfAvailableSoloSpawns() > 0 then  
         -- The main spawning options. Solo near and solo far.
-    --    sGui.add{name = "isolated_spawn_near",
-    --                    type = "button",
-    --                    caption="Solo Spawn (Near)"}
+        sGui.add{name = "isolated_spawn_near",
+                        type = "button",
+                        caption="Solo Spawn (Near)"}
         sGui.add{name = "isolated_spawn_far",
                         type = "button",
                         caption="Solo Spawn (Far)"}
@@ -234,7 +234,7 @@ function SpawnOptsGuiClick(event)
         GivePlayerStarterItems(player)
         ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME, 0)
         SendPlayerToSpawn(player)
-        SendBroadcastMsg(player.name .. " joined the main force!")
+        logAndBroadcast(player.name, player.name .. " joined the main force!")
         ChartArea(player.force, player.position, 4)
 
     elseif ((buttonClicked == "isolated_spawn_near") or (buttonClicked == "isolated_spawn_far")) then
@@ -263,7 +263,7 @@ function SpawnOptsGuiClick(event)
             player.print("Sorry! You have been assigned to the default spawn.")
             ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME, 0)
             SendPlayerToSpawn(player)
-            SendBroadcastMsg(player.name .. " joined the default spawn!")
+            logAndBroadcast(player.name, player.name .. " joined the default spawn!")
             ChartArea(player.force, player.position, 4)
         else
             local used = newSpawn.used;
@@ -274,12 +274,12 @@ function SpawnOptsGuiClick(event)
                 ChangePlayerSpawn(player, newSpawn, GAME_SURFACE_NAME, newSpawn.seq)
                 SendPlayerToSpawn(player)
                 player.print("Sorry! You have been assigned to an abandoned base! This is done to keep map size small.")
-                SendBroadcastMsg(player.name .. " joined an abandoned base!")
+                logAndBroadcast(player.name, player.name .. " joined an abandoned base!")
             else
                 ChangePlayerSpawn(player, newSpawn, GAME_SURFACE_NAME, newSpawn.seq)
                 SendPlayerToNewSpawnAndCreateIt(player, newSpawn)
                 player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!")
-                SendBroadcastMsg(player.name .. " joined a new base!")
+                logAndBroadcast(player.name, player.name .. " joined a new base!")
                 ChartArea(player.force, player.position, 4)
             end
         end
@@ -341,7 +341,7 @@ function PickRandomSpawn( t, far )
         table.insert( candidates, spawnPos );
     end
   end
-  if scenario.config.separateSpawns.preferFar then
+  if far then
     table.sort (candidates, function (k1, k2) return k1.dist > k2.dist end )
   else
     table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
@@ -450,7 +450,7 @@ function SharedSpwnOptsGuiClick(event)
                 SendPlayerToSpawn(player)
                 GivePlayerStarterItems(player)
                 sharedSpawns.addPlayerToSharedSpawn(sharedSpawn, player.name);
-                SendBroadcastMsg(player.name .. " joined " .. spawnKey .. " !")
+                logAndBroadcast(player.name, player.name .. " joined " .. spawnKey .. " !")
                 if (player.gui.center.shared_spawn_opts ~= nil) then
                     player.gui.center.shared_spawn_opts.destroy()
                 end
@@ -563,13 +563,13 @@ function SpawnCtrlGuiCheckStateChanged(event)
                 sharedSpawn = sharedSpawns.createNewSharedSpawn(player)
             end
             sharedSpawn.openAccess = true
-            SendBroadcastMsg("New players can now join " .. player.name ..  "'s base!")
+            logAndBroadcast(player.name, "New players can now join " .. player.name ..  "'s base!")
             ExpandSpawnCtrlGui(player, event.tick)
         else
             if sharedSpawn ~= nil then
                 sharedSpawn.openAccess = false
             end
-            SendBroadcastMsg("New players can no longer join " .. player.name ..  "'s base!")
+            logAndBroadcast(player.name, "New players can no longer join " .. player.name ..  "'s base!")
             ExpandSpawnCtrlGui(player, event.tick)
         end
     end

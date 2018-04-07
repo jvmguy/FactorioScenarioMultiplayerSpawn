@@ -276,7 +276,7 @@ function M.onTick()
     end
     if (game.tick == global.regrow.forceRemovalTime+660) then
         removeGarbageChunks()
-        SendBroadcastMsg("Map cleanup done...")
+        logAndBroadcast("", "Map cleanup done...")
     end
          
 end

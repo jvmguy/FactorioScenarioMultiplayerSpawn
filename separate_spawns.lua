@@ -177,18 +177,18 @@ function RemovePlayer(player)
     -- If a uniqueSpawn was created for the player, mark it as unused.
     if (uniqueSpawn ~= nil and sharedSpawn == nil) then
         if scenario.config.wipespawn.enabled then
-            SendBroadcastMsg(player.name .. " base was reclaimed.");
+            logAndBroadcast( player.name, player.name .. " base was reclaimed." )    
             wipespawn.markForRemoval(uniqueSpawn)
             uniqueSpawn.used = false;
             uniqueSpawn.createdFor = nil;
         elseif scenario.config.regrow.enabled then
-            SendBroadcastMsg(player.name .. " base was abandoned.");
+            logAndBroadcast( player.name, player.name .. " base was abandoned." )    
             uniqueSpawn.used = false;
             uniqueSpawn.createdFor = nil;
         else
             uniqueSpawn.used = false;
             uniqueSpawn.createdFor = nil;
-            SendBroadcastMsg(player.name .. " base was freed up.");
+            logAndBroadcast( player.name, player.name .. " base was freed up." )    
         end
     end
     
@@ -362,7 +362,7 @@ function SendPlayerToNewSpawnAndCreateIt(player, spawn)
         ClearNearbyEnemies(player, SAFE_AREA_TILE_DIST)
     else      
         DebugPrint("THIS SHOULD NOT EVER HAPPEN! Spawn failed!")
-        SendBroadcastMsg("Failed to create spawn point for: " .. player.name)
+        logAndBroadcast( player.name, "Failed to create spawn point for: " .. player.name )    
     end
 end
 

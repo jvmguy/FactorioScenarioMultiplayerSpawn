@@ -51,12 +51,12 @@ local function fillVanillaConfig()
         
         allotment=85,
         
-        spawns_per_region={min=3, max=5},
-        size={min=20, max=25},
-        richness=3500,
+        spawns_per_region={min=1, max=1},
+        size={min=21, max=25},
+        richness=7000,
         min_amount=350,
 
-        starting={richness=3000, size=20, probability=0},
+        starting={richness=4000, size=20, probability=1},
         
         multi_resource_chance=0.30,
         multi_resource={
@@ -70,7 +70,7 @@ local function fillVanillaConfig()
         type="resource-ore",
         
         allotment=60,
-        spawns_per_region={min=3, max=5},
+        spawns_per_region={min=5, max=7},
         richness=2500,
         size={min=19, max=22},
         min_amount=250,

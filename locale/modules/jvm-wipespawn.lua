@@ -168,11 +168,11 @@ end
 function M.onTick()
 --    -- Catch force remove flag
     if (game.tick == global.wipespawn.forceRemovalTime+60) then
-        SendBroadcastMsg("Map cleanup in 10 seconds...")
+        logAndBroadcast("", "Map cleanup in 10 seconds...")
     end
     if (game.tick == global.wipespawn.forceRemovalTime+660) then
         removeGarbageChunks()
-        SendBroadcastMsg("Map cleanup done...")
+        logAndBroadcast("", "Map cleanup done...")
     end
          
 end

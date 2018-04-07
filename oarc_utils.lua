@@ -106,6 +106,11 @@ function SendBroadcastMsg(msg)
     end
 end
 
+function logAndBroadcast(playerName, msg)
+    SendBroadcastMsg(msg);
+    logInfo(playerName, msg);
+end
+
 function formattime(ticks)
   local seconds = ticks / 60
   local minutes = math.floor((seconds)/60)

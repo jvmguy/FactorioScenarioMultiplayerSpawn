@@ -78,6 +78,7 @@ function M.createNewSharedSpawn(player)
         global.sharedSpawnCount = global.sharedSpawnCount + 1;
         local key = "shared_spawn_" .. global.sharedSpawnCount
         global.sharedSpawns[key] = sharedSpawn;
+        logInfo("Create " .. key .. "for player " .. player.name )    
     end
     return sharedSpawn;                                   
 end

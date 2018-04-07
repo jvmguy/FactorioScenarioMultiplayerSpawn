@@ -238,9 +238,9 @@ scenario.config.separateSpawns = {
 -- x = right, left
 -- y = up, down
 
-    land = 72,
+    land = 80,
     trees = 2,  -- included in the land
-    moat = 8,   -- additional to land
+    moat = 0,   -- additional to land
     size = 80,  -- should be land + moat
 	
 	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 

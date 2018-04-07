@@ -1,9 +1,9 @@
 
-local function playerNameFromEvent(event)
+function playerNameFromEvent(event)
     return (event.player_index and game.players[event.player_index].name) or "<unknown>"
 end
 
-local function logInfo(playerName, msg)
+function logInfo(playerName, msg)
     game.write_file("infolog.txt", game.tick .. ": " .. playerName .. ": " .. msg .. "\n", true, 0);
 end
 
