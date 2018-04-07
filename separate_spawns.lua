@@ -345,7 +345,14 @@ function DoesPlayerHaveCustomSpawn(player)
 end
 
 function ChangePlayerSpawn(player, pos, surfaceName, seq)
-    global.playerSpawns[player.name] = { x=pos.x, y=pos.y, surface=surfaceName, seq=seq }
+    if global.playerSpawns[player.name] == nil then
+        global.playerSpawns[player.name] = { x=pos.x, y=pos.y, surface=surfaceName, seq=seq }
+    else
+        global.playerSpawns[player.name].x = pos.x;
+        global.playerSpawns[player.name].y = pos.y;
+        global.playerSpawns[player.name].surface = surfaceName;
+        global.playerSpawns[player.name].seq = seq;
+    end
 end
 
 function SendPlayerToNewSpawnAndCreateIt(player, spawn)
