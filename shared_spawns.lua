@@ -24,18 +24,22 @@ end
 
 function M.removePlayer(forPlayerName)
     -- Remove from shared spawn player slots (need to search all)
-    for key,sharedSpawn in pairs(global.sharedSpawns) do
+    for sskey,sharedSpawn in pairs(global.sharedSpawns) do
         local players = 0
         for key,playerName in pairs(sharedSpawn.players) do
             if playerName ~= nil then
-                players = players + 1
-            end
-            if (forPlayerName == playerName) then
-                sharedSpawn.players[key] = nil;
+                if (forPlayerName == playerName) then
+                    logInfo(forPlayerName, "Removing player from shared spawn " .. sskey)
+                    sharedSpawn.players[key] = nil;
+                else
+                    players = players + 1
+                end
             end
         end
         if players == 0 then
-            sharedSpawn.openAccess = true;
+            logInfo(forPlayerName, "Deleting shared spawn " .. sskey)
+            global.sharedSpawns[sskey] = nil;
+            global.allSpawns[sharedSpawn.seq].sharedKey = nil;
         end
     end
 end
@@ -76,8 +80,11 @@ function M.createNewSharedSpawn(player)
                                     seq=playerSpawn.seq,
                                     players={ player.name } }
         global.sharedSpawnCount = global.sharedSpawnCount + 1;
-        local key = "shared_spawn_" .. global.sharedSpawnCount
+        local key = "shared spawn " .. global.sharedSpawnCount
         global.sharedSpawns[key] = sharedSpawn;
+        if global.allSpawns[playerSpawn.seq] ~= nil then
+            global.allSpawns[playerSpawn.seq].sharedKey = key;
+        end
         logInfo("Create " .. key .. "for player " .. player.name )    
     end
     return sharedSpawn;                                   
@@ -85,19 +92,16 @@ end
 
 function M.getOnlinePlayersAtSharedSpawn(sharedSpawn)
     if (sharedSpawn ~= nil) then
-
         local count = 0
 
         -- For each player in the shared spawn, check if online and add to count.
         for _,player in pairs(game.connected_players) do
             for _,playerName in pairs(sharedSpawn.players) do
-            
                 if (playerName == player.name) then
                     count = count + 1
                 end
             end
         end
-
         return count
     else
         return 0
@@ -110,7 +114,6 @@ end
 -- is below the threshold.
 function M.getNumberOfAvailableSharedSpawns()
     local count = 0
-
     for _,sharedSpawn in pairs(global.sharedSpawns) do
         if (sharedSpawn.openAccess) then
             if (M.getOnlinePlayersAtSharedSpawn(sharedSpawn) < MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN) then
