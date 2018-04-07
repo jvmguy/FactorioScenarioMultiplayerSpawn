@@ -113,7 +113,7 @@ function M.InitSpawnPoint(n)
    spawn.createdFor = nil;
    spawn.used = false;
    spawn.seq = n
-   table.insert(global.allSpawns, spawn)
+   global.allSpawns[n] = spawn;
 end
 
 local function GenerateMoat(surface, chunkArea, moatRect)
