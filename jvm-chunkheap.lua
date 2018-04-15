@@ -84,20 +84,27 @@ function M.insert(heap, item)
 end
 
 function M.remove(heap, item)
-    -- game.print("remove: " .. item.index .. " count=" .. heap.count)
-	local index = item.index;	
-	heap[index] = heap[heap.count-1]
-	heap[index].index = index
-	heap.count = heap.count - 1
-	if heap.count>index then
-		siftdown(heap, index)
-	end
+    -- log("remove: " .. item.index .. " count=" .. heap.count)
+	if heap.count>0 then	
+        local index = item.index;
+        if heap.count>1 then
+    	   heap[index] = heap[heap.count-1]
+    	    heap[index].index = index
+    	end
+    	heap.count = heap.count - 1
+    	if heap.count>index then
+		  siftdown(heap, index)
+    	end
     -- check(heap)
+    end
 end 
 
 function M.head(heap)
     -- game.print("head: " .. heap.count)
-	return heap[0]
+    if heap.count>0 then
+	   return heap[0]
+    end
+    return nil;
 end
 
 function M.size(heap)
