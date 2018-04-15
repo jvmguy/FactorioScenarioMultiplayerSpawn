@@ -133,11 +133,11 @@ scenario.config.teleporter = {
 
     -- where in the silo chunk to place the teleporter
     -- this should not be 0,0 if there is the possibility that the default spawn will be used
-    siloPosition = { x=2, y=0 },
+    siloPosition = { x=16, y=-8 },
     
     -- where in the silo chunk the teleporter takes you
     -- this should be different than the silo position
-    siloTeleportPosition = { x=0, y=0 },
+    siloTeleportPosition = { x=14, y=-8 },
     
     startItems = {
         {name= "coal", count=50},
@@ -179,7 +179,7 @@ ENABLE_SEPARATE_SPAWNS = true
 ENABLE_ALL_RESEARCH_DONE = false
 
 -- Enable Scenario version of RSO
-ENABLE_RSO = true
+ENABLE_RSO = false
 
 -- Enable Gravestone Chests
 ENABLE_GRAVESTONE_CHESTS = false
@@ -263,10 +263,10 @@ scenario.config.separateSpawns = {
     },
     
     researched = {
-        'automation',
-        'logistics',
-        'electronics',
-        'automation-2',    
+--        'automation',
+--        'logistics',
+--        'electronics',
+--        'automation-2',    
 --        'coal-liquefaction',
     },
 }
