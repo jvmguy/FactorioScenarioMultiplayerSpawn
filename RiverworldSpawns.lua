@@ -291,8 +291,8 @@ function M.ChunkGenerated(event)
 
         GenerateRails( surface, chunkArea, scenario.config.riverworld.rail, railsRect);        
         GenerateRails( surface, chunkArea, scenario.config.riverworld.rail2, railsRect2);
-        if scenario.config.riverworld.seablock then        
-            Scheduler.schedule(game.tick+1, ReplaceLandWithWater, { surface= surface, area = chunkArea, spawnPos=spawnPos } );
+        if scenario.config.riverworld.seablock then
+            Scheduler.schedule(game.tick+4, ReplaceLandWithWater, { surface= surface, area = chunkArea, spawnPos=spawnPos } );
         end
     end
 end
