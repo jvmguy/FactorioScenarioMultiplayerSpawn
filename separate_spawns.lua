@@ -179,8 +179,7 @@ function RemovePlayer(player)
         if scenario.config.wipespawn.enabled then
             logAndBroadcast( player.name, player.name .. " base was reclaimed." )    
             wipespawn.markForRemoval(uniqueSpawn)
-            uniqueSpawn.used = false;
-            uniqueSpawn.createdFor = nil;
+            Scheduler.schedule(game.tick+700, MarkUnused, { playerName = player.name, spawn=uniqueSpawn } );
         elseif scenario.config.regrow.enabled then
             logAndBroadcast( player.name, player.name .. " base was abandoned." )    
             uniqueSpawn.used = false;
@@ -201,6 +200,14 @@ function RemovePlayer(player)
     
     -- Remove the character completely
     game.remove_offline_players({player});
+end
+
+function MarkUnused(args)
+    local playerName = args.playerName
+    local uniqueSpawn = args.spawn            
+    uniqueSpawn.used = false;
+    uniqueSpawn.createdFor = nil;
+    logInfo( playerName, playerName .. "spawn " .. spawn.seq .. " marked as unused." )    
 end
 
 -- Call this if a player leaves the game
