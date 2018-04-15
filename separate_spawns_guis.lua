@@ -304,8 +304,8 @@ end
 function SpawnIsCompatible( spawnPos, far )
   local distSqr = spawnPos.x^2 + spawnPos.y^2;
   local dist = math.sqrt(distSqr);
-  local isFar = true
-  local compatible = (isFar == far);
+  -- local isFar = true
+  local compatible = true; -- (isFar == far);
   local player = game.players[1];
   
   -- player.print("Spawn " .. spawnPos.x .. ", " .. spawnPos.y .. " dist" .. dist .. " is far = " .. boolToString(isFar) .. " compatible=" .. boolToString(compatible) .. " req far " .. boolToString(far)  );
@@ -342,9 +342,9 @@ function PickRandomSpawn( t, far )
     end
   end
   if far then
-    table.sort (candidates, function (k1, k2) return k1.dist > k2.dist end )
-  else
     table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
+  else
+    table.sort (candidates, function (k1, k2) return k1.dist > k2.dist end )
   end
   local ncandidates = TableLength(candidates)
   if ncandidates > 5 then
