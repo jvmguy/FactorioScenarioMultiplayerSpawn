@@ -342,13 +342,13 @@ function PickRandomSpawn( t, far )
     end
   end
   if far then
-    table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
-  else
     table.sort (candidates, function (k1, k2) return k1.dist > k2.dist end )
+  else
+    table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
   end
   local ncandidates = TableLength(candidates)
   if ncandidates > 5 then
-        ncandidates = math.floor((ncandidates+1)/3)
+        ncandidates = 5; -- math.floor((ncandidates+1)/3)
   end
   -- player.print("choosing a spawn from " .. ncandidates .. " candidates");
   if ncandidates > 0 then
