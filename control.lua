@@ -334,13 +334,14 @@ Event.register(defines.events.on_research_finished, jvm.on_research_finished)
 if false then
     setmetatable(_G, {
          __newindex = function(_, n, v)
-             log("Attempt to write to undeclared var " .. n)
-             game.print("Attempt to write to undeclared var " .. n)
+             logInfo("", "Attempt to write to undeclared var " .. n)
+             logInfo("", debug.traceback());             
              global[n] = v;
          end,
          __index = function(_, n)
-             log("Attempt to read undeclared var " .. n)
              game.print("Attempt to read undeclared var " .. n)
+             logInfo("", "Attempt to read undeclared var " .. n)
+             logInfo("", debug.traceback());             
             return global[n];
          end
      })
