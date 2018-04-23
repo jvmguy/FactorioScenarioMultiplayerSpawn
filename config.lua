@@ -179,7 +179,10 @@ ENABLE_SEPARATE_SPAWNS = true
 ENABLE_ALL_RESEARCH_DONE = false
 
 -- Enable Scenario version of RSO
-ENABLE_RSO = false
+ENABLE_RSO = true
+
+-- Whether to enable old blueprint string code
+ENABLE_BLUEPRINT_STRING = false
 
 -- Enable Gravestone Chests
 ENABLE_GRAVESTONE_CHESTS = false
@@ -280,10 +283,10 @@ scenario.config.riverworld = {
     firstSpawnPoint = 16,
     -- moat=0,         -- horizontal offset relative to center of spawn
     -- moatWidth=8,    
-    spacing = 608,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
+    spacing = 672,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
     barrier = 256,	-- width of impenetrable barrier
-    rail = 3*512+3,	-- generate a north-south railway starting here
-    rail2 = -3*512-32+3, -- generate a north-south railway starting here
+    rail = 3*640+3,	-- generate a north-south railway starting here
+    rail2 = -3*640-32+3, -- generate a north-south railway starting here
     
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
