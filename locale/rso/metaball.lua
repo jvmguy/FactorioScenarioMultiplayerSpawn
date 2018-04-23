@@ -38,8 +38,8 @@ function MetaEllipse:new(x, y, radius, angle, x_scale, y_scale, goo)
   x_scale = x_scale or 1
   y_scale = y_scale or 1
   goo = goo or 1
-  cosa = cos(angle)
-  sina = sin(angle)
+  local cosa = cos(angle)
+  local sina = sin(angle)
   return setmetatable({x=x, y=y, radius=radius, angle=angle, x_scale=x_scale, y_scale=y_scale, goo=goo, cosa=cosa, sina=sina}, MetaEllipse)
 end
 
@@ -61,8 +61,8 @@ function MetaSquare:new(x, y, radius, angle, x_scale, y_scale, goo)
   x_scale = x_scale or 1
   y_scale = y_scale or 1
   goo = goo or 1
-  cosa = cos(angle)
-  sina = sin(angle)
+  local cosa = cos(angle)
+  local sina = sin(angle)
   return setmetatable({x=x, y=y, radius=radius, angle=angle, x_scale=x_scale, y_scale=y_scale, goo=goo, cosa=cosa, sina=sina}, MetaSquare)
 end
 
@@ -84,8 +84,8 @@ function MetaDonut:new(x, y, out_r, int_r, angle, x_scale, y_scale, goo)
   x_scale = x_scale or 1
   y_scale = y_scale or 1
   goo = goo or 1
-  cosa = cos(angle)
-  sina = sin(angle)
+  local cosa = cos(angle)
+  local sina = sin(angle)
   if int_r >= out_r then error("int_r >= out_r ("..int_r.." > "..out_r); return; end
   local radius = out_r--(out_r - int_r)*0.5
   local radius2 = int_r--(radius2 + radius)*0.5

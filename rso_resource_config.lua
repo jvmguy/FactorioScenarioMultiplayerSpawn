@@ -1,4 +1,6 @@
 
+config = {}
+
 local function fillVanillaConfig()
     
     config["iron-ore"] = {

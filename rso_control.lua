@@ -15,6 +15,8 @@ local sin = math.sin
 local pi = math.pi
 local max = math.max
 
+local initDone = false
+
 local function round(value)
 	return math.floor(value + 0.5)
 end
@@ -161,7 +163,7 @@ local function rng_restricted_angle(restrictions)
 	local x_scale, y_scale
 	local deformX = rgen:random() * 2 - 1
 	local deformY = rgen:random() * 2 - 1
-	
+	local angle
 	if restrictions=='xy' then
 		y_scale=1.0 + deformY*0.5
 		x_scale=1.0 + deformX*0.5
@@ -330,7 +332,7 @@ local function modify_resource_size(resourceName, resourceSize, startingArea)
 		resourceSize = math.ceil(resourceSize * global_size_mult)
 	end
 	
-	resourceEntity = game.entity_prototypes[resourceName]
+	local resourceEntity = game.entity_prototypes[resourceName]
 	if resourceEntity and resourceEntity.infinite_resource then
 		
 		newResourceSize = resourceSize * endless_resource_mode_sizeModifier
@@ -673,7 +675,7 @@ local function spawn_resource_liquid(surface, rname, pos, size, richness, starti
 	
 	richness = ( 0.75 + rgen:random() / 2 ) * richness * size
 	
-	resourceEntity = game.entity_prototypes[rname]
+	local resourceEntity = game.entity_prototypes[rname]
 	
 	
 	local total_share = 0
@@ -724,7 +726,7 @@ local function spawn_resource_liquid(surface, rname, pos, size, richness, starti
 					end
 					break
 				elseif not startingArea then -- we don't want to make ultra rich nodes in starting area - failing to make them will add second spawn in different location
-					entities = surface.find_entities_filtered{area = {{x-2.75, y-2.75}, {x+2.75, y+2.75}}, name=rname}
+					local entities = surface.find_entities_filtered{area = {{x-2.75, y-2.75}, {x+2.75, y+2.75}}, name=rname}
 					if entities and #entities > 0 then
 						_total = _total + amount
 						for k, ent in pairs(entities) do
@@ -791,7 +793,7 @@ local function spawn_entity(surface, ent, r_config, x, y)
 				
 				if spawner_probability_edge > 0 then
 					
-					bigSpawnerChance = rgen:random()
+					local bigSpawnerChance = rgen:random()
 					
 					if rgen:random() < spawner_probability_edge then
 						if ( useBobEntity and bigSpawnerChance > 0.75 ) then
@@ -851,8 +853,8 @@ local function spawn_entity(surface, ent, r_config, x, y)
 						if v.allotment_range and sub_type >= v.allotment_range.min and sub_type <= v.allotment_range.max then
 							for attempt = 1, maxAttemptCount do
 								local max_d = floor(CHUNK_SIZE*distancePerAttempt*attempt)
-								s_x = x + rgen:random(max_d) - max_d/2
-								s_y = y + rgen:random(max_d) - max_d/2
+								local s_x = x + rgen:random(max_d) - max_d/2
+								local s_y = y + rgen:random(max_d) - max_d/2
 								remove_trees(surface, s_x, s_y, v.clear_range[1], v.clear_range[2])
 								if surface.can_place_entity{name=sub_spawn, position={s_x, s_y}} then
 									surface.create_entity{name=sub_spawn, position={s_x, s_y}, force=game.forces[r_config.force]}--, direction=rgen:random(4)
@@ -1198,7 +1200,7 @@ local function roll_region(c_x, c_y)
 						local c_x, c_y = find_random_chunk(r_x, r_y)
 						if not r_data[c_x] then r_data[c_x] = {} end
 						if not r_data[c_x][c_y] then r_data[c_x][c_y] = {} end
-						c_data = r_data[c_x][c_y]
+						local c_data = r_data[c_x][c_y]
 						c_data[#c_data+1] = {v.name, 1}
 						debug("Rolled absolute "..v.name.." with rt="..abs_roll.." @ "..c_x..","..c_y.." reg: "..r_x..","..r_y)
 					end
