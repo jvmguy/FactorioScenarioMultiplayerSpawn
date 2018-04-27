@@ -12,7 +12,7 @@ commands.add_command("decimate", "thin out the biters", function(command)
         local wide = 128; 
         local pos = { x=kk * 2 * wide, y=0 }  
         local area = {{pos.x - wide, pos.y - high}, {pos.x + wide, pos.y + high}}
-        local things =  { "small-spitter", "medium-spitter", "big-spitter", "small-biter", "medium-biter", "big-biter", "spitter-spawner", "biter-spawner", "small-worm-turret", "medium-worm-turret", "big-worm-turret" }
+        local things =  { "small-spitter", "medium-spitter", "big-spitter", "behemoth-spitter", "small-biter", "medium-biter", "big-biter", "behemoth-biter", "spitter-spawner", "biter-spawner", "small-worm-turret", "medium-worm-turret", "big-worm-turret" }
         local surface = player.surface 
         for _, enemyName in pairs( things ) do
             player.print(enemyName);
