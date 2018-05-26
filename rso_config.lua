@@ -10,12 +10,12 @@ use_donut_shapes = false		-- setting this to false will remove donuts from possi
 
 starting_area_size = 0         	-- starting area in regions, safe from random nonsense
 
-absolute_resource_chance = 0.65 -- chance to spawn an resource in a region
+absolute_resource_chance = 0.50 -- chance to spawn an resource in a region
 starting_richness_mult = 1		-- multiply starting area richness for resources
 global_richness_mult = 1		-- multiply richness for all resources except starting area
 global_size_mult = 1			-- multiply size for all ores, doesn't affect starting area
 
-absolute_enemy_chance = 5	      -- chance to spawn enemies per sector (can be more then one base if spawned)
+absolute_enemy_chance = 3	      -- chance to spawn enemies per sector (can be more then one base if spawned)
 enemy_base_size_multiplier = 1  -- all base sizes will be multiplied by this - larger number means bigger bases
 
 multi_resource_active = false			-- global switch for multi resource chances
