@@ -241,10 +241,10 @@ scenario.config.separateSpawns = {
 -- x = right, left
 -- y = up, down
 
-    land = 80,
+    land = 120,
     trees = 2,  -- included in the land
-    moat = 0,   -- additional to land
-    size = 80,  -- should be land + moat
+    moat = 8,   -- additional to land
+    size = 128,  -- should be land + moat
 	
 	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
 	
@@ -287,6 +287,7 @@ scenario.config.riverworld = {
     barrier = 256,	-- width of impenetrable barrier
     rail = 3*640+3,	-- generate a north-south railway starting here
     rail2 = -3*640-32+3, -- generate a north-south railway starting here
+    freespace = 3*640 + 32, -- no voids after this 
     
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.

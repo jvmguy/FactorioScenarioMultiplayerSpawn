@@ -245,6 +245,12 @@ function M.ChunkGenerated(event)
         local chunkArea = event.area
         local midPoint = {x = (chunkArea.left_top.x + chunkArea.right_bottom.x)/2,
                             y = (chunkArea.left_top.y + chunkArea.right_bottom.y)/2 }
+                            
+		-- Don't touch any chunks outside of freespace
+        if math.abs(midPoint.x) > scenario.config.riverworld.freespace then
+            return
+        end
+
         -- to do this correctly, we should really get the *two* closest spawns 
         local spawnPos = NearestSpawn( global.allSpawns, midPoint)
         local dy = math.abs(midPoint.y - spawnPos.y)
