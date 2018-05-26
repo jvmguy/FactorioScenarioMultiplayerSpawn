@@ -7,11 +7,11 @@ local function CreatePlayerListGui(event)
 end
 
 local function ExpandPlayerListGui(player)
-    local frame = player.gui.left["adminPlayerList-panel"]
+    local frame = player.gui.top["adminPlayerList-panel"]
     if (frame) then
         frame.destroy()
     else
-        local frame = player.gui.left.add{type="frame",
+        local frame = player.gui.top.add{type="frame",
                                             name="adminPlayerList-panel",
                                             caption="Online:"}
         local scrollFrame = frame.add{type="scroll-pane",
