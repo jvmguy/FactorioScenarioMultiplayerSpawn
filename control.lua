@@ -136,6 +136,7 @@ function jvm.on_init(event)
 
 
     EnableStartingResearch(game.forces[MAIN_FORCE]);
+    EnableStartingRecipes(game.forces[MAIN_FORCE]);
     
     if ENABLE_ALL_RESEARCH_DONE then
         game.forces[MAIN_FORCE].research_all_technologies()
