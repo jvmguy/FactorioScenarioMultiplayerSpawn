@@ -131,9 +131,17 @@ end
 function EnableStartingResearch(force)
     local researched = scenario.config.separateSpawns.researched;
     if researched ~= nil then
---    force.technologies['automated-construction'].researched=true;
         for key, tech in pairs(researched) do
             force.technologies[tech].researched=true;
+        end
+    end
+end
+
+function EnableRecipes(force)
+    local recipesEnabled = scenario.config.separateSpawns.recipesEnabled;
+    if recipesEnabled ~= nil then
+        for key, recipe in pairs(recipesEnabled) do
+            force.recipes[recipe].enabled=true;
         end
     end
 end
