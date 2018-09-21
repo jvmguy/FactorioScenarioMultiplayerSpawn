@@ -103,9 +103,9 @@ local function fillVanillaConfig()
         type="resource-liquid",
         minimum_amount=60000,
         allotment=40,   -- 80
-        spawns_per_region={min=3, max=5},
+        spawns_per_region={min=2, max=3},
         richness={min=60000, max=70000}, -- richness per resource spawn
-        size={min=4, max=5},
+        size={min=3, max=4},
         
         starting={richness=20000, size=2, probability=0},
         
