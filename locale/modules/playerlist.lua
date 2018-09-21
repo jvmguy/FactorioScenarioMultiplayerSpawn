@@ -1,7 +1,7 @@
 
 local function CreatePlayerListGui(event)
   local player = game.players[event.player_index]
-  if player.gui.top.playerList == nil then
+  if player.gui.top.adminPlayerList == nil then
       player.gui.top.add{name="adminPlayerList", type="button", caption="Player List"}
   end   
 end
