@@ -288,7 +288,7 @@ scenario.config.separateSpawns = {
 
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
-    enabled = true,
+    enabled = false,
     seablock = true,        -- behavior a little like the seablock mod. (well, not really)
 	stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
 	waterWalls = false,
@@ -307,6 +307,27 @@ scenario.config.riverworld = {
 	-- 0 is day. 0.5 is night. 0.35 is twilight.
 }
 
+scenario.config.bunkerSpawns = {
+    -- this mostly inherits the separateSpawns config, but has a few minor differences
+    enabled = true,
+    firstSpawnPoint = 10,
+    numSpawnPoints = 22,
+    spacing = 512,
+    
+    -- for the bunker zone
+    bunkerSpacing = 512,
+    bunkerZoneStart = 20*1024,
+    bunkerZoneHeight = 2048,
+    waterRadius = 190,
+    bunkerRadius = 200,
+    -- location within the bunker of the teleport that takes you to wilderness
+    teleport = { x=24, y=-47 },
+    
+    -- freeze time of day
+    -- you might get night vision at the start, but you have to decide whether it's worth using it.
+    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    -- 0 is day. 0.5 is night. 0.35 is twilight.
+}
 
 SPAWN_TREE_DENSITY = 0.3
 
@@ -321,6 +342,9 @@ ENABLE_SPAWN_FORCE_GRASS = true
 -- Safe area has no aliens
 -- +/- this in x and y direction
 SAFE_AREA_TILE_DIST = CHUNK_SIZE*6
+
+-- Safe area around bunker entrance that has no aliens 
+SAFE_AREA_BUNKER_ENTRANCE_TILE_DIST = CHUNK_SIZE * 3
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction

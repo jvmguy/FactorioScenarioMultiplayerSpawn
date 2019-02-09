@@ -55,13 +55,15 @@ require("bps")
 toxicJungle = require("ToxicJungle")
 
 -- spawnGenerator = require("FermatSpiralSpawns");
-spawnGenerator = require("RiverworldSpawns");
+-- spawnGenerator = require("RiverworldSpawns");
+spawnGenerator = require("BunkerSpawns");
 
 sharedSpawns = require("shared_spawns");
 
 regrow = require("locale/modules/jvm-regrowth");
 wipespawn = require("locale/modules/jvm-wipespawn");
 
+global.init = ""
 jvm = {}
 
 
@@ -136,12 +138,12 @@ function jvm.on_init(event)
 
 
     EnableStartingResearch(game.forces[MAIN_FORCE]);
+
     EnableStartingRecipes(game.forces[MAIN_FORCE]);
     
     if ENABLE_ALL_RESEARCH_DONE then
         game.forces[MAIN_FORCE].research_all_technologies()
     end
-
 end
 
 Event.register(-1, jvm.on_init)
@@ -170,8 +172,9 @@ function jvm.on_chunk_generated(event)
         shouldGenerateResources = regrow.shouldGenerateResources(event);
         regrow.onChunkGenerated(event)
     end
-    if scenario.config.riverworld.enabled then
-        spawnGenerator.ChunkGenerated(event);
+
+    if spawnGenerator.ChunkGenerated then
+        spawnGenerator.ChunkGenerated(event)
     end
 
     if scenario.config.toxicJungle.enabled then
@@ -188,11 +191,15 @@ function jvm.on_chunk_generated(event)
         GenerateRocketSiloChunk(event)
     end
 
-    -- This MUST come after RSO generation!
-    if ENABLE_SEPARATE_SPAWNS then
-        SeparateSpawnsGenerateChunk(event)
+    if spawnGenerator.ChunkGeneratedAfterRSO then
+        spawnGenerator.ChunkGeneratedAfterRSO(event)
+    else
+        -- This MUST come after RSO generation!
+        if ENABLE_SEPARATE_SPAWNS then
+            SeparateSpawnsGenerateChunk(event)
+        end
     end
-    
+
     if scenario.config.regrow.enabled then
         regrow.afterResourceGeneration(event)
     end

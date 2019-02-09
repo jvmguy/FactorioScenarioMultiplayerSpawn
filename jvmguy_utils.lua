@@ -110,7 +110,7 @@ function TeleportPlayer( player )
                 -- elseif SameCoord(portal.dest, global.playerSpawns[player.name]) then
                 else    
                     -- teleport player to silo
-                    player.print("teleport to silo");
+                    player.print("you have been teleported");
                     dest = portal.dest;
                     break
                 end
@@ -137,7 +137,7 @@ function EnableStartingResearch(force)
     end
 end
 
-function EnableRecipes(force)
+function EnableStartingRecipes(force)
     local recipesEnabled = scenario.config.separateSpawns.recipesEnabled;
     if recipesEnabled ~= nil then
         for key, recipe in pairs(recipesEnabled) do

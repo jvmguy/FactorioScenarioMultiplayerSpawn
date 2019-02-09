@@ -100,7 +100,10 @@ function GenerateSpawnChunk( event, spawnPos)
 			end
 
             GenerateStartingResources( surface, chunkArea, spawnPos);
-            if scenario.config.teleporter.enabled then
+            
+            -- generate a teleport to the silo if enabled
+            -- disabled for bunker spawns. need to refactor this
+            if false and scenario.config.teleporter.enabled then
                 local pos = { x=spawnPos.x+scenario.config.teleporter.spawnPosition.x, y=spawnPos.y+scenario.config.teleporter.spawnPosition.y }
                 if CheckIfInChunk(pos.x, pos.y, chunkArea) then
                     local dest = scenario.config.teleporter.siloTeleportPosition
@@ -240,7 +243,6 @@ function InitSpawnGlobalsAndForces()
     -- Contains an array of all player spawns
     -- A secondary array tracks whether the character will respawn there.
     
-    
     if (global.allSpawns == nil) then
         global.allSpawns = {}
     end
@@ -249,13 +251,14 @@ function InitSpawnGlobalsAndForces()
     end
 
     -- InitSpawnPoint( 0, 0, 0);
-    for n = 1,scenario.config.separateSpawns.numSpawnPoints do
+    local config = spawnGenerator.GetConfig()
+    for n = 1,config.numSpawnPoints do
           spawnGenerator.InitSpawnPoint( n )
           global.lastSpawn = n
     end
     -- another spawn for admin. admin gets the last spawn
-	if scenario.config.separateSpawns.extraSpawn ~= nil and scenario.config.separateSpawns.extraSpawn >  scenario.config.separateSpawns.numSpawnPoints then
-        spawnGenerator.InitSpawnPoint( scenario.config.separateSpawns.extraSpawn);
+	if config.extraSpawn ~= nil and config.extraSpawn >  config.numSpawnPoints then
+        spawnGenerator.InitSpawnPoint( config.extraSpawn);
 	end
 	
     if (global.playerCooldowns == nil) then
@@ -277,7 +280,8 @@ function AddSpawn()
     -- used as a command to expand in-game number of spawns
     -- if extraSpawn is configured, this does not work correctly
     local n = global.lastSpawn + 1;
-    if scenario.config.separateSpawns.extraSpawn ~= nil and n == scenario.config.separateSpawns.extraSpawn then
+    local config = spawnGenerator.getConfig()
+    if config.extraSpawn ~= nil and n == config.extraSpawn then
         n = n + 1
     end
     spawnGenerator.InitSpawnPoint( n )
@@ -362,18 +366,43 @@ function ChangePlayerSpawn(player, pos, surfaceName, seq)
     end
 end
 
+function TeleportPlayerWithDelay(args)
+    Scheduler.schedule(game.tick+args.delay, TeleportPlayerCallback,  args)
+end
+
+function TeleportPlayerCallback(args)
+    args.player.teleport(args.spawn, args.surface)
+end
+
+-- Clear out enemies around an area with a certain distance
+function ClearEnemies(surface, position, safeDist)
+    local safeArea = {left_top=
+                    {x=position.x-safeDist,
+                     y=position.y-safeDist},
+                  right_bottom=
+                    {x=position.x+safeDist,
+                     y=position.y+safeDist}}
+
+    for _, entity in pairs(surface.find_entities_filtered{area = safeArea, force = "enemy"}) do
+        entity.destroy()
+    end
+end
+
 function SendPlayerToNewSpawnAndCreateIt(player, spawn)
     -- Send the player to that position
     if spawn == nil then
       DebugPrint("SendPlayerToNewSpawnAndCreateIt: error. spawn is nil")
       spawn = { x = 0, y = 0 }
     end
-    player.teleport(spawn, game.surfaces[GAME_SURFACE_NAME])
-    ChartArea(player.force, player.position, 4)
+    TeleportPlayerWithDelay({ player=player, spawn=spawn, surface= game.surfaces[GAME_SURFACE_NAME], delay=5*TICKS_PER_SECOND })
+    ChartArea(player.force, spawn, 4)
+    if spawn.teleport then
+        ChartArea(player.force, spawn.teleport, 4)
+    end
 
     -- If we get a valid spawn point, setup the area
     if ((spawn.x ~= 0) and (spawn.y ~= 0)) then
-        ClearNearbyEnemies(player, SAFE_AREA_TILE_DIST)
+        ClearEnemies(player.surface, spawn, SAFE_AREA_TILE_DIST)
     else      
         DebugPrint("THIS SHOULD NOT EVER HAPPEN! Spawn failed!")
         logAndBroadcast( player.name, "Failed to create spawn point for: " .. player.name )    
@@ -381,9 +410,12 @@ function SendPlayerToNewSpawnAndCreateIt(player, spawn)
 end
 
 function SendPlayerToSpawn(player)
+    local surface = game.surfaces[GAME_SURFACE_NAME]
+    local spawn
     if (DoesPlayerHaveCustomSpawn(player)) then
-        player.teleport(global.playerSpawns[player.name], game.surfaces[GAME_SURFACE_NAME])
+        spawn = global.playerSpawns[player.name]
     else
-        player.teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), game.surfaces[GAME_SURFACE_NAME])
+        spawn = game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME)
     end
+    player.teleport(spawn, surface)
 end
