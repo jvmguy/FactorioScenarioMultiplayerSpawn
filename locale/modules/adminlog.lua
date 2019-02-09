@@ -4,7 +4,9 @@ function playerNameFromEvent(event)
 end
 
 function logInfo(playerName, msg)
-    game.write_file("infolog.txt", game.tick .. ": " .. playerName .. ": " .. msg .. "\n", true, 0);
+    if msg ~= nil then
+        game.write_file("infolog.txt", game.tick .. ": " .. playerName .. ": " .. msg .. "\n", true, 0);
+    end
 end
 
 local function on_player_joined_game(event)

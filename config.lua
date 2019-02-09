@@ -76,17 +76,19 @@ scenario.config.startKit = {
         {name = "power-armor", count = 1,
             equipment = {
                   -- the order of these does matter.
-                  {name = "fusion-reactor-equipment"},
-                  {name = "exoskeleton-equipment"},
-                  {name = "personal-roboport-mk2-equipment", count=2},
-                  {name = "battery-mk2-equipment", count=3},
-                  {name = "solar-panel-equipment", count = 7 }
+--                  {name = "fusion-reactor-equipment"},
+--                  {name = "exoskeleton-equipment"},
+--                  {name = "personal-roboport-equipment", count=1},
+--                  {name = "battery-equipment", count=1},
+                    {name = "solar-panel-equipment", count = 23 },
+                    {name = "personal-roboport-mk2-equipment", count=2},
+                    {name = "battery-mk2-equipment", count=3},
             }
         },
-        {name = "belt-immunity-equipment", count = 1},
+        {name = "belt-immunity-equipment", count = 4},
         {name = "night-vision-equipment", count = 1},
         {name = "construction-robot", count = 20},
-        {name = "roboport", count = 1},
+        {name = "roboport", count = 2},
         {name = "logistic-chest-storage", count = 1},
 		{name = "burner-mining-drill", count = 1},
 		{name = "stone-furnace", count = 1},
@@ -107,14 +109,14 @@ scenario.config.startKit = {
 scenario.config.mapSettings = {
     -- jvmguy uses these settings for riverworld
     RSO_TERRAIN_SEGMENTATION = "very-low", -- Frequency of water
-    RSO_WATER = "very-high", -- Size of water patches
+    RSO_WATER = "high", -- Size of water patches
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
 
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
 }
 
 scenario.config.teleporter = {
-    enabled = false,
+    enabled = true,
     -- where in the spawn to place the teleporter
 	spawnPosition = { x=20, y=-47 },
 
@@ -221,8 +223,8 @@ scenario.config.separateSpawns = {
     --     most distant base is sqrt(25+42)*spacing = 8000
     preferFar = false,
     firstSpawnPoint = 18,
-    numSpawnPoints = 18,
-    extraSpawn = 20,    -- admin spawn really far away
+    numSpawnPoints = 22,
+    extraSpawn = 24,    -- admin spawn really far away
     spacing = 1000,
     
 -- x = right, left
@@ -236,14 +238,17 @@ scenario.config.separateSpawns = {
 	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
 	
     resources = {
+        { shape="rect", name="steel-chest", x=30,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
         { shape="rect", name="steel-chest", x=30,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=30,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=30,   y=-8,  height=1, width=1, contents = { {name = "coal", count=2400 } }  },
-        { shape="rect", name="steel-chest", x=30,   y=-4,  height=1, width=1, contents = { {name = "stone", count=99999 } },  },
+        { shape="rect", name="steel-chest", x=30,   y=-8,  height=1, width=1, contents = { 
+            {name = "coal", count=1000 },
+            {name = "stone", count=1000 }
+         }  },
         { shape="rect", name="steel-chest", x=30,   y=0,  height=1, width=1, contents = { 
             {name = "steel-plate", count=400 },
             {name = "uranium-235", count=100 },
-            {name = "uranium-238", count=400 },
+            {name = "uranium-238", count=500 },
             -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
             {name = "offshore-pump", count = 1},
             {name = "boiler", count = 10},
@@ -256,11 +261,11 @@ scenario.config.separateSpawns = {
             {name = "assembling-machine-3", count=1},
         },  },
     
-        { shape="rect", type="coal",         x=36,  y=-41, height=14, width=24,  amount=20000,  },
-        { shape="rect", type="stone",        x=36,  y=-24, height=14, width=24,  amount=20000,  },
+        { shape="rect", type="coal",         x=36,  y=-41, height=14, width=24,  amount=2000,  },
+        { shape="rect", type="stone",        x=36,  y=-24, height=14, width=24,  amount=2000,  },
         -- { shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
-        { shape="rect", type="copper-ore",   x=36,  y=-7,  height=21, width=24,  amount=10000,  },
-        { shape="rect", type="iron-ore",     x=36,  y =18, height=21, width=24,  amount=10000,  },
+        { shape="rect", type="copper-ore",   x=36,  y=-7,  height=21, width=24,  amount=2000,  },
+        { shape="rect", type="iron-ore",     x=36,  y =18, height=21, width=24,  amount=2000,  },
         
         { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=1000000,  },
         { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=1000000,  },
@@ -268,10 +273,10 @@ scenario.config.separateSpawns = {
     },
     
     researched = {
-        'automation',
-        'logistics',
-        'electronics',
-        'automation-2',    
+--        'automation',
+--        'logistics',
+--        'electronics',
+--        'automation-2',    
 --        'coal-liquefaction',
     },
     recipesEnabled = {
@@ -284,7 +289,7 @@ scenario.config.separateSpawns = {
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
-    seablock = false,        -- behavior a little like the seablock mod. (well, not really)
+    seablock = true,        -- behavior a little like the seablock mod. (well, not really)
 	stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
 	waterWalls = false,
     firstSpawnPoint = 14,
@@ -292,7 +297,7 @@ scenario.config.riverworld = {
     -- moatWidth=8,    
     spacing = 736,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
     barrier = 256,	-- width of impenetrable barrier
-    rail = 3*640+4,	-- generate a north-south railway starting here
+    rail = 3*640,	-- generate a north-south railway starting here
     rail2 = -3*640-32, -- generate a north-south railway starting here
     freespace = 3*640 + 32, -- no voids after this 
     

@@ -2,7 +2,7 @@
 local function CreateSpawnListGui(event)
   local player = game.players[event.player_index]
   if player.admin then
-        if player.gui.top.playerList == nil then
+        if player.gui.top.SpawnList == nil then
             player.gui.top.add{name="SpawnList", type="button", caption="Spawn List"}
         end   
   end

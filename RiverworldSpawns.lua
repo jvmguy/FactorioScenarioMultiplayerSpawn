@@ -81,25 +81,25 @@ local function GenerateRails(surface, chunkArea, railX, rails)
 
         for y = rect.left_top.y, rect.right_bottom.y-1 do
             if math.fmod(y,2)==0 then
-                local pt = { x=railX+0, y=y };                 
+                local pt = { x=railX+2, y=y };                 
                 makeIndestructibleEntity(surface, {name="straight-rail", position=pt, force=MAIN_FORCE})
-                local pt = { x=railX+8, y=y };
+                local pt = { x=railX+10, y=y };
                 makeIndestructibleEntity(surface, {name="straight-rail", position=pt, force=MAIN_FORCE})
-                local pt = { x=railX+16, y=y };
+                local pt = { x=railX+18, y=y };
                 makeIndestructibleEntity(surface, {name="straight-rail", position=pt, force=MAIN_FORCE})
-                local pt = { x=railX+24, y=y };
+                local pt = { x=railX+26, y=y };
                 makeIndestructibleEntity(surface, {name="straight-rail", position=pt, force=MAIN_FORCE})
             end
             if (math.fmod(y,30)==0) then
-                local pt = { x=railX-1, y=y+1 };                 
+                local pt = { x=railX+1, y=y+1 };                 
                 surface.create_entity({name="rail-signal", position=pt, force=MAIN_FORCE})
-                local pt = { x=railX+7, y=y+1 };                 
+                local pt = { x=railX+9, y=y+1 };                 
                 surface.create_entity({name="rail-signal", position=pt, force=MAIN_FORCE})
-                local pt = { x=railX+13, y=y+1 };                 
+                local pt = { x=railX+15, y=y+1 };                 
                 surface.create_entity({name="big-electric-pole", position=pt, force=MAIN_FORCE})
-                local pt = { x=railX+18, y=y };                 
+                local pt = { x=railX+20, y=y };                 
                 surface.create_entity({name="rail-signal", position=pt, force=MAIN_FORCE, direction=4})
-                local pt = { x=railX+26, y=y };                 
+                local pt = { x=railX+28, y=y };                 
                 surface.create_entity({name="rail-signal", position=pt, force=MAIN_FORCE, direction=4})
             end
         end
@@ -272,10 +272,10 @@ function M.ChunkGenerated(event)
         wallRect2 = ChunkIntersection(chunkArea, wallRect2);
         
                 
-        local railsRect = MakeRect( scenario.config.riverworld.rail, 28, -20000, 40000);
+        local railsRect = MakeRect( scenario.config.riverworld.rail, 32, -20000, 40000);
         railsRect = ChunkIntersection( chunkArea, railsRect);
                 
-        local railsRect2 = MakeRect( scenario.config.riverworld.rail2, 28, -20000, 40000);
+        local railsRect2 = MakeRect( scenario.config.riverworld.rail2, 32, -20000, 40000);
         railsRect2 = ChunkIntersection( chunkArea, railsRect2);
         
         if dy < spacing and scenario.config.riverworld.moat ~= nil and scenario.config.riverworld.moatWidth>0 then
