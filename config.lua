@@ -64,7 +64,7 @@ scenario.config.bots = {
 }
 
 scenario.config.playerBonus = {
-    character_crafting_speed_modifier = 1.0/100-1.0,
+    character_crafting_speed_modifier = 1.0/10-1.0,
 }
 
 scenario.config.silo = {
@@ -108,8 +108,8 @@ scenario.config.startKit = {
 
 scenario.config.mapSettings = {
     -- jvmguy uses these settings for riverworld
-    RSO_TERRAIN_SEGMENTATION = "very-low", -- Frequency of water
-    RSO_WATER = "high", -- Size of water patches
+    RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
+    RSO_WATER = "very-high", -- Size of water patches
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
 
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
@@ -207,37 +207,8 @@ scenario.config.toxicJungle = {
     enabled = false,
     tree_chance = 0.2
 }    
-                   --
----------------------------------------
--- Resource Options
----------------------------------------
--- everyone gets a separate start area
-scenario.config.separateSpawns = {
-    enabled = true,
---
---    shape = "octagon",
---    treeDensity = 0.2,
 
-    -- if we use fermat spirals 
-    --     nearest base is sqrt(25)*spacing = 5000
-    --     most distant base is sqrt(25+42)*spacing = 8000
-    preferFar = false,
-    firstSpawnPoint = 18,
-    numSpawnPoints = 22,
-    extraSpawn = 24,    -- admin spawn really far away
-    spacing = 1000,
-    
--- x = right, left
--- y = up, down
-
-    land = 74,
-    trees = 3,  -- included in the land
-    moat = 10,   -- additional to land
-    size = 84,  -- should be land + moat
-	
-	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
-	
-    resources = {
+scenario.config.spawnResources = {
         { shape="rect", name="steel-chest", x=30,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
         { shape="rect", name="steel-chest", x=30,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=30,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
@@ -270,8 +241,39 @@ scenario.config.separateSpawns = {
         { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=1000000,  },
         { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=1000000,  },
         { shape="rect", type="crude-oil", x=66, y= 6, height=1, amount=1000000,  },
-    },
+}
+
+---------------------------------------
+-- Resource Options
+---------------------------------------
+-- everyone gets a separate start area
+scenario.config.separateSpawns = {
+    enabled = true,
+--
+--    shape = "octagon",
+--    treeDensity = 0.2,
+
+    -- if we use fermat spirals 
+    --     nearest base is sqrt(25)*spacing = 5000
+    --     most distant base is sqrt(25+42)*spacing = 8000
+    preferFar = false,
+    firstSpawnPoint = 18,
+    numSpawnPoints = 22,
+    extraSpawn = 24,    -- admin spawn really far away
+    spacing = 1000,
     
+-- x = right, left
+-- y = up, down
+
+    land = 74,
+    trees = 3,  -- included in the land
+    moat = 10,   -- additional to land
+    size = 84,  -- should be land + moat
+	
+	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
+	
+    resources = scenario.config.spawnResources,
+        
     researched = {
 --        'automation',
 --        'logistics',
@@ -310,19 +312,32 @@ scenario.config.riverworld = {
 scenario.config.bunkerSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
-    firstSpawnPoint = 10,
-    numSpawnPoints = 22,
-    spacing = 512,
+    firstSpawnPoint = 16,
+    numSpawnPoints = 24,
+    extraSpawn = 30,    -- really far away, but not as far as you might think
+    
+    spacing = 608,
     
     -- for the bunker zone
-    bunkerSpacing = 512,
-    bunkerZoneStart = 20*1024,
+    bunkerSpacing = 640,
+    bunkerZoneStart = 10*1024,
     bunkerZoneHeight = 2048,
-    waterRadius = 190,
-    bunkerRadius = 200,
+    waterRadius = 200,
+    bunkerRadius = 220,
     -- location within the bunker of the teleport that takes you to wilderness
     teleport = { x=24, y=-47 },
     
+    -- The above ground entrance to the bunker. land + water
+    bunkerEntranceLandRadius = 8,
+    bunkerEntranceRadius = 16,
+    
+    land = 74,
+    trees = 3,  -- included in the land
+    moat = 10,   -- additional to land
+    size = 84,  -- should be land + moat
+    
+    resources = scenario.config.spawnResources,
+
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
     -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
@@ -344,7 +359,7 @@ ENABLE_SPAWN_FORCE_GRASS = true
 SAFE_AREA_TILE_DIST = CHUNK_SIZE*6
 
 -- Safe area around bunker entrance that has no aliens 
-SAFE_AREA_BUNKER_ENTRANCE_TILE_DIST = CHUNK_SIZE * 3
+SAFE_AREA_BUNKER_ENTRANCE_TILE_DIST = CHUNK_SIZE * 2
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
