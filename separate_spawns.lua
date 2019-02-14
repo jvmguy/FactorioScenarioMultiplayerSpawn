@@ -39,8 +39,7 @@ function GenerateSpawnChunk( event, spawnPos)
                             {x=spawnPos.x+WARNING_AREA_TILE_DIST,
                              y=spawnPos.y+WARNING_AREA_TILE_DIST}}
     if CheckIfChunkIntersects(chunkArea,warningArea) then
-
-		
+        local config = spawnGenerator.GetConfig()
         local landArea = {left_top=
                             {x=spawnPos.x-ENFORCE_LAND_AREA_TILE_DIST,
                              y=spawnPos.y-ENFORCE_LAND_AREA_TILE_DIST},
@@ -94,9 +93,9 @@ function GenerateSpawnChunk( event, spawnPos)
                 end
             end
 			if (ENABLE_CROP_OCTAGON) then
-	            CreateCropOctagon(surface, spawnPos, chunkArea, scenario.config.separateSpawns.land, scenario.config.separateSpawns.trees, scenario.config.separateSpawns.moat)
+	            CreateCropOctagon(surface, spawnPos, chunkArea, config.land, config.trees, config.moat)
 			else
-	            CreateCropCircle(surface, spawnPos, chunkArea, scenario.config.separateSpawns.land)
+	            CreateCropCircle(surface, spawnPos, chunkArea, config.land)
 			end
 
             GenerateStartingResources( surface, chunkArea, spawnPos);
@@ -280,7 +279,7 @@ function AddSpawn()
     -- used as a command to expand in-game number of spawns
     -- if extraSpawn is configured, this does not work correctly
     local n = global.lastSpawn + 1;
-    local config = spawnGenerator.getConfig()
+    local config = spawnGenerator.GetConfig()
     if config.extraSpawn ~= nil and n == config.extraSpawn then
         n = n + 1
     end
@@ -323,7 +322,8 @@ end
 function GenerateStartingResources(surface, chunkArea, spawnPos)
     --local surface = player.surface
     local pos = { x=spawnPos.x, y=spawnPos.y } 
-    for _, res in pairs( scenario.config.separateSpawns.resources ) do
+    local config = spawnGenerator.GetConfig()
+    for _, res in pairs( config.resources ) do
         -- resource may specify dx,dy or x,y relative to spawn
         if res.x ~= nil then
             pos.x = spawnPos.x + res.x
