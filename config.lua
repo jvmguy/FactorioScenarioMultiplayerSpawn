@@ -209,22 +209,22 @@ scenario.config.toxicJungle = {
 }    
 
 scenario.config.spawnResources = {
-        { shape="rect", name="steel-chest", x=30,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=30,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=30,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=30,   y=-8,  height=1, width=1, contents = { 
+        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-8,  height=1, width=1, contents = { 
             {name = "coal", count=1000 },
-            {name = "stone", count=1000 }
-         }  },
-        { shape="rect", name="steel-chest", x=30,   y=0,  height=1, width=1, contents = { 
+            {name = "stone", count=1000 },
             {name = "steel-plate", count=400 },
             {name = "uranium-235", count=100 },
             {name = "uranium-238", count=500 },
+         }  },
+        { shape="rect", name="steel-chest", x=42,   y=0,  height=1, width=1, contents = { 
             -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
             {name = "offshore-pump", count = 1},
             {name = "boiler", count = 10},
             {name = "steam-engine", count = 20},
-            {name = "pipe", count=5},
+            {name = "pipe", count=12},
             {name = "pipe-to-ground", count=2},
             {name = "small-electric-pole", count = 20},
             {name = "inserter", count=20},
@@ -232,11 +232,11 @@ scenario.config.spawnResources = {
             {name = "assembling-machine-3", count=1},
         },  },
     
-        { shape="rect", type="coal",         x=36,  y=-41, height=14, width=24,  amount=2000,  },
-        { shape="rect", type="stone",        x=36,  y=-24, height=14, width=24,  amount=2000,  },
+        { shape="rect", type="coal",         x=48,  y=-41, height=14, width=12,  amount=10000,  },
+        { shape="rect", type="stone",        x=48,  y=-24, height=14, width=12,  amount=10000,  },
         -- { shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
-        { shape="rect", type="copper-ore",   x=36,  y=-7,  height=21, width=24,  amount=2000,  },
-        { shape="rect", type="iron-ore",     x=36,  y =18, height=21, width=24,  amount=2000,  },
+        { shape="rect", type="copper-ore",   x=48,  y=-7,  height=21, width=12,  amount=10000,  },
+        { shape="rect", type="iron-ore",     x=48,  y =18, height=21, width=12,  amount=10000,  },
         
         { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=1000000,  },
         { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=1000000,  },
@@ -312,9 +312,9 @@ scenario.config.riverworld = {
 scenario.config.bunkerSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
-    firstSpawnPoint = 16,
-    numSpawnPoints = 24,
-    extraSpawn = 30,    -- really far away, but not as far as you might think
+    firstSpawnPoint = 10,
+    numSpawnPoints = 36,
+    extraSpawn = 38,    -- really far away, but not as far as you might think
     
     spacing = 608,
     
@@ -322,8 +322,8 @@ scenario.config.bunkerSpawns = {
     bunkerSpacing = 640,
     bunkerZoneStart = 10*1024,
     bunkerZoneHeight = 2048,
-    waterRadius = 200,
-    bunkerRadius = 220,
+    waterRadius = 100,
+    bunkerRadius = 120,
     -- location within the bunker of the teleport that takes you to wilderness
     teleport = { x=24, y=-47 },
     
@@ -331,10 +331,10 @@ scenario.config.bunkerSpawns = {
     bunkerEntranceLandRadius = 8,
     bunkerEntranceRadius = 16,
     
-    land = 74,
+    land = 90,
     trees = 3,  -- included in the land
     moat = 10,   -- additional to land
-    size = 84,  -- should be land + moat
+    size = 100,  -- should be land + moat
     
     resources = scenario.config.spawnResources,
 
