@@ -59,14 +59,14 @@ my_player_list_admin_style = {
     minimal_width = 200,
     top_padding = 0,
     bottom_padding = 0,
-    maximal_height = 15
+    maximal_height = 25
 }
 my_player_list_style = {
     font = "default-semibold",
     minimal_width = 200,
     top_padding = 0,
     bottom_padding = 0,
-    maximal_height = 20
+    maximal_height = 25
 }
 my_player_list_style_spacer = {
     maximal_height = 20
