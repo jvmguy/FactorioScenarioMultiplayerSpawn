@@ -6,6 +6,7 @@ end
 -- Enforce a square of land, with a tree border
 -- this is equivalent to the CreateCropCircle code
 function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth, moatWidth)
+    local config = spawnGenerator.GetConfig()
 
     local dirtTiles = {}
     for i=chunkArea.left_top.x,chunkArea.right_bottom.x-1,1 do
@@ -53,7 +54,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
 	    surface.set_tiles(waterTiles)
     end
     
-    local water = scenario.config.separateSpawns.water;
+    local water = config.water;
     if water ~= nil then
         local waterTiles = {}   
         local shapeTiles = TilesInShape( chunkArea, {x=centerPos.x + water.x, y=centerPos.y + water.y }, water.shape, water.height, water.width );
@@ -129,7 +130,8 @@ function SameCoord(a, b)
 end
 
 function EnableStartingResearch(force)
-    local researched = scenario.config.separateSpawns.researched;
+    local config = spawnGenerator.GetConfig()
+    local researched = config.researched;
     if researched ~= nil then
         for key, tech in pairs(researched) do
             force.technologies[tech].researched=true;
@@ -138,7 +140,8 @@ function EnableStartingResearch(force)
 end
 
 function EnableStartingRecipes(force)
-    local recipesEnabled = scenario.config.separateSpawns.recipesEnabled;
+    local config = spawnGenerator.GetConfig()
+    local recipesEnabled = config.recipesEnabled;
     if recipesEnabled ~= nil then
         for key, recipe in pairs(recipesEnabled) do
             force.recipes[recipe].enabled=true;
