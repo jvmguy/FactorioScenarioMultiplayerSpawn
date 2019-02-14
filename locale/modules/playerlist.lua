@@ -28,7 +28,7 @@ local function ExpandPlayerListGui(player)
         ApplyStyle(scrollFrame, my_player_list_fixed_width_style)
         scrollFrame.horizontal_scroll_policy = "never";
         for _,player in pairs(game.players) do
-            if player != nil then
+            if player ~= nil then
                 local onlineStatus = " " .. HoursAndMinutes(player.online_time);
                 if player.connected then
                     onlineStatus = onlineStatus .. " (online)";
