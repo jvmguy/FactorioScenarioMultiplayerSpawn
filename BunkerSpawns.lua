@@ -47,10 +47,6 @@ local function ChunkContains( chunk, pt )
             pt.y >= chunk.left_top.y and pt.y < chunk.right_bottom.y;
 end
 
-local function GetConfig()
-    return scenario.config.bunkerSpawns;  
-end
-
 function M.GetConfig()
     return scenario.config.bunkerSpawns;  
 end
@@ -67,7 +63,7 @@ function M.InitSpawnPoint(n)
 end
 
 function M.ConfigureGameSurface()
-    local config = GetConfig();
+    local config = scenario.config.bunkerSpawns;
     if config.freezeTime ~= nil then
         local surface = game.surfaces[GAME_SURFACE_NAME];
         surface.daytime = config.freezeTime
@@ -101,10 +97,11 @@ local function GenerateBunkerTeleport(surface, chunkArea, spawnPos)
 end
 
 local function GenerateEntrance(surface, chunkArea, spawnPos)
+    local config = scenario.config.bunkerSpawns
     local teleportPos = spawnPos.teleport
     -- remove trees in the immediate areas?
     for key, entity in pairs(surface.find_entities_filtered({area=chunkArea, type= "tree"})) do
-        if ((teleportPos.x - entity.position.x)^2 + (teleportPos.y - entity.position.y)^2 < ENFORCE_LAND_AREA_TILE_DIST^2) then
+        if ((teleportPos.x - entity.position.x)^2 + (teleportPos.y - entity.position.y)^2 < config.bunkerEntranceRadius^2) then
             entity.destroy()
         end
     end
@@ -115,9 +112,9 @@ local function GenerateEntrance(surface, chunkArea, spawnPos)
             local dx = x - teleportPos.x
             local dy = y - teleportPos.y
             local r = math.sqrt( dx*dx + dy*dy )
-            if r < 8 then
+            if r < config.bunkerEntranceLandRadius then
                 table.insert(tiles, {name = "grass-1", position ={x,y}})
-            elseif r<16 then 
+            elseif r<config.bunkerEntranceRadius then 
                 table.insert(tiles, {name = "water",position = {x,y}})
             end
         end
