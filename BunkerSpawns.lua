@@ -96,6 +96,21 @@ local function GenerateBunkerTeleport(surface, chunkArea, spawnPos)
     end
 end
 
+local function PaveWithConcrete( surface, chunkArea, spawnPos, landRadius)
+    local tiles = {};
+    for y=chunkArea.left_top.y, chunkArea.right_bottom.y-1 do
+        for x = chunkArea.left_top.x, chunkArea.right_bottom.x-1 do
+            local distVar1 = math.floor(math.max(math.abs(spawnPos.x - x), math.abs(spawnPos.y - y)))
+            local distVar2 = math.floor(math.abs(spawnPos.x - x) + math.abs(spawnPos.y - y))
+            local distVar = math.max(distVar1, distVar2 * 0.707);
+            if distVar < landRadius then
+                table.insert(tiles, {name = "concrete", position = {x,y}})
+            end
+        end
+    end
+    surface.set_tiles(tiles);
+end
+
 local function GenerateEntrance(surface, chunkArea, spawnPos)
     local config = scenario.config.bunkerSpawns
     local teleportPos = spawnPos.teleport
@@ -167,6 +182,7 @@ function M.ChunkGeneratedAfterRSO(event)
             local spawnPos = NearestSpawn( global.allSpawns, midPoint)
             GenerateBunker( surface, chunkArea, spawnPos, config.waterRadius, config.bunkerRadius)
             GenerateBunkerTeleport( surface, chunkArea, spawnPos)
+            PaveWithConcrete( surface, chunkArea, spawnPos, config.land);
         end
         
         local spawnPos = NearestTeleport( global.allSpawns, midPoint)
