@@ -109,7 +109,7 @@ scenario.config.startKit = {
 scenario.config.mapSettings = {
     -- jvmguy uses these settings for riverworld
     RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
-    RSO_WATER = "very-high", -- Size of water patches
+    RSO_WATER = "high", -- Size of water patches
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
 
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
@@ -313,8 +313,8 @@ scenario.config.bunkerSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
     firstSpawnPoint = 10,
-    numSpawnPoints = 36,
-    extraSpawn = 38,    -- really far away, but not as far as you might think
+    numSpawnPoints = 22,
+    extraSpawn = 24,    -- really far away, but not as far as you might think
     
     spacing = 608,
     
@@ -342,6 +342,9 @@ scenario.config.bunkerSpawns = {
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
     -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
     -- 0 is day. 0.5 is night. 0.35 is twilight.
+    researched = {
+        'coal-liquefaction',
+    },
 }
 
 SPAWN_TREE_DENSITY = 0.3
