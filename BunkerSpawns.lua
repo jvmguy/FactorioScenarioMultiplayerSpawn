@@ -66,10 +66,15 @@ function M.ConfigureGameSurface()
     local config = scenario.config.bunkerSpawns;
     if config.freezeTime ~= nil then
         local surface = game.surfaces[GAME_SURFACE_NAME];
-        surface.daytime = config.freezeTime
+        surface.daytime = config.freezeTime;
         surface.freeze_daytime = true;
+    end
+    if config.startingEvolution ~= nil then
+        game.forces['enemy'].evolution_factor = config.startingEvolution;
     end 
 end
+
+
 
 local function GenerateBunker(surface, chunkArea, spawnPos, waterRadius, bunkerRadius)
     local tiles = {};

@@ -2,7 +2,7 @@ debug_enabled = false
 
 useBobEntity = false
 
-region_size = 8     -- alternative mean to control how further away resources would be, default - 256 tiles or 8 chunks
+region_size = 7     -- alternative mean to control how further away resources would be, default - 256 tiles or 8 chunks
 				    -- each region is region_size*region_size chunks
 				    -- each chunk is 32*32 tiles
 

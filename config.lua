@@ -34,6 +34,12 @@ WELCOME_MSG_TITLE = "Welcome to Jvmguy's Server"
 scenario.config.welcomeMessages = {
     "This scenario is a variant of a scenario created by Oarc",
     "",
+    "You start in a bunker. The car in the bunker is a teleport to and from the wild.",
+    "The only way in or out of the bunker is the teleport.",
+    "",
+    "You might use the bunker to build a small base to help you get started,",
+    "or if you're feeling adventurous, you can go on to build something in the wild.",
+    "",
     "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
 --    "This server is running a custom scenario that changes spawn locations.",
     "",
@@ -48,6 +54,24 @@ scenario.config.welcomeMessages = {
     
     "Oarc contact: SteamID:Oarc | Twitter:@_Oarc_ | oarcinae@gmail.com",
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
+}
+
+scenario.config.gameInfo = {
+    "This scenario is a variant of a scenario created by Oarc",
+    "",
+    "You start in a bunker. The car in the bunker is a teleport to and from the wild.",
+    "The only way in or out of the bunker is the teleport.",
+    "",
+    "You might use the bunker to build a small base to help you get started,",
+    "or if you're feeling adventurous, you can go on to build something in the wild.",
+    "",
+    "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
+    "This server is running a custom scenario that changes spawn locations.",
+    "",
+--    "/w Biter expansion is on, so watch out!",
+    "Discord chat https://discord.gg/q6gfYa9",
+    "",
+    "Good Luck!",
 }
 
 scenario.config.wipespawn = {
@@ -92,11 +116,11 @@ scenario.config.startKit = {
         {name = "logistic-chest-storage", count = 1},
 		{name = "burner-mining-drill", count = 1},
 		{name = "stone-furnace", count = 1},
-        {name = "steel-axe", count = 5},
+--        {name = "steel-axe", count = 5},
 		{name = "submachine-gun", count=1},
         {name = "iron-plate", count=100},
 --		{name = "car", count=1},
---		{name = "raw-wood", count=100},
+--		{name = "wood", count=100},
 		{name = "firearm-magazine", count=100},
 --		{name = "landfill", count=200}
 
@@ -108,8 +132,8 @@ scenario.config.startKit = {
 
 scenario.config.mapSettings = {
     -- jvmguy uses these settings for riverworld
-    RSO_TERRAIN_SEGMENTATION = "low", -- Frequency of water
-    RSO_WATER = "high", -- Size of water patches
+    RSO_TERRAIN_SEGMENTATION = 2.0, -- "low", -- Frequency of water
+    RSO_WATER = 3.3, -- "very-high", -- Size of water patches
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
 
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
@@ -312,29 +336,29 @@ scenario.config.riverworld = {
 scenario.config.bunkerSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
-    firstSpawnPoint = 10,
-    numSpawnPoints = 22,
+    firstSpawnPoint = 16,
+    numSpawnPoints = 23,
     extraSpawn = 24,    -- really far away, but not as far as you might think
     
-    spacing = 608,
+    spacing = 400,
     
     -- for the bunker zone
-    bunkerSpacing = 640,
-    bunkerZoneStart = 10*1024,
-    bunkerZoneHeight = 2048,
+    bunkerSpacing = 576,
+    bunkerZoneStart = 12*1024,
+    bunkerZoneHeight = 4096,
     waterRadius = 100,
-    bunkerRadius = 120,
+    bunkerRadius = 110,
     -- location within the bunker of the teleport that takes you to wilderness
     teleport = { x=24, y=-47 },
-    
+        
     -- The above ground entrance to the bunker. land + water
     bunkerEntranceLandRadius = 8,
     bunkerEntranceRadius = 16,
     
-    land = 90,
+    land = 80,
     trees = 3,  -- included in the land
     moat = 10,   -- additional to land
-    size = 100,  -- should be land + moat
+    size = 90,  -- should be land + moat
     
     resources = scenario.config.spawnResources,
 
@@ -343,8 +367,10 @@ scenario.config.bunkerSpawns = {
     -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
     -- 0 is day. 0.5 is night. 0.35 is twilight.
     researched = {
-        'coal-liquefaction',
+    -- 'coal-liquefaction',
     },
+    
+    startingEvolution=0.8,
 }
 
 SPAWN_TREE_DENSITY = 0.3
