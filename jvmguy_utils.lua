@@ -102,7 +102,14 @@ function TeleportPlayer( player )
         local dest = nil
         for _,portal in pairs(global.portal) do
             if car.unit_number == portal.unit_number then
-                if portal.dest == nil then
+                local teleportDisabled = (player.online_time < MIN_ONLINE_TIME);
+                
+                if teleportDisabled then
+                    -- teleport from silo back to player spawn.
+                    player.print("teleport warming up, time remaining " .. formattime(MIN_ONLINE_TIME-player.online_time).. ". sending you back to the spawn.");
+                    dest = global.playerSpawns[player.name];
+                    break
+                elseif (portal.dest == nil) or teleportDisabled then
                     -- teleport from silo back to player spawn.
                     player.print("teleport back to player spawn");
                     dest = global.playerSpawns[player.name];
