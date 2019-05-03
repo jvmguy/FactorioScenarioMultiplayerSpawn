@@ -109,13 +109,13 @@ scenario.config.startKit = {
                     {name = "battery-mk2-equipment", count=3},
             }
         },
-        {name = "belt-immunity-equipment", count = 4},
+--        {name = "belt-immunity-equipment", count = 4},
         {name = "night-vision-equipment", count = 1},
         {name = "construction-robot", count = 20},
         {name = "roboport", count = 2},
         {name = "logistic-chest-storage", count = 1},
-		{name = "burner-mining-drill", count = 1},
-		{name = "stone-furnace", count = 1},
+--		{name = "burner-mining-drill", count = 1},
+--		{name = "stone-furnace", count = 1},
 --        {name = "steel-axe", count = 5},
 		{name = "submachine-gun", count=1},
         {name = "iron-plate", count=100},
@@ -132,8 +132,8 @@ scenario.config.startKit = {
 
 scenario.config.mapSettings = {
     -- jvmguy uses these settings for riverworld
-    RSO_TERRAIN_SEGMENTATION = 2.0, -- "low", -- Frequency of water
-    RSO_WATER = 3.3, -- "very-high", -- Size of water patches
+    RSO_TERRAIN_SEGMENTATION = 2,
+    RSO_WATER = 6, 
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
 
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
@@ -240,8 +240,8 @@ scenario.config.spawnResources = {
             {name = "coal", count=1000 },
             {name = "stone", count=1000 },
             {name = "steel-plate", count=400 },
-            {name = "uranium-235", count=100 },
-            {name = "uranium-238", count=500 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
          }  },
         { shape="rect", name="steel-chest", x=42,   y=0,  height=1, width=1, contents = { 
             -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
@@ -252,15 +252,14 @@ scenario.config.spawnResources = {
             {name = "pipe-to-ground", count=2},
             {name = "small-electric-pole", count = 20},
             {name = "inserter", count=20},
-            {name = "assembling-machine-2", count=9},
-            {name = "assembling-machine-3", count=1},
+            {name = "assembling-machine-2", count=10},
         },  },
     
-        { shape="rect", type="coal",         x=48,  y=-41, height=14, width=12,  amount=10000,  },
-        { shape="rect", type="stone",        x=48,  y=-24, height=14, width=12,  amount=10000,  },
+        { shape="rect", type="coal",         x=48,  y=-41, height=14, width=12,  amount=100000,  },
+        { shape="rect", type="stone",        x=48,  y=-24, height=14, width=12,  amount=100000,  },
         -- { shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
-        { shape="rect", type="copper-ore",   x=48,  y=-7,  height=21, width=12,  amount=10000,  },
-        { shape="rect", type="iron-ore",     x=48,  y =18, height=21, width=12,  amount=10000,  },
+        { shape="rect", type="copper-ore",   x=48,  y=-7,  height=21, width=12,  amount=100000,  },
+        { shape="rect", type="iron-ore",     x=48,  y =18, height=21, width=12,  amount=100000,  },
         
         { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=1000000,  },
         { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=1000000,  },
@@ -340,7 +339,7 @@ scenario.config.bunkerSpawns = {
     numSpawnPoints = 23,
     extraSpawn = 24,    -- really far away, but not as far as you might think
     
-    spacing = 400,
+    spacing = 500,
     
     -- for the bunker zone
     bunkerSpacing = 576,
@@ -353,7 +352,7 @@ scenario.config.bunkerSpawns = {
         
     -- The above ground entrance to the bunker. land + water
     bunkerEntranceLandRadius = 8,
-    bunkerEntranceRadius = 16,
+    bunkerEntranceRadius = 32,
     
     land = 80,
     trees = 3,  -- included in the land
@@ -370,7 +369,13 @@ scenario.config.bunkerSpawns = {
     -- 'coal-liquefaction',
     },
     
-    startingEvolution=0.8,
+    startingEvolution=0.7,
+
+    recipesEnabled = {
+        "loader",
+        "fast-loader",
+        "express-loader",
+    },
 }
 
 SPAWN_TREE_DENSITY = 0.3
@@ -449,7 +454,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = false
+ENEMY_EXPANSION = true
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
 ENEMY_POLLUTION_FACTOR_DIVISOR = 5
