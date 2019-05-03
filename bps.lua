@@ -144,8 +144,8 @@ local function find_empty_blueprint(player, no_crafting)
 		return player.cursor_stack
 	end
 
-	local main = player.get_inventory(defines.inventory.player_main)
-	local quickbar = player.get_inventory(defines.inventory.player_quickbar)
+	local main = player.get_inventory(defines.inventory.character_main)
+	local quickbar = player.get_inventory(defines.inventory.character_quickbar)
 
 	local stacks = filter(quickbar, "blueprint")
 	for i, stack in pairs(filter(main, "blueprint")) do
@@ -190,8 +190,8 @@ local function find_empty_book(player, slots, no_crafting)
 	end
 
 	local advanced_circuits = player.get_item_count("advanced-circuit")
-	local main = player.get_inventory(defines.inventory.player_main)
-	local quickbar = player.get_inventory(defines.inventory.player_quickbar)
+	local main = player.get_inventory(defines.inventory.character_main)
+	local quickbar = player.get_inventory(defines.inventory.character_quickbar)
 	local first_empty_book = nil
 	local books = filter(quickbar, "blueprint-book")
 	for i, book in pairs(filter(main, "blueprint-book")) do
@@ -515,8 +515,8 @@ local function save_all(player)
 	blueprints_saved = 0
 	duplicate_filenames = {}
 
-	local main = player.get_inventory(defines.inventory.player_main)
-	local quickbar = player.get_inventory(defines.inventory.player_quickbar)
+	local main = player.get_inventory(defines.inventory.character_main)
+	local quickbar = player.get_inventory(defines.inventory.character_quickbar)
 
 	for position, stack in pairs(filter(quickbar, "blueprint")) do
 		if (stack.is_blueprint_setup()) then

@@ -89,7 +89,7 @@ end
 
 -- Autofills a turret with ammo
 local function AutofillTurret(player, turret)
-    local mainInv = player.get_inventory(defines.inventory.player_main)
+    local mainInv = player.get_inventory(defines.inventory.character_main)
     local result = {}
 
     -- Attempt to transfer some ammo
@@ -99,7 +99,7 @@ end
 
 -- Autofills a vehicle with fuel, bullets and shells where applicable
 local function AutoFillVehicle(player, vehicle)
-    local mainInv = player.get_inventory(defines.inventory.player_main)
+    local mainInv = player.get_inventory(defines.inventory.character_main)
     local result = {}
 
     -- Attempt to transfer some fuel
