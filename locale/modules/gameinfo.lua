@@ -1,11 +1,9 @@
 
 local function CreateGameInfoGui(event)
-  local player = game.players[event.player_index]
-  if player.admin then
-        if player.gui.top.GameInfo == nil then
-            player.gui.top.add{name="GameInfo", type="button", caption="Game Info"}
-        end   
-  end
+    local player = game.players[event.player_index]
+    if player.gui.top.GameInfo == nil then
+        player.gui.top.add{name="GameInfo", type="button", caption="Game Info"}
+    end   
 end
 
 local my_player_list_fixed_width_style = {
