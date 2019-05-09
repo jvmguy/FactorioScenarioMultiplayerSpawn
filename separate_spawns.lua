@@ -105,8 +105,7 @@ function GenerateSpawnChunk( event, spawnPos)
             if false and scenario.config.teleporter.enabled then
                 local pos = { x=spawnPos.x+scenario.config.teleporter.spawnPosition.x, y=spawnPos.y+scenario.config.teleporter.spawnPosition.y }
                 if CheckIfInChunk(pos.x, pos.y, chunkArea) then
-                    local dest = scenario.config.teleporter.siloTeleportPosition
-                    CreateTeleporter(surface, pos, { x=dest.x, y=dest.y })
+                    CreateTeleporter(surface, pos, "silo")
                 end
             end 
         end

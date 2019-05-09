@@ -86,14 +86,43 @@ function CreateWaterStrip(surface, spawnPos, width, height)
     surface.set_tiles(waterTiles)
 end
 
-function CreateTeleporter(surface, teleporterPosition, dest)
+function CreateTeleporter(surface, teleporterPosition, usage)
     local car = surface.create_entity{name="car", position=teleporterPosition, force=MAIN_FORCE }
     car.destructible=false;
     car.minable=false;
     for _,item in pairs(scenario.config.teleporter.startItems) do
         car.insert(item);
     end
-    table.insert(global.portal, { dest=dest, unit_number = car.unit_number });
+    table.insert(global.portal, { dest=dest, unit_number = car.unit_number, spawn = spawn, usage = usage });
+    return car.unit_number
+end
+
+function FindTeleportByID( number )
+    local surface = game.surfaces[GAME_SURFACE_NAME];
+    for _, entity in pairs(surface.find_entities_filtered{ name="car" }) do
+        if entity.unit_number == number then
+            return { x=entity.position.x - 2, y=entity.position.y }
+        end
+    end
+    return nil
+end
+
+function FindTeleportDest( usage, playerName )
+    local spawnSeq = global.playerSpawns[playerName].seq;
+    local spawn = global.allSpawns[spawnSeq];
+    if usage == "silo" then
+        return scenario.config.teleporter.siloTeleportPosition
+    end
+    if usage == "spawn" then
+        return spawn
+    end
+    if usage == "bunker" then
+        return FindTeleportByID( spawn.bunkerTeleportID)
+    end
+    if usage == "bunker entrance" then
+        return FindTeleportByID( spawn.entranceTeleportID )
+    end
+    return nil;
 end
 
 function TeleportPlayer( player )
@@ -106,28 +135,23 @@ function TeleportPlayer( player )
                 
                 if teleportDisabled then
                     -- teleport from silo back to player spawn.
-                    player.print("teleport warming up, time remaining " .. formattime(MIN_ONLINE_TIME-player.online_time).. ". sending you back to the spawn.");
+                    player.print("teleport warming up, time remaining " .. formattime(MIN_ONLINE_TIME-player.online_time).. ".");
                     dest = global.playerSpawns[player.name];
                     break
-                elseif (portal.dest == nil) or teleportDisabled then
-                    -- teleport from silo back to player spawn.
-                    player.print("teleport back to player spawn");
-                    dest = global.playerSpawns[player.name];
-                    break
-                -- we could allow only the player to use the teleporter.
-                -- elseif SameCoord(portal.dest, global.playerSpawns[player.name]) then
                 else    
-                    -- teleport player to silo
-                    player.print("you have been teleported");
-                    dest = portal.dest;
+                    -- generic teleport
+                    player.print("you have been teleported to the " .. portal.usage);
+                    dest = FindTeleportDest( portal.usage, player.name);
                     break
                 end
             end
         end
         -- TODO. transport anyone in the vicinity as well 
+        player.driving=false;
         if dest ~= nil then
-            player.driving=false;
             player.teleport(dest);
+        else
+            player.print("teleport failed");
         end
     end
 end

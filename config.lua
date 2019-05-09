@@ -65,10 +65,14 @@ scenario.config.gameInfo = {
     "You might use the bunker to build a small base to help you get started,",
     "or if you're feeling adventurous, you can go on to build something in the wild.",
     "",
+    "You can change your respawn location, but if you change it to somewhere outside the bunker",
+    "you will not be able to return.",
+    "",
     "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
     "This server is running a custom scenario that changes spawn locations.",
     "",
---    "/w Biter expansion is on, so watch out!",
+    "/w Biter expansion is on, so watch out!",
+    "",
     "Discord chat https://discord.gg/q6gfYa9",
     "",
     "Good Luck!",
@@ -132,8 +136,8 @@ scenario.config.startKit = {
 
 scenario.config.mapSettings = {
     -- jvmguy uses these settings for riverworld
-    RSO_TERRAIN_SEGMENTATION = 2,
-    RSO_WATER = 6, 
+    RSO_TERRAIN_SEGMENTATION = 1.3,
+    RSO_WATER = 1, 
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
 
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
@@ -147,7 +151,9 @@ scenario.config.teleporter = {
     -- where in the silo chunk to place the teleporter
     -- this should not be 0,0 if there is the possibility that the default spawn will be used
     siloPosition = { x=16, y=-8 },
-    
+
+    -- whether there is a teleporter at the silo to take you back    
+    siloTeleportEnabled = false,
     -- where in the silo chunk the teleporter takes you
     -- this should be different than the silo position
     siloTeleportPosition = { x=14, y=-8 },
@@ -336,8 +342,8 @@ scenario.config.bunkerSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
     firstSpawnPoint = 16,
-    numSpawnPoints = 23,
-    extraSpawn = 24,    -- really far away, but not as far as you might think
+    numSpawnPoints = 27,
+    extraSpawn = 28,    -- really far away, but not as far as you might think
     
     spacing = 500,
     
@@ -434,7 +440,7 @@ GHOST_TIME_TO_LIVE = 20 * TICKS_PER_MINUTE
 ---------------------------------------
 -- Special Action Cooldowns
 ---------------------------------------
-RESPAWN_COOLDOWN_IN_MINUTES = 60
+RESPAWN_COOLDOWN_IN_MINUTES = 30
 RESPAWN_COOLDOWN_TICKS = TICKS_PER_MINUTE * RESPAWN_COOLDOWN_IN_MINUTES
 
 -- Require playes to be online for at least 15 minutes

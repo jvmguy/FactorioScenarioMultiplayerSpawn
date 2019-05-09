@@ -97,7 +97,7 @@ local function GenerateBunkerTeleport(surface, chunkArea, spawnPos)
     local teleportPos = { x = (spawnPos.x + teleportOffset.x), y = (spawnPos.y + teleportOffset.y) }
     if ChunkContains( chunkArea, teleportPos) then
         local dest = scenario.config.teleporter.siloTeleportPosition
-        CreateTeleporter(surface, teleportPos, spawnPos.teleport)
+        spawnPos.bunkerTeleportID = CreateTeleporter(surface, teleportPos, "bunker entrance" )
     end
 end
 
@@ -150,7 +150,7 @@ local function GenerateEntranceTeleport(surface, chunkArea, spawnPos)
     local teleportPos = spawnPos.teleport
     if ChunkContains( chunkArea, teleportPos) then
         local teleportPlacement = { x = teleportPos.x + 2, y=teleportPos.y }
-        CreateTeleporter(surface, teleportPlacement, nil)
+        spawnPos.entranceTeleportID = CreateTeleporter(surface, teleportPlacement, "bunker")
     end
 end
 
