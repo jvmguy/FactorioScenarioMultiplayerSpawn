@@ -136,7 +136,7 @@ function TeleportPlayer( player )
                 if teleportDisabled then
                     -- teleport from silo back to player spawn.
                     player.print("teleport warming up, time remaining " .. formattime(MIN_ONLINE_TIME-player.online_time).. ".");
-                    dest = global.playerSpawns[player.name];
+                    -- dest = global.playerSpawns[player.name];
                     break
                 else    
                     -- generic teleport
