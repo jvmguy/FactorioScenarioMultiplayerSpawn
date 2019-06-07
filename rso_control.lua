@@ -1359,25 +1359,25 @@ function RSO_init()
 				
 		initDone = true
 
-		if surface.map_gen_settings.autoplace_controls["iron-ore"].size ~= "none" then
-			game.players[1].print("RSO WARNING - VANILLA iron-ore GEN IS NOT DISABLED!")
+		if surface.map_gen_settings.autoplace_controls["iron-ore"].size ~= 0 then
+			game.players[1].print("RSO WARNING - VANILLA iron-ore GEN IS NOT DISABLED! ")
 		end
-		if surface.map_gen_settings.autoplace_controls["copper-ore"].size ~= "none" then
+		if surface.map_gen_settings.autoplace_controls["copper-ore"].size ~= 0 then
 			game.players[1].print("RSO WARNING - VANILLA copper-ore GEN IS NOT DISABLED!")
 		end
-		if surface.map_gen_settings.autoplace_controls["uranium-ore"].size ~= "none" then
+		if surface.map_gen_settings.autoplace_controls["uranium-ore"].size ~= 0 then
 			game.players[1].print("RSO WARNING - VANILLA uranium-ore GEN IS NOT DISABLED!")
 		end
-		if surface.map_gen_settings.autoplace_controls["crude-oil"].size ~= "none" then
+		if surface.map_gen_settings.autoplace_controls["crude-oil"].size ~= 0 then
 			game.players[1].print("RSO WARNING - VANILLA crude-oil GEN IS NOT DISABLED!")
 		end
-		if surface.map_gen_settings.autoplace_controls["enemy-base"].size ~= "none" then
+		if surface.map_gen_settings.autoplace_controls["enemy-base"].size ~= 0 then
 			game.players[1].print("RSO WARNING - VANILLA enemy-base GEN IS NOT DISABLED!")
 		end
-		if surface.map_gen_settings.autoplace_controls["stone"].size ~= "none" then
+		if surface.map_gen_settings.autoplace_controls["stone"].size ~= 0 then
 			game.players[1].print("RSO WARNING - VANILLA stone GEN IS NOT DISABLED!")
 		end
-		if surface.map_gen_settings.autoplace_controls["coal"].size ~= "none" then
+		if surface.map_gen_settings.autoplace_controls["coal"].size ~= 0 then
 			game.players[1].print("RSO WARNING - VANILLA coal GEN IS NOT DISABLED!")
 		end
 	end

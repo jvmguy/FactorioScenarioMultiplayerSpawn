@@ -41,6 +41,7 @@ require("locale/modules/decimatecommand")
 require("locale/modules/itemcommand")
 require("locale/modules/kitcommand")
 require("locale/modules/rgcommand")
+require("locale/modules/gameinfo")
 require("locale/modules/spawnscommand")
 require("locale/modules/statuscommand")
 require("locale/modules/playerlist")
@@ -51,16 +52,23 @@ require("rso_control")
 require("separate_spawns")
 require("separate_spawns_guis")
 require("frontier_silo")
-require("bps")
+--require("bps")
 toxicJungle = require("ToxicJungle")
 
 -- spawnGenerator = require("FermatSpiralSpawns");
 spawnGenerator = require("RiverworldSpawns");
+-- spawnGenerator = require("BunkerSpawns");
 
 sharedSpawns = require("shared_spawns");
 
 regrow = require("locale/modules/jvm-regrowth");
 wipespawn = require("locale/modules/jvm-wipespawn");
+
+global.init = ""
+global.debug = {}
+function global.log(msg)
+    table.insert(global.debug, msg);
+end
 
 jvm = {}
 
@@ -136,12 +144,12 @@ function jvm.on_init(event)
 
 
     EnableStartingResearch(game.forces[MAIN_FORCE]);
+
     EnableStartingRecipes(game.forces[MAIN_FORCE]);
     
     if ENABLE_ALL_RESEARCH_DONE then
         game.forces[MAIN_FORCE].research_all_technologies()
     end
-
 end
 
 Event.register(-1, jvm.on_init)
@@ -170,8 +178,9 @@ function jvm.on_chunk_generated(event)
         shouldGenerateResources = regrow.shouldGenerateResources(event);
         regrow.onChunkGenerated(event)
     end
-    if scenario.config.riverworld.enabled then
-        spawnGenerator.ChunkGenerated(event);
+
+    if spawnGenerator.ChunkGenerated then
+        spawnGenerator.ChunkGenerated(event)
     end
 
     if scenario.config.toxicJungle.enabled then
@@ -188,11 +197,16 @@ function jvm.on_chunk_generated(event)
         GenerateRocketSiloChunk(event)
     end
 
-    -- This MUST come after RSO generation!
-    if ENABLE_SEPARATE_SPAWNS then
-        SeparateSpawnsGenerateChunk(event)
+    if spawnGenerator.ChunkGeneratedAfterRSO then
+        spawnGenerator.ChunkGeneratedAfterRSO(event)
+    else
+        -- This MUST come after RSO generation!
+        -- XXX move this into spawnGenerator
+        if ENABLE_SEPARATE_SPAWNS then
+            SeparateSpawnsGenerateChunk(event)
+        end
     end
-    
+
     if scenario.config.regrow.enabled then
         regrow.afterResourceGeneration(event)
     end
@@ -244,11 +258,6 @@ function jvm.on_player_created(event)
         PlayerSpawnItems(event)
     else
         SeparateSpawnsPlayerCreated(event)
-    end
-
-    -- Not sure if this should be here or in player joined....
-    if ENABLE_BLUEPRINT_STRING then
-        bps_player_joined(event)
     end
 end
 

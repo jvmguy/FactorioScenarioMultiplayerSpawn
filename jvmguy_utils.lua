@@ -6,6 +6,7 @@ end
 -- Enforce a square of land, with a tree border
 -- this is equivalent to the CreateCropCircle code
 function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth, moatWidth)
+    local config = spawnGenerator.GetConfig()
 
     local dirtTiles = {}
     for i=chunkArea.left_top.x,chunkArea.right_bottom.x-1,1 do
@@ -53,7 +54,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
 	    surface.set_tiles(waterTiles)
     end
     
-    local water = scenario.config.separateSpawns.water;
+    local water = config.water;
     if water ~= nil then
         local waterTiles = {}   
         local shapeTiles = TilesInShape( chunkArea, {x=centerPos.x + water.x, y=centerPos.y + water.y }, water.shape, water.height, water.width );
@@ -85,41 +86,76 @@ function CreateWaterStrip(surface, spawnPos, width, height)
     surface.set_tiles(waterTiles)
 end
 
-function CreateTeleporter(surface, teleporterPosition, dest)
+function CreateTeleporter(surface, teleporterPosition, usage)
     local car = surface.create_entity{name="car", position=teleporterPosition, force=MAIN_FORCE }
     car.destructible=false;
     car.minable=false;
     for _,item in pairs(scenario.config.teleporter.startItems) do
         car.insert(item);
     end
-    table.insert(global.portal, { dest=dest, unit_number = car.unit_number });
+    table.insert(global.portal, { dest=dest, unit_number = car.unit_number, spawn = spawn, usage = usage });
+    return car.unit_number
+end
+
+function FindTeleportByID( number )
+    local surface = game.surfaces[GAME_SURFACE_NAME];
+    for _, entity in pairs(surface.find_entities_filtered{ name="car" }) do
+        if (entity ~= nil) and (entity.unit_number == number) then
+            return { x=entity.position.x - 2, y=entity.position.y }
+        end
+    end
+    return nil
+end
+
+function FindTeleportDest( usage, playerName )
+    local spawnSeq = global.playerSpawns[playerName].seq;
+    local spawn = global.allSpawns[spawnSeq];
+    if usage == "silo" then
+        return FindTeleportByID( global.siloTeleportID)
+    end
+    if usage == "spawn" then
+        return FindTeleportByID( spawn.spawnTeleportID)
+    end
+    if usage == "bunker" then
+        return FindTeleportByID( spawn.bunkerTeleportID)
+    end
+    if usage == "bunker entrance" then
+        return FindTeleportByID( spawn.entranceTeleportID )
+    end
+    return nil;
 end
 
 function TeleportPlayer( player )
     local car = player.vehicle;
     if car ~= nil then
         local dest = nil
+        local isPortal = false;
         for _,portal in pairs(global.portal) do
             if car.unit_number == portal.unit_number then
-                if portal.dest == nil then
+                isPortal = true;
+                local teleportDisabled = false and (player.online_time < MIN_ONLINE_TIME);
+                
+                if teleportDisabled then
                     -- teleport from silo back to player spawn.
-                    player.print("teleport back to player spawn");
-                    dest = global.playerSpawns[player.name];
+                    player.print("teleport warming up, time remaining " .. formattime(MIN_ONLINE_TIME-player.online_time).. ".");
+                    -- dest = global.playerSpawns[player.name];
                     break
-                -- we could allow only the player to use the teleporter.
-                -- elseif SameCoord(portal.dest, global.playerSpawns[player.name]) then
                 else    
-                    -- teleport player to silo
-                    player.print("teleport to silo");
-                    dest = portal.dest;
+                    -- generic teleport
+                    player.print("you have been teleported to the " .. portal.usage);
+                    dest = FindTeleportDest( portal.usage, player.name);
                     break
                 end
             end
         end
-        -- TODO. transport anyone in the vicinity as well 
-        if dest ~= nil then
+        -- TODO. transport anyone in the vicinity as well
+        if isPortal then 
             player.driving=false;
-            player.teleport(dest);
+            if dest ~= nil then
+                player.teleport(dest);
+            else
+                player.print("teleport failed");
+            end
         end
     end
 end
@@ -129,7 +165,8 @@ function SameCoord(a, b)
 end
 
 function EnableStartingResearch(force)
-    local researched = scenario.config.separateSpawns.researched;
+    local config = spawnGenerator.GetConfig()
+    local researched = config.researched;
     if researched ~= nil then
         for key, tech in pairs(researched) do
             force.technologies[tech].researched=true;
@@ -137,8 +174,9 @@ function EnableStartingResearch(force)
     end
 end
 
-function EnableRecipes(force)
-    local recipesEnabled = scenario.config.separateSpawns.recipesEnabled;
+function EnableStartingRecipes(force)
+    local config = spawnGenerator.GetConfig()
+    local recipesEnabled = config.recipesEnabled;
     if recipesEnabled ~= nil then
         for key, recipe in pairs(recipesEnabled) do
             force.recipes[recipe].enabled=true;

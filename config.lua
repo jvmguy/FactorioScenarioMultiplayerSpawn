@@ -50,6 +50,19 @@ scenario.config.welcomeMessages = {
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
 }
 
+scenario.config.gameInfo = {
+    "This scenario is a variant of a scenario created by Oarc",
+    "",
+    "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
+    "This server is running a custom scenario that changes spawn locations.",
+    "",
+--    "/w Biter expansion is on, so watch out!",
+--    "",
+    "Discord chat https://discord.gg/q6gfYa9",
+    "",
+    "Good Luck!",
+}
+
 scenario.config.wipespawn = {
     enabled=true
 }
@@ -64,7 +77,7 @@ scenario.config.bots = {
 }
 
 scenario.config.playerBonus = {
-    character_crafting_speed_modifier = 1.0/100-1.0,
+    character_crafting_speed_modifier = 1.0/10-1.0,
 }
 
 scenario.config.silo = {
@@ -85,18 +98,18 @@ scenario.config.startKit = {
                     {name = "battery-mk2-equipment", count=3},
             }
         },
-        {name = "belt-immunity-equipment", count = 4},
+--        {name = "belt-immunity-equipment", count = 4},
         {name = "night-vision-equipment", count = 1},
         {name = "construction-robot", count = 20},
         {name = "roboport", count = 2},
         {name = "logistic-chest-storage", count = 1},
-		{name = "burner-mining-drill", count = 1},
-		{name = "stone-furnace", count = 1},
-        {name = "steel-axe", count = 5},
+--		{name = "burner-mining-drill", count = 1},
+--		{name = "stone-furnace", count = 1},
+--        {name = "steel-axe", count = 5},
 		{name = "submachine-gun", count=1},
         {name = "iron-plate", count=100},
 --		{name = "car", count=1},
---		{name = "raw-wood", count=100},
+--		{name = "wood", count=100},
 		{name = "firearm-magazine", count=100},
 --		{name = "landfill", count=200}
 
@@ -108,8 +121,8 @@ scenario.config.startKit = {
 
 scenario.config.mapSettings = {
     -- jvmguy uses these settings for riverworld
-    RSO_TERRAIN_SEGMENTATION = "very-low", -- Frequency of water
-    RSO_WATER = "high", -- Size of water patches
+    RSO_TERRAIN_SEGMENTATION = 1.3,
+    RSO_WATER = 4, 
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
 
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
@@ -123,7 +136,9 @@ scenario.config.teleporter = {
     -- where in the silo chunk to place the teleporter
     -- this should not be 0,0 if there is the possibility that the default spawn will be used
     siloPosition = { x=16, y=-8 },
-    
+
+    -- whether there is a teleporter at the silo to take you back    
+    siloTeleportEnabled = true,
     -- where in the silo chunk the teleporter takes you
     -- this should be different than the silo position
     siloTeleportPosition = { x=14, y=-8 },
@@ -207,7 +222,41 @@ scenario.config.toxicJungle = {
     enabled = false,
     tree_chance = 0.2
 }    
-                   --
+
+scenario.config.spawnResources = {
+        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-8,  height=1, width=1, contents = { 
+            {name = "coal", count=1000 },
+            {name = "stone", count=1000 },
+            {name = "steel-plate", count=400 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
+         }  },
+        { shape="rect", name="steel-chest", x=42,   y=0,  height=1, width=1, contents = { 
+            -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
+            {name = "offshore-pump", count = 1},
+            {name = "boiler", count = 10},
+            {name = "steam-engine", count = 20},
+            {name = "pipe", count=12},
+            {name = "pipe-to-ground", count=2},
+            {name = "small-electric-pole", count = 20},
+            {name = "inserter", count=20},
+            {name = "assembling-machine-2", count=10},
+        },  },
+    
+        { shape="rect", type="coal",         x=48,  y=-41, height=14, width=12,  amount=100000,  },
+        { shape="rect", type="stone",        x=48,  y=-24, height=14, width=12,  amount=100000,  },
+        -- { shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
+        { shape="rect", type="copper-ore",   x=48,  y=-7,  height=21, width=12,  amount=100000,  },
+        { shape="rect", type="iron-ore",     x=48,  y =18, height=21, width=12,  amount=100000,  },
+        
+        { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=66, y= 6, height=1, amount=1000000,  },
+}
+
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
@@ -237,41 +286,8 @@ scenario.config.separateSpawns = {
 	
 	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
 	
-    resources = {
-        { shape="rect", name="steel-chest", x=30,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=30,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=30,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=30,   y=-8,  height=1, width=1, contents = { 
-            {name = "coal", count=1000 },
-            {name = "stone", count=1000 }
-         }  },
-        { shape="rect", name="steel-chest", x=30,   y=0,  height=1, width=1, contents = { 
-            {name = "steel-plate", count=400 },
-            {name = "uranium-235", count=100 },
-            {name = "uranium-238", count=500 },
-            -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
-            {name = "offshore-pump", count = 1},
-            {name = "boiler", count = 10},
-            {name = "steam-engine", count = 20},
-            {name = "pipe", count=5},
-            {name = "pipe-to-ground", count=2},
-            {name = "small-electric-pole", count = 20},
-            {name = "inserter", count=20},
-            {name = "assembling-machine-2", count=9},
-            {name = "assembling-machine-3", count=1},
-        },  },
-    
-        { shape="rect", type="coal",         x=36,  y=-41, height=14, width=24,  amount=2000,  },
-        { shape="rect", type="stone",        x=36,  y=-24, height=14, width=24,  amount=2000,  },
-        -- { shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
-        { shape="rect", type="copper-ore",   x=36,  y=-7,  height=21, width=24,  amount=2000,  },
-        { shape="rect", type="iron-ore",     x=36,  y =18, height=21, width=24,  amount=2000,  },
+    resources = scenario.config.spawnResources,
         
-        { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=66, y= 6, height=1, amount=1000000,  },
-    },
-    
     researched = {
 --        'automation',
 --        'logistics',
@@ -280,33 +296,92 @@ scenario.config.separateSpawns = {
 --        'coal-liquefaction',
     },
     recipesEnabled = {
-        "loader",
-        "fast-loader",
-        "express-loader",
+--        "loader",
+--        "fast-loader",
+--        "express-loader",
     },
 }
 
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
-    seablock = true,        -- behavior a little like the seablock mod. (well, not really)
-	stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
-	waterWalls = false,
+    seablock = false,        -- behavior a little like the seablock mod. (well, not really)
+    stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
+    waterWalls = false,
     firstSpawnPoint = 14,
-    -- moat=0,         -- horizontal offset relative to center of spawn
-    -- moatWidth=8,    
+    numSpawnPoints = 27,
+    extraSpawn = 28,    -- really far away, but not as far as you might think
+
     spacing = 736,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
     barrier = 256,	-- width of impenetrable barrier
     rail = 3*640,	-- generate a north-south railway starting here
     rail2 = -3*640-32, -- generate a north-south railway starting here
     freespace = 3*640 + 32, -- no voids after this 
     
+    land = 74,
+    trees = 3,  -- included in the land
+    moat = 10,   -- additional to land
+    moatWidth = 10,   -- additional to land
+    size = 84,  -- should be land + moat
+
+    resources = scenario.config.spawnResources,
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
     -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
 	-- 0 is day. 0.5 is night. 0.35 is twilight.
+    recipesEnabled = {
+--        "loader",
+--        "fast-loader",
+--        "express-loader",
+    },
+
 }
 
+scenario.config.bunkerSpawns = {
+    -- this mostly inherits the separateSpawns config, but has a few minor differences
+    enabled = false,
+    firstSpawnPoint = 16,
+    numSpawnPoints = 27,
+    extraSpawn = 28,    -- really far away, but not as far as you might think
+    
+    spacing = 500,
+    
+    -- for the bunker zone
+    bunkerSpacing = 576,
+    bunkerZoneStart = 12*1024,
+    bunkerZoneHeight = 4096,
+    waterRadius = 100,
+    bunkerRadius = 110,
+    -- location within the bunker of the teleport that takes you to wilderness
+    teleport = { x=24, y=-47 },
+        
+    -- The above ground entrance to the bunker. land + water
+    bunkerEntranceLandRadius = 8,
+    bunkerEntranceRadius = 32,
+    
+    land = 80,
+    trees = 3,  -- included in the land
+    moat = 10,   -- additional to land
+    size = 90,  -- should be land + moat
+    
+    resources = scenario.config.spawnResources,
+
+    -- freeze time of day
+    -- you might get night vision at the start, but you have to decide whether it's worth using it.
+    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    -- 0 is day. 0.5 is night. 0.35 is twilight.
+    researched = {
+    -- 'coal-liquefaction',
+    },
+    
+    startingEvolution=0.7,
+
+    recipesEnabled = {
+        "loader",
+        "fast-loader",
+        "express-loader",
+    },
+}
 
 SPAWN_TREE_DENSITY = 0.3
 
@@ -321,6 +396,9 @@ ENABLE_SPAWN_FORCE_GRASS = true
 -- Safe area has no aliens
 -- +/- this in x and y direction
 SAFE_AREA_TILE_DIST = CHUNK_SIZE*6
+
+-- Safe area around bunker entrance that has no aliens 
+SAFE_AREA_BUNKER_ENTRANCE_TILE_DIST = CHUNK_SIZE * 2
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
@@ -361,7 +439,7 @@ GHOST_TIME_TO_LIVE = 20 * TICKS_PER_MINUTE
 ---------------------------------------
 -- Special Action Cooldowns
 ---------------------------------------
-RESPAWN_COOLDOWN_IN_MINUTES = 60
+RESPAWN_COOLDOWN_IN_MINUTES = 30
 RESPAWN_COOLDOWN_TICKS = TICKS_PER_MINUTE * RESPAWN_COOLDOWN_IN_MINUTES
 
 -- Require playes to be online for at least 15 minutes
@@ -381,7 +459,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = false
+ENEMY_EXPANSION = true
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
 ENEMY_POLLUTION_FACTOR_DIVISOR = 5

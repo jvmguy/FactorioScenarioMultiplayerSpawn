@@ -106,6 +106,10 @@ local function GenerateRails(surface, chunkArea, railX, rails)
     end
 end
 
+function M.GetConfig()
+    return scenario.config.riverworld;  
+end
+
 function M.InitSpawnPoint(n)
    local a = SpawnPoint(n)
    local spawn = CenterInChunk(a);
@@ -258,35 +262,35 @@ function M.ChunkGenerated(event)
         local barrier = scenario.config.riverworld.barrier
         local w = chunkArea.right_bottom.x - chunkArea.left_top.x
         local y = spawnPos.y - spacing/2;
-        local wallRect = MakeRect( chunkArea.left_top.x, w, y, barrier/2 );
+        local wallRect = MakeRect( chunkArea.left_top.x, w, y, barrier/2 )
         wallRect = ChunkIntersection(chunkArea, wallRect);
         y = y + barrier/2
-        local waterRect = MakeRect( chunkArea.left_top.x, w, y, 8 );
+        local waterRect = MakeRect( chunkArea.left_top.x, w, y, 8 )
         waterRect = ChunkIntersection(chunkArea, waterRect);
 
-        local y = spawnPos.y + spacing/2 - barrier/2 - 8;
-        local waterRect2 = MakeRect( chunkArea.left_top.x, w, y, 8 );
-        waterRect2 = ChunkIntersection(chunkArea, waterRect2);
+        local y = spawnPos.y + spacing/2 - barrier/2 - 8
+        local waterRect2 = MakeRect( chunkArea.left_top.x, w, y, 8 )
+        waterRect2 = ChunkIntersection(chunkArea, waterRect2)
         y = y + 8        
-        local wallRect2 = MakeRect( chunkArea.left_top.x, w, y, barrier/2 );
-        wallRect2 = ChunkIntersection(chunkArea, wallRect2);
+        local wallRect2 = MakeRect( chunkArea.left_top.x, w, y, barrier/2 )
+        wallRect2 = ChunkIntersection(chunkArea, wallRect2)
         
                 
-        local railsRect = MakeRect( scenario.config.riverworld.rail, 32, -20000, 40000);
-        railsRect = ChunkIntersection( chunkArea, railsRect);
+        local railsRect = MakeRect( scenario.config.riverworld.rail, 32, -20000, 40000)
+        railsRect = ChunkIntersection( chunkArea, railsRect)
                 
-        local railsRect2 = MakeRect( scenario.config.riverworld.rail2, 32, -20000, 40000);
-        railsRect2 = ChunkIntersection( chunkArea, railsRect2);
+        local railsRect2 = MakeRect( scenario.config.riverworld.rail2, 32, -20000, 40000)
+        railsRect2 = ChunkIntersection( chunkArea, railsRect2)
         
-        if dy < spacing and scenario.config.riverworld.moat ~= nil and scenario.config.riverworld.moatWidth>0 then
+        if dy < spacing and scenario.config.riverworld.moatRect ~= nil and scenario.config.riverworld.moatWidth>0 then
             local w = scenario.config.riverworld.moatWidth
             local h = spacing - barrier
             -- left moat
             local moatRect = MakeRect( spawnPos.x-scenario.config.riverworld.moat-w, w, spawnPos.y - h/2, h)        
-            GenerateMoat(surface, chunkArea, moatRect);
+            GenerateMoat(surface, chunkArea, moatRect)
             -- right moat
             local moatRect2 = MakeRect( spawnPos.x+scenario.config.riverworld.moat, w, spawnPos.y - h/2, h)        
-            GenerateMoat(surface, chunkArea, moatRect2);
+            GenerateMoat(surface, chunkArea, moatRect2)
         end
         -- quick reject
         if (dy < spacing) then
@@ -296,19 +300,23 @@ function M.ChunkGenerated(event)
             GenerateWalls( surface, wallRect2, railsRect, railsRect2, false )
         end
 
-        GenerateRails( surface, chunkArea, scenario.config.riverworld.rail, railsRect);        
-        GenerateRails( surface, chunkArea, scenario.config.riverworld.rail2, railsRect2);
+        GenerateRails( surface, chunkArea, scenario.config.riverworld.rail, railsRect)
+        GenerateRails( surface, chunkArea, scenario.config.riverworld.rail2, railsRect2)
         if scenario.config.riverworld.seablock then
-            Scheduler.schedule(game.tick+4, ReplaceLandWithWater, { surface= surface, area = chunkArea, spawnPos=spawnPos } );
+            Scheduler.schedule(game.tick+4, ReplaceLandWithWater, { surface= surface, area = chunkArea, spawnPos=spawnPos } )
         end
     end
 end
 
 function M.ConfigureGameSurface()
-    if scenario.config.riverworld.freezeTime ~= nil then
-        local surface = game.surfaces[GAME_SURFACE_NAME];
-        surface.daytime = scenario.config.riverworld.freezeTime
-        surface.freeze_daytime = true;
+    local config = scenario.config.riverworld;
+    if config.freezeTime ~= nil then
+        local surface = game.surfaces[GAME_SURFACE_NAME]
+        surface.daytime = config.freezeTime
+        surface.freeze_daytime = true
+    end 
+    if config.startingEvolution ~= nil then
+        game.forces['enemy'].evolution_factor = config.startingEvolution;
     end 
 end
 

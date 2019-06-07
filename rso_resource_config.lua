@@ -9,9 +9,9 @@ local function fillVanillaConfig()
         -- general spawn params
         allotment=99, -- how common resource is
         spawns_per_region={min=1, max=1}, --number of chunks
-        richness=5000,        -- resource_ore has only one richness value - resource-liquid has min/max
+        richness=20000,        -- resource_ore has only one richness value - resource-liquid has min/max
         
-        size={min=25, max=30}, -- rough radius of area, too high value can produce square shaped areas
+        size={min=30, max=35}, -- rough radius of area, too high value can produce square shaped areas
         min_amount=350,
         
         -- resource provided at starting location
@@ -33,8 +33,8 @@ local function fillVanillaConfig()
         
         allotment=95,
         spawns_per_region={min=1, max=1},
-        richness=5000,
-        size={min=25, max=30},
+        richness=20000,
+        size={min=30, max=35},
         min_amount=350,
 
         starting={richness=6000, size=25, probability=0},
@@ -54,8 +54,8 @@ local function fillVanillaConfig()
         allotment=80,
         
         spawns_per_region={min=1, max=1},
-        size={min=20, max=25},
-        richness=4000,
+        size={min=30, max=35},
+        richness=32000,
         min_amount=350,
 
         starting={richness=6000, size=20, probability=0},
@@ -73,7 +73,7 @@ local function fillVanillaConfig()
         
         allotment=60,
         spawns_per_region={min=1, max=1},
-        richness=3000,
+        richness=12000,
         size={min=19, max=22},
         min_amount=250,
 
@@ -92,8 +92,8 @@ local function fillVanillaConfig()
         
         allotment=40,
         spawns_per_region={min=1, max=1},
-        richness=3000,
-        size={min=12, max=16},
+        richness=12000,
+        size={min=15, max=20},
         min_amount=250,
 
         starting={richness=3000, size=12, probability=0},
@@ -104,7 +104,7 @@ local function fillVanillaConfig()
         minimum_amount=60000,
         allotment=40,   -- 80
         spawns_per_region={min=2, max=3},
-        richness={min=60000, max=70000}, -- richness per resource spawn
+        richness={min=600000, max=700000}, -- richness per resource spawn
         size={min=3, max=4},
         
         starting={richness=20000, size=2, probability=0},

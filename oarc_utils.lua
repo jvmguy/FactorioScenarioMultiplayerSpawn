@@ -59,14 +59,14 @@ my_player_list_admin_style = {
     minimal_width = 200,
     top_padding = 0,
     bottom_padding = 0,
-    maximal_height = 15
+    maximal_height = 25
 }
 my_player_list_style = {
     font = "default-semibold",
     minimal_width = 200,
     top_padding = 0,
     bottom_padding = 0,
-    maximal_height = 20
+    maximal_height = 25
 }
 my_player_list_style_spacer = {
     maximal_height = 20
@@ -145,7 +145,7 @@ function GivePlayerStarterItems(player)
     for _,item in pairs(scenario.config.startKit) do
         player.insert(item);
         if item.equipment ~= nil then
-            local p_armor = player.get_inventory(5)[1].grid --defines.inventory.player_armor = 5?
+            local p_armor = player.get_inventory(5)[1].grid --defines.inventory.character_armor = 5?
             if p_armor ~= nil then
                 for _,equip in pairs(item.equipment) do
                     local count = equip.count
@@ -396,13 +396,13 @@ function DropGravestoneChests(player)
     -- Put it all into the chest
     -- If the chest is full, create a new chest.
     for i, id in ipairs{
-    defines.inventory.player_armor,
-    defines.inventory.player_main,
-    defines.inventory.player_quickbar,
-    defines.inventory.player_guns,
-    defines.inventory.player_ammo,
-    defines.inventory.player_tools,
-    defines.inventory.player_trash} do
+    defines.inventory.character_armor,
+    defines.inventory.character_main,
+    defines.inventory.character_quickbar,
+    defines.inventory.character_guns,
+    defines.inventory.character_ammo,
+    defines.inventory.character_tools,
+    defines.inventory.character_trash} do
         local inv = player.get_inventory(id)
         if (not inv.is_empty()) then
             for j = 1, #inv do

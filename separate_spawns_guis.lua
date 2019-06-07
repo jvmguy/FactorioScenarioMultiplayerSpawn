@@ -213,6 +213,7 @@ function SpawnOptsGuiClick(event)
     if not (event and event.element and event.element.valid) then return end
     local player = game.players[event.player_index]
     local buttonClicked = event.element.name
+    local config = spawnGenerator.GetConfig()
 
 
     -- Check if a valid button on the gui was pressed
@@ -242,9 +243,9 @@ function SpawnOptsGuiClick(event)
 
         local newSpawn = nil;
         -- Create a new spawn point
-        if player.index == 1 and scenario.config.separateSpawns.extraSpawn ~= nil then
-            if (scenario.config.separateSpawns.extraSpawn < #global.allSpawns) then
-                newSpawn = global.allSpawns[scenario.config.separateSpawns.extraSpawn];
+        if player.index == 1 and config.extraSpawn ~= nil then
+            if (config.extraSpawn < #global.allSpawns) then
+                newSpawn = global.allSpawns[config.extraSpawn];
             else
                 newSpawn = global.allSpawns[#global.allSpawns];
             end
@@ -329,11 +330,12 @@ end
 
 function PickRandomSpawn( t, far )
   -- local player = game.players[1];
+  local config = spawnGenerator.GetConfig()
   local candidates = {}
   for key, spawnPos in pairs(t) do
     if spawnPos ~= nil and (not spawnPos.used) and SpawnIsCompatible( spawnPos, far ) then
         spawnPos.key = key;
-	if scenario.config.separateSpawns.preferFar then
+	if config.preferFar then
             spawnPos.dist = DistanceFromUsedSpawns(spawnPos)
         else
             spawnPos.dist = math.abs(spawnPos.y)

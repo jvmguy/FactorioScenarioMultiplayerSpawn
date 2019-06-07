@@ -42,7 +42,7 @@ local function TransferItemMultipleTypes(result, srcInv, destEntity, itemNameArr
      -- Return the last error code
 end
 
-local vehicleFuel = {"rocket-fuel", "solid-fuel", "raw-wood", "coal"}
+local vehicleFuel = {"rocket-fuel", "solid-fuel", "wood", "coal"}
 local machineGunAmmo = {"uranium-rounds-magazine", "piercing-rounds-magazine","firearm-magazine"}
 local tankCannonAmmo = {"explosive-uranium-cannon-shell", "uranium-cannon-shell", "explosive-cannon-shell", "cannon-shell"}
 local tankFlamethrowerAmmo = {"flamethrower-ammo"}
@@ -51,7 +51,7 @@ local localizedName = {
     -- fuel
     ["rocket-fuel"] = "Rocket Fuel", 
     ["solid-fuel"] = "Solid Fuel",
-    ["raw-wood"] = "Raw Wood",
+    ["wood"] = "Wood",
     ["coal"] = "Coal",
 
     -- machine gun / turret ammo
@@ -89,7 +89,7 @@ end
 
 -- Autofills a turret with ammo
 local function AutofillTurret(player, turret)
-    local mainInv = player.get_inventory(defines.inventory.player_main)
+    local mainInv = player.get_inventory(defines.inventory.character_main)
     local result = {}
 
     -- Attempt to transfer some ammo
@@ -99,7 +99,7 @@ end
 
 -- Autofills a vehicle with fuel, bullets and shells where applicable
 local function AutoFillVehicle(player, vehicle)
-    local mainInv = player.get_inventory(defines.inventory.player_main)
+    local mainInv = player.get_inventory(defines.inventory.character_main)
     local result = {}
 
     -- Attempt to transfer some fuel
