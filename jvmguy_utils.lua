@@ -100,7 +100,7 @@ end
 function FindTeleportByID( number )
     local surface = game.surfaces[GAME_SURFACE_NAME];
     for _, entity in pairs(surface.find_entities_filtered{ name="car" }) do
-        if entity.unit_number == number then
+        if (entity ~= nil) and (entity.unit_number == number) then
             return { x=entity.position.x - 2, y=entity.position.y }
         end
     end
@@ -129,8 +129,10 @@ function TeleportPlayer( player )
     local car = player.vehicle;
     if car ~= nil then
         local dest = nil
+        local isPortal = false;
         for _,portal in pairs(global.portal) do
             if car.unit_number == portal.unit_number then
+                isPortal = true;
                 local teleportDisabled = (player.online_time < MIN_ONLINE_TIME);
                 
                 if teleportDisabled then
@@ -146,12 +148,14 @@ function TeleportPlayer( player )
                 end
             end
         end
-        -- TODO. transport anyone in the vicinity as well 
-        player.driving=false;
-        if dest ~= nil then
-            player.teleport(dest);
-        else
-            player.print("teleport failed");
+        -- TODO. transport anyone in the vicinity as well
+        if isPortal then 
+            player.driving=false;
+            if dest ~= nil then
+                player.teleport(dest);
+            else
+                player.print("teleport failed");
+            end
         end
     end
 end
