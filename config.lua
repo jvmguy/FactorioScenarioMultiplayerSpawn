@@ -137,7 +137,7 @@ scenario.config.startKit = {
 scenario.config.mapSettings = {
     -- jvmguy uses these settings for riverworld
     RSO_TERRAIN_SEGMENTATION = 1.3,
-    RSO_WATER = 1, 
+    RSO_WATER = 4, 
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
 
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
