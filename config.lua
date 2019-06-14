@@ -22,7 +22,7 @@ TICKS_PER_MINUTE = TICKS_PER_SECOND * 60
 scenario.config.joinedMessages = {
     "Welcome to jvmguy's server.",
     "In the current game mode, a satellite must be launched from the rocket silo in the center to win!",
-    "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill",
+    "Mods Enabled: Separate Spawns, Long-Reach, Autofill",
     "",
 --    "Look in the car at your spawn for fast start items.",
 --    "The car is also your personal transport to and from the silo.",
@@ -89,13 +89,13 @@ scenario.config.startKit = {
         {name = "power-armor", count = 1,
             equipment = {
                   -- the order of these does matter.
---                  {name = "fusion-reactor-equipment"},
---                  {name = "exoskeleton-equipment"},
+                    {name = "fusion-reactor-equipment"},
+                    {name = "exoskeleton-equipment"},
+                    {name = "personal-roboport-mk2-equipment", count=3},
+                    {name = "battery-mk2-equipment", count=3},
 --                  {name = "personal-roboport-equipment", count=1},
 --                  {name = "battery-equipment", count=1},
-                    {name = "solar-panel-equipment", count = 23 },
-                    {name = "personal-roboport-mk2-equipment", count=2},
-                    {name = "battery-mk2-equipment", count=3},
+                    {name = "solar-panel-equipment", count = 7 },
             }
         },
 --        {name = "belt-immunity-equipment", count = 4},
@@ -138,7 +138,7 @@ scenario.config.teleporter = {
     siloPosition = { x=16, y=-8 },
 
     -- whether there is a teleporter at the silo to take you back    
-    siloTeleportEnabled = true,
+    siloTeleportEnabled = false,
     -- where in the silo chunk the teleporter takes you
     -- this should be different than the silo position
     siloTeleportPosition = { x=14, y=-8 },
@@ -183,7 +183,7 @@ ENABLE_SEPARATE_SPAWNS = true
 ENABLE_ALL_RESEARCH_DONE = false
 
 -- Enable Scenario version of RSO
-ENABLE_RSO = true
+ENABLE_RSO = false
 
 -- Whether to enable old blueprint string code
 ENABLE_BLUEPRINT_STRING = false
@@ -223,7 +223,7 @@ scenario.config.toxicJungle = {
     tree_chance = 0.2
 }    
 
-scenario.config.spawnResources = {
+scenario.config.vanillaResources = {
         { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
@@ -257,6 +257,42 @@ scenario.config.spawnResources = {
         { shape="rect", type="crude-oil", x=66, y= 6, height=1, amount=1000000,  },
 }
 
+scenario.config.angelsResources = {
+        { shape="rect", name="steel-chest", x=36,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=36,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=36,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=36,   y=-8,  height=1, width=1, contents = { 
+            {name = "coal", count=1000 },
+            {name = "stone", count=1000 },
+            {name = "steel-plate", count=400 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
+         }  },
+        { shape="rect", name="steel-chest", x=36,   y=0,  height=1, width=1, contents = { 
+            -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
+            {name = "offshore-pump", count = 1},
+            {name = "boiler", count = 10},
+            {name = "steam-engine", count = 20},
+            {name = "pipe", count=12},
+            {name = "pipe-to-ground", count=2},
+            {name = "small-electric-pole", count = 20},
+            {name = "inserter", count=20},
+            {name = "assembling-machine-2", count=10},
+        },  },
+    
+        { shape="rect", type="coal",            x=42,  y=-47, height=14, width=12,  amount=100000,  },
+        { shape="rect", type="angels-ore5",     x=42,  y=-30, height=14, width=12,  amount=100000,  },
+        { shape="rect", type="angels-ore6",     x=42,  y=-13,  height=14, width=12,  amount=100000,  },
+        { shape="rect", type="angels-ore1",     x=42,  y =4, height=21, width=12,  amount=100000,  },
+        { shape="rect", type="angels-ore3",     x=42,  y =28, height=21, width=12,  amount=100000,  },
+        
+        { shape="rect", type="angels-natural-gas", x=60, y=-6, height=1, amount=1000000,  },
+        { shape="rect", type="angels-natural-gas", x=60, y= 0, height=1, amount=1000000,  },
+        { shape="rect", type="angels-natural-gas", x=60, y= 6, height=1, amount=1000000,  },
+}
+
+-- XXX detech angels ores and auto-configure
+scenario.config.spawnResources = scenario.config.vanillaResources;
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
@@ -377,9 +413,9 @@ scenario.config.bunkerSpawns = {
     startingEvolution=0.7,
 
     recipesEnabled = {
-        "loader",
-        "fast-loader",
-        "express-loader",
+--        "loader",
+--        "fast-loader",
+--        "express-loader",
     },
 }
 
@@ -459,7 +495,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = true
+ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
 ENEMY_POLLUTION_FACTOR_DIVISOR = 5
