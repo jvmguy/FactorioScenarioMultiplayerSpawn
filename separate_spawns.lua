@@ -101,11 +101,11 @@ function GenerateSpawnChunk( event, spawnPos)
             GenerateStartingResources( surface, chunkArea, spawnPos);
             
             -- generate a teleport to the silo if enabled
-            -- disabled for bunker spawns. need to refactor this
-            if false and scenario.config.teleporter.enabled then
+            -- disabled for bunker spawns. need to refactor this, and move to spawn generator
+            if scenario.config.teleporter.siloTeleportEnabled then
                 local pos = { x=spawnPos.x+scenario.config.teleporter.spawnPosition.x, y=spawnPos.y+scenario.config.teleporter.spawnPosition.y }
                 if CheckIfInChunk(pos.x, pos.y, chunkArea) then
-                    CreateTeleporter(surface, pos, "silo")
+                    spawnPos.spawnTeleportID = CreateTeleporter(surface, pos, "silo")
                 end
             end 
         end
@@ -240,7 +240,6 @@ end
 function InitSpawnGlobalsAndForces()
     -- Contains an array of all player spawns
     -- A secondary array tracks whether the character will respawn there.
-    
     if (global.allSpawns == nil) then
         global.allSpawns = {}
     end

@@ -106,6 +106,10 @@ local function GenerateRails(surface, chunkArea, railX, rails)
     end
 end
 
+function M.GetConfig()
+    return scenario.config.riverworld;  
+end
+
 function M.InitSpawnPoint(n)
    local a = SpawnPoint(n)
    local spawn = CenterInChunk(a);
@@ -305,10 +309,14 @@ function M.ChunkGenerated(event)
 end
 
 function M.ConfigureGameSurface()
-    if scenario.config.riverworld.freezeTime ~= nil then
+    local config = scenario.config.riverworld;
+    if config.freezeTime ~= nil then
         local surface = game.surfaces[GAME_SURFACE_NAME]
-        surface.daytime = scenario.config.riverworld.freezeTime
+        surface.daytime = config.freezeTime
         surface.freeze_daytime = true
+    end 
+    if config.startingEvolution ~= nil then
+        game.forces['enemy'].evolution_factor = config.startingEvolution;
     end 
 end
 

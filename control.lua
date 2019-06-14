@@ -65,6 +65,11 @@ regrow = require("locale/modules/jvm-regrowth");
 wipespawn = require("locale/modules/jvm-wipespawn");
 
 global.init = ""
+global.debug = {}
+function global.log(msg)
+    table.insert(global.debug, msg);
+end
+
 jvm = {}
 
 
@@ -196,6 +201,7 @@ function jvm.on_chunk_generated(event)
         spawnGenerator.ChunkGeneratedAfterRSO(event)
     else
         -- This MUST come after RSO generation!
+        -- XXX move this into spawnGenerator
         if ENABLE_SEPARATE_SPAWNS then
             SeparateSpawnsGenerateChunk(event)
         end
@@ -252,11 +258,6 @@ function jvm.on_player_created(event)
         PlayerSpawnItems(event)
     else
         SeparateSpawnsPlayerCreated(event)
-    end
-
-    -- Not sure if this should be here or in player joined....
-    if ENABLE_BLUEPRINT_STRING then
-        bps_player_joined(event)
     end
 end
 

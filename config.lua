@@ -22,7 +22,7 @@ TICKS_PER_MINUTE = TICKS_PER_SECOND * 60
 scenario.config.joinedMessages = {
     "Welcome to jvmguy's server.",
     "In the current game mode, a satellite must be launched from the rocket silo in the center to win!",
-    "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill",
+    "Mods Enabled: Separate Spawns, Long-Reach, Autofill",
     "",
 --    "Look in the car at your spawn for fast start items.",
 --    "The car is also your personal transport to and from the silo.",
@@ -198,7 +198,7 @@ ENABLE_SEPARATE_SPAWNS = true
 ENABLE_ALL_RESEARCH_DONE = false
 
 -- Enable Scenario version of RSO
-ENABLE_RSO = true
+ENABLE_RSO = false
 
 -- Whether to enable old blueprint string code
 ENABLE_BLUEPRINT_STRING = false
@@ -238,7 +238,7 @@ scenario.config.toxicJungle = {
     tree_chance = 0.2
 }    
 
-scenario.config.spawnResources = {
+scenario.config.vanillaResources = {
         { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
@@ -272,6 +272,42 @@ scenario.config.spawnResources = {
         { shape="rect", type="crude-oil", x=66, y= 6, height=1, amount=1000000,  },
 }
 
+scenario.config.angelsResources = {
+        { shape="rect", name="steel-chest", x=36,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=36,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=36,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=36,   y=-8,  height=1, width=1, contents = { 
+            {name = "coal", count=1000 },
+            {name = "stone", count=1000 },
+            {name = "steel-plate", count=400 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
+         }  },
+        { shape="rect", name="steel-chest", x=36,   y=0,  height=1, width=1, contents = { 
+            -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
+            {name = "offshore-pump", count = 1},
+            {name = "boiler", count = 10},
+            {name = "steam-engine", count = 20},
+            {name = "pipe", count=12},
+            {name = "pipe-to-ground", count=2},
+            {name = "small-electric-pole", count = 20},
+            {name = "inserter", count=20},
+            {name = "assembling-machine-2", count=10},
+        },  },
+    
+        { shape="rect", type="coal",            x=42,  y=-47, height=14, width=12,  amount=100000,  },
+        { shape="rect", type="angels-ore5",     x=42,  y=-30, height=14, width=12,  amount=100000,  },
+        { shape="rect", type="angels-ore6",     x=42,  y=-13,  height=14, width=12,  amount=100000,  },
+        { shape="rect", type="angels-ore1",     x=42,  y =4, height=21, width=12,  amount=100000,  },
+        { shape="rect", type="angels-ore3",     x=42,  y =28, height=21, width=12,  amount=100000,  },
+        
+        { shape="rect", type="angels-natural-gas", x=60, y=-6, height=1, amount=1000000,  },
+        { shape="rect", type="angels-natural-gas", x=60, y= 0, height=1, amount=1000000,  },
+        { shape="rect", type="angels-natural-gas", x=60, y= 6, height=1, amount=1000000,  },
+}
+
+-- XXX detech angels ores and auto-configure
+scenario.config.spawnResources = scenario.config.vanillaResources;
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
@@ -311,31 +347,45 @@ scenario.config.separateSpawns = {
 --        'coal-liquefaction',
     },
     recipesEnabled = {
-        "loader",
-        "fast-loader",
-        "express-loader",
+--        "loader",
+--        "fast-loader",
+--        "express-loader",
     },
 }
 
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = false,
-    seablock = true,        -- behavior a little like the seablock mod. (well, not really)
-	stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
-	waterWalls = false,
+    seablock = false,        -- behavior a little like the seablock mod. (well, not really)
+    stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
+    waterWalls = false,
     firstSpawnPoint = 14,
-    -- moat=0,         -- horizontal offset relative to center of spawn
-    -- moatWidth=8,    
+    numSpawnPoints = 27,
+    extraSpawn = 28,    -- really far away, but not as far as you might think
+
     spacing = 736,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
     barrier = 256,	-- width of impenetrable barrier
     rail = 3*640,	-- generate a north-south railway starting here
     rail2 = -3*640-32, -- generate a north-south railway starting here
     freespace = 3*640 + 32, -- no voids after this 
     
+    land = 74,
+    trees = 3,  -- included in the land
+    moat = 10,   -- additional to land
+    moatWidth = 10,   -- additional to land
+    size = 84,  -- should be land + moat
+
+    resources = scenario.config.spawnResources,
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
     -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
 	-- 0 is day. 0.5 is night. 0.35 is twilight.
+    recipesEnabled = {
+--        "loader",
+--        "fast-loader",
+--        "express-loader",
+    },
+
 }
 
 scenario.config.bunkerSpawns = {
@@ -378,9 +428,9 @@ scenario.config.bunkerSpawns = {
     startingEvolution=0.7,
 
     recipesEnabled = {
-        "loader",
-        "fast-loader",
-        "express-loader",
+--        "loader",
+--        "fast-loader",
+--        "express-loader",
     },
 }
 

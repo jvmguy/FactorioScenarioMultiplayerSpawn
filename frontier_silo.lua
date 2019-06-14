@@ -191,7 +191,7 @@ local function CreateRocketSilo(surface, chunkArea)
 		end
         
         if scenario.config.teleporter.siloTeleportEnabled then
-            CreateTeleporter(surface, scenario.config.teleporter.siloPosition, "spawn")
+            global.siloTeleportID = CreateTeleporter(surface, scenario.config.teleporter.siloPosition, "spawn")
         end 
     end
 end

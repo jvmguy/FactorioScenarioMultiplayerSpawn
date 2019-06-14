@@ -111,10 +111,10 @@ function FindTeleportDest( usage, playerName )
     local spawnSeq = global.playerSpawns[playerName].seq;
     local spawn = global.allSpawns[spawnSeq];
     if usage == "silo" then
-        return scenario.config.teleporter.siloTeleportPosition
+        return FindTeleportByID( global.siloTeleportID)
     end
     if usage == "spawn" then
-        return spawn
+        return FindTeleportByID( spawn.spawnTeleportID)
     end
     if usage == "bunker" then
         return FindTeleportByID( spawn.bunkerTeleportID)
