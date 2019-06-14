@@ -102,7 +102,7 @@ function GenerateSpawnChunk( event, spawnPos)
             
             -- generate a teleport to the silo if enabled
             -- disabled for bunker spawns. need to refactor this, and move to spawn generator
-            if scenario.config.teleporter.enabled then
+            if scenario.config.teleporter.siloTeleportEnabled then
                 local pos = { x=spawnPos.x+scenario.config.teleporter.spawnPosition.x, y=spawnPos.y+scenario.config.teleporter.spawnPosition.y }
                 if CheckIfInChunk(pos.x, pos.y, chunkArea) then
                     spawnPos.spawnTeleportID = CreateTeleporter(surface, pos, "silo")
