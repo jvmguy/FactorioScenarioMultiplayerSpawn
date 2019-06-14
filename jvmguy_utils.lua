@@ -133,7 +133,7 @@ function TeleportPlayer( player )
         for _,portal in pairs(global.portal) do
             if car.unit_number == portal.unit_number then
                 isPortal = true;
-                local teleportDisabled = false and (player.online_time < MIN_ONLINE_TIME);
+                local teleportDisabled = (player.online_time < MIN_ONLINE_TIME);
                 
                 if teleportDisabled then
                     -- teleport from silo back to player spawn.
