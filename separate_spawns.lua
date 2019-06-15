@@ -41,11 +41,11 @@ function GenerateSpawnChunk( event, spawnPos)
     if CheckIfChunkIntersects(chunkArea,warningArea) then
         local config = spawnGenerator.GetConfig()
         local landArea = {left_top=
-                            {x=spawnPos.x-ENFORCE_LAND_AREA_TILE_DIST,
-                             y=spawnPos.y-ENFORCE_LAND_AREA_TILE_DIST},
+                            {x=spawnPos.x-config.size,
+                             y=spawnPos.y-config.size},
                           right_bottom=
-                            {x=spawnPos.x+ENFORCE_LAND_AREA_TILE_DIST,
-                             y=spawnPos.y+ENFORCE_LAND_AREA_TILE_DIST}}
+                            {x=spawnPos.x+config.size,
+                             y=spawnPos.y+config.size}}
 
         local safeArea = {left_top=
                             {x=spawnPos.x-SAFE_AREA_TILE_DIST,

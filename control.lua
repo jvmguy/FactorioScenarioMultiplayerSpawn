@@ -55,9 +55,9 @@ require("frontier_silo")
 --require("bps")
 toxicJungle = require("ToxicJungle")
 
--- spawnGenerator = require("FermatSpiralSpawns");
+spawnGenerator = require("FermatSpiralSpawns");
 -- spawnGenerator = require("RiverworldSpawns");
-spawnGenerator = require("BunkerSpawns");
+-- spawnGenerator = require("BunkerSpawns");
 
 sharedSpawns = require("shared_spawns");
 
@@ -68,6 +68,12 @@ global.init = ""
 global.debug = {}
 function global.log(msg)
     table.insert(global.debug, msg);
+end
+
+function global.dump()
+    for _,val in pairs(global.debug) do
+        game.print(val)
+    end
 end
 
 jvm = {}
@@ -141,7 +147,6 @@ function jvm.on_init(event)
     if FRONTIER_ROCKET_SILO_MODE then
         ChartRocketSiloArea(game.forces[MAIN_FORCE])
     end
-
 
     EnableStartingResearch(game.forces[MAIN_FORCE]);
 

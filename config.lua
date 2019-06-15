@@ -104,20 +104,20 @@ scenario.config.startKit = {
         {name = "power-armor", count = 1,
             equipment = {
                   -- the order of these does matter.
---                  {name = "fusion-reactor-equipment"},
---                  {name = "exoskeleton-equipment"},
+                  {name = "fusion-reactor-equipment"},
+                  {name = "exoskeleton-equipment"},
+                  {name = "personal-roboport-mk2-equipment", count=3},
+                  {name = "battery-mk2-equipment", count=3},
+                  {name = "solar-panel-equipment", count = 7 },
 --                  {name = "personal-roboport-equipment", count=1},
 --                  {name = "battery-equipment", count=1},
-                    {name = "solar-panel-equipment", count = 23 },
-                    {name = "personal-roboport-mk2-equipment", count=2},
-                    {name = "battery-mk2-equipment", count=3},
             }
         },
 --        {name = "belt-immunity-equipment", count = 4},
         {name = "night-vision-equipment", count = 1},
         {name = "construction-robot", count = 20},
         {name = "roboport", count = 2},
-        {name = "logistic-chest-storage", count = 1},
+        {name = "logistic-chest-storage", count = 2},
 --		{name = "burner-mining-drill", count = 1},
 --		{name = "stone-furnace", count = 1},
 --        {name = "steel-axe", count = 5},
@@ -153,7 +153,7 @@ scenario.config.teleporter = {
     siloPosition = { x=16, y=-8 },
 
     -- whether there is a teleporter at the silo to take you back    
-    siloTeleportEnabled = false,
+    siloTeleportEnabled = true,
     -- where in the silo chunk the teleporter takes you
     -- this should be different than the silo position
     siloTeleportPosition = { x=14, y=-8 },
@@ -273,12 +273,13 @@ scenario.config.vanillaResources = {
 }
 
 scenario.config.angelsResources = {
-        { shape="rect", name="steel-chest", x=36,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=36,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=36,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
-        { shape="rect", name="steel-chest", x=36,   y=-8,  height=1, width=1, contents = { 
-            {name = "coal", count=1000 },
+        { shape="rect", name="steel-chest", x=42,   y=-50, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=45,   y=-50, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=48,   y=-50, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=51,   y=-50,  height=1, width=1, contents = { 
+            {name = "coal", count=2000 },
             {name = "stone", count=1000 },
+            {name = "wood", count=1000 },
             {name = "steel-plate", count=400 },
 --            {name = "uranium-235", count=100 },
 --            {name = "uranium-238", count=500 },
@@ -290,24 +291,27 @@ scenario.config.angelsResources = {
             {name = "steam-engine", count = 20},
             {name = "pipe", count=12},
             {name = "pipe-to-ground", count=2},
-            {name = "small-electric-pole", count = 20},
+            {name = "small-electric-pole", count = 50},
             {name = "inserter", count=20},
             {name = "assembling-machine-2", count=10},
+            {name = "assembling-machine-3", count=1},
+            {name = "electric-mining-drill", count=10},
         },  },
     
-        { shape="rect", type="coal",            x=42,  y=-47, height=14, width=12,  amount=100000,  },
-        { shape="rect", type="angels-ore5",     x=42,  y=-30, height=14, width=12,  amount=100000,  },
-        { shape="rect", type="angels-ore6",     x=42,  y=-13,  height=14, width=12,  amount=100000,  },
-        { shape="rect", type="angels-ore1",     x=42,  y =4, height=21, width=12,  amount=100000,  },
-        { shape="rect", type="angels-ore3",     x=42,  y =28, height=21, width=12,  amount=100000,  },
+        { shape="rect", type="coal",            x=42,  y=-47, height=14, width=24,  amount=100000,  },
+        { shape="rect", type="angels-ore5",     x=42,  y=-30, height=14, width=24,  amount=100000,  },
+        { shape="rect", type="angels-ore6",     x=42,  y=-13,  height=14, width=24,  amount=100000,  },
+        { shape="rect", type="angels-ore1",     x=42,  y =4, height=21, width=24,  amount=100000,  },
+        { shape="rect", type="angels-ore3",     x=42,  y =28, height=21, width=24,  amount=100000,  },
         
-        { shape="rect", type="angels-natural-gas", x=60, y=-6, height=1, amount=1000000,  },
-        { shape="rect", type="angels-natural-gas", x=60, y= 0, height=1, amount=1000000,  },
-        { shape="rect", type="angels-natural-gas", x=60, y= 6, height=1, amount=1000000,  },
+        { shape="rect", type="angels-natural-gas", x=80, y=-6, height=1, amount=1000000,  },
+        { shape="rect", type="angels-natural-gas", x=80, y= 0, height=1, amount=1000000,  },
+        { shape="rect", type="angels-natural-gas", x=80, y= 6, height=1, amount=1000000,  },
 }
 
 -- XXX detech angels ores and auto-configure
-scenario.config.spawnResources = scenario.config.vanillaResources;
+-- scenario.config.spawnResources = scenario.config.vanillaResources;
+scenario.config.spawnResources = scenario.config.angelsResources;
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
@@ -346,6 +350,40 @@ scenario.config.separateSpawns = {
 --        'automation-2',    
 --        'coal-liquefaction',
     },
+    recipesEnabled = {
+--        "loader",
+--        "fast-loader",
+--        "express-loader",
+    },
+}
+
+scenario.config.fermatSpiralSpawns = {
+    -- this mostly inherits the separateSpawns config, but has a few minor differences
+    enabled = true,
+    firstSpawnPoint = 16,
+    numSpawnPoints = 27,
+    extraSpawn = 28,    -- really far away, but not as far as you might think
+    
+    spacing = 800,
+    
+    -- describe the spawn crop circle
+    land = 110,
+    trees = 3,  -- included in the land
+    moat = 10,   -- additional to land
+    size = 120,  -- should be land + moat
+    
+    resources = scenario.config.angelsResources,
+
+    -- freeze time of day
+    -- you might get night vision at the start, but you have to decide whether it's worth using it.
+    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    -- 0 is day. 0.5 is night. 0.35 is twilight.
+    researched = {
+    -- 'coal-liquefaction',
+    },
+    
+    startingEvolution=0.7,
+
     recipesEnabled = {
 --        "loader",
 --        "fast-loader",
@@ -456,9 +494,10 @@ SAFE_AREA_BUNKER_ENTRANCE_TILE_DIST = CHUNK_SIZE * 2
 WARNING_AREA_TILE_DIST = CHUNK_SIZE*10
 
 -- 1 : X (spawners alive : spawners destroyed) in this area
-WARN_AREA_REDUCTION_RATIO = 15
+ARN_AREA_REDUCTION_RATIO = 15
 
 -- Create a circle of land area for the spawn
+-- deprecated
 ENFORCE_LAND_AREA_TILE_DIST = scenario.config.separateSpawns.size 
 
 ---------------------------------------

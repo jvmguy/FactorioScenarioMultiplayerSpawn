@@ -3,6 +3,13 @@ if global.portal == nil then
     global.portal={}
 end
 
+function distFunc( cx, cy, ix, iy)
+    local distVar1 = math.floor(math.max(math.abs(cx - ix), math.abs(cy - iy)))
+    local distVar2 = math.floor(math.abs(cx - ix) + math.abs(cy - iy))
+    local distVar = math.max(distVar1, distVar2 * 0.707);
+    return distVar
+end
+
 -- Enforce a square of land, with a tree border
 -- this is equivalent to the CreateCropCircle code
 function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth, moatWidth)
@@ -12,9 +19,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
     for i=chunkArea.left_top.x,chunkArea.right_bottom.x-1,1 do
         for j=chunkArea.left_top.y,chunkArea.right_bottom.y-1,1 do
 
-            local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
-            local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
-            local distVar = math.max(distVar1, distVar2 * 0.707);
+            local distVar = distFunc( centerPos.x, centerPos.y, i, j);
 
             -- Fill in all unexpected water in a circle
             if (distVar < landRadius) then
@@ -40,13 +45,10 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
         for i=chunkArea.left_top.x,chunkArea.right_bottom.x-1,1 do
             for j=chunkArea.left_top.y,chunkArea.right_bottom.y-1,1 do
     
-                local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
-                local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
-                local distVar = math.max(distVar1, distVar2 * 0.707);
+                local distVar = distFunc( centerPos.x, centerPos.y, i, j);
     
                 -- Create a water ring
-                if ((distVar > landRadius) and 
-                    (distVar <= landRadius+moatWidth)) then
+                if ((distVar > landRadius) and (distVar <= landRadius+moatWidth)) then
                     table.insert(waterTiles, {name = "water", position ={i,j}})
                 end
             end
@@ -64,11 +66,21 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
         surface.set_tiles(waterTiles)
     end
 
+    -- remove resources in the immediate areas?
+    for key, entity in pairs(surface.find_entities_filtered({area=chunkArea, type= "resource"})) do
+        if entity and entity.valid then
+            local distVar = distFunc( centerPos.x, centerPos.y, entity.position.x, entity.position.y);
+            if distVar < landRadius+moatWidth then
+                entity.destroy()
+            end
+        end
+    end
     -- remove cliffs in the immediate areas?
     for key, entity in pairs(surface.find_entities_filtered({area=chunkArea, type= "cliff"})) do
         --Destroying some cliffs can cause a chain-reaction.  Validate inputs.
         if entity and entity.valid then
-            if ((centerPos.x - entity.position.x)^2 + (centerPos.y - entity.position.y)^2 < landRadius^2) then
+            local distVar = distFunc( centerPos.x, centerPos.y, entity.position.x, entity.position.y);
+            if distVar < landRadius+moatWidth then
                 entity.destroy()
             end
         end
