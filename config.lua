@@ -34,12 +34,12 @@ WELCOME_MSG_TITLE = "Welcome to Jvmguy's Server"
 scenario.config.welcomeMessages = {
     "This scenario is a variant of a scenario created by Oarc",
     "",
-    "You start in a bunker. The car in the bunker is a teleport to and from the wild.",
-    "The only way in or out of the bunker is the teleport.",
-    "",
-    "You might use the bunker to build a small base to help you get started,",
-    "or if you're feeling adventurous, you can go on to build something in the wild.",
-    "",
+--    "You start in a bunker. The car in the bunker is a teleport to and from the wild.",
+--    "The only way in or out of the bunker is the teleport.",
+--    "",
+--    "You might use the bunker to build a small base to help you get started,",
+--    "or if you're feeling adventurous, you can go on to build something in the wild.",
+--    "",
     "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
 --    "This server is running a custom scenario that changes spawn locations.",
     "",
@@ -59,19 +59,16 @@ scenario.config.welcomeMessages = {
 scenario.config.gameInfo = {
     "This scenario is a variant of a scenario created by Oarc",
     "",
-    "You start in a bunker. The car in the bunker is a teleport to and from the wild.",
-    "The only way in or out of the bunker is the teleport.",
-    "",
-    "You might use the bunker to build a small base to help you get started,",
-    "or if you're feeling adventurous, you can go on to build something in the wild.",
-    "",
-    "You can change your respawn location, but if you change it to somewhere outside the bunker",
-    "you will not be able to return.",
-    "",
+--    "You start in a bunker. The car in the bunker is a teleport to and from the wild.",
+--    "The only way in or out of the bunker is the teleport.",
+--    "",
+--    "You might use the bunker to build a small base to help you get started,",
+--    "or if you're feeling adventurous, you can go on to build something in the wild.",
+--    "",
     "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
     "This server is running a custom scenario that changes spawn locations.",
     "",
-    "/w Biter expansion is on, so watch out!",
+--    "/w Biter expansion is on, so watch out!",
     "",
     "Discord chat https://discord.gg/q6gfYa9",
     "",
@@ -92,7 +89,8 @@ scenario.config.bots = {
 }
 
 scenario.config.playerBonus = {
-    character_crafting_speed_modifier = 1.0/10-1.0,
+--    character_crafting_speed_modifier = 1.0/10-1.0,
+    character_crafting_speed_modifier = 0,
 }
 
 scenario.config.silo = {
@@ -138,6 +136,8 @@ scenario.config.mapSettings = {
     -- jvmguy uses these settings for riverworld
     RSO_TERRAIN_SEGMENTATION = 1.3,
     RSO_WATER = 4, 
+--    RSO_TERRAIN_SEGMENTATION = 0.1,
+--    RSO_WATER = 20, 
     RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
 
     RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
@@ -549,7 +549,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = true
+ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
 ENEMY_POLLUTION_FACTOR_DIVISOR = 5
