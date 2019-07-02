@@ -132,17 +132,6 @@ scenario.config.startKit = {
 --        {name = "transport-belt", count=400},
 }
 
-scenario.config.mapSettings = {
-    -- jvmguy uses these settings for riverworld
-    RSO_TERRAIN_SEGMENTATION = 1.3,
-    RSO_WATER = 4, 
---    RSO_TERRAIN_SEGMENTATION = 0.1,
---    RSO_WATER = 20, 
-    RSO_PEACEFUL = false, -- Peaceful mode for biters/aliens
-
-    RSO_STARTING_AREA = "very-low", -- Does not affect Oarc spawn sizes.
-}
-
 scenario.config.teleporter = {
     enabled = true,
     -- where in the spawn to place the teleporter
@@ -196,9 +185,6 @@ ENABLE_SPAWN_SURFACE = true
 ENABLE_SEPARATE_SPAWNS = true
 
 ENABLE_ALL_RESEARCH_DONE = false
-
--- Enable Scenario version of RSO
-ENABLE_RSO = false
 
 -- Whether to enable old blueprint string code
 ENABLE_BLUEPRINT_STRING = false
@@ -273,7 +259,7 @@ scenario.config.vanillaResources = {
 }
 
 scenario.config.angelsResources = {
-        { shape="rect", name="steel-chest", x=42,   y=-50, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-50, height=1, width=1, contents = { {name = "landfill", count=4800 } },  },
         { shape="rect", name="steel-chest", x=45,   y=-50, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=48,   y=-50, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=51,   y=-50,  height=1, width=1, contents = { 
@@ -298,15 +284,15 @@ scenario.config.angelsResources = {
             {name = "electric-mining-drill", count=10},
         },  },
     
-        { shape="rect", type="coal",            x=42,  y=-47, height=14, width=24,  amount=100000,  },
-        { shape="rect", type="angels-ore5",     x=42,  y=-30, height=14, width=24,  amount=100000,  },
-        { shape="rect", type="angels-ore6",     x=42,  y=-13,  height=14, width=24,  amount=100000,  },
-        { shape="rect", type="angels-ore1",     x=42,  y =4, height=21, width=24,  amount=100000,  },
-        { shape="rect", type="angels-ore3",     x=42,  y =28, height=21, width=24,  amount=100000,  },
+        { shape="rect", type="coal",            x=42,  y=-47, height=14, width=24,  amount=40000,  },
+        { shape="rect", type="angels-ore5",     x=42,  y=-30, height=14, width=24,  amount=40000,  },
+        { shape="rect", type="angels-ore6",     x=42,  y=-13,  height=14, width=24,  amount=40000,  },
+        { shape="rect", type="angels-ore1",     x=42,  y =4, height=21, width=24,  amount=40000,  },
+        { shape="rect", type="angels-ore3",     x=42,  y =28, height=21, width=24,  amount=40000,  },
         
-        { shape="rect", type="angels-natural-gas", x=80, y=-6, height=1, amount=1000000,  },
-        { shape="rect", type="angels-natural-gas", x=80, y= 0, height=1, amount=1000000,  },
-        { shape="rect", type="angels-natural-gas", x=80, y= 6, height=1, amount=1000000,  },
+        { shape="rect", type="angels-natural-gas", x=80, y=-6, height=1, amount=10000,  },
+        { shape="rect", type="angels-natural-gas", x=80, y= 0, height=1, amount=10000,  },
+        { shape="rect", type="angels-natural-gas", x=80, y= 6, height=1, amount=10000,  },
 }
 
 -- XXX detech angels ores and auto-configure
@@ -360,17 +346,19 @@ scenario.config.separateSpawns = {
 scenario.config.fermatSpiralSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
-    firstSpawnPoint = 16,
-    numSpawnPoints = 27,
-    extraSpawn = 28,    -- really far away, but not as far as you might think
+    seablock = false,    -- replace land with water except where there are resources
+    firstSpawnPoint = 1,
+    numSpawnPoints = 24,
+    extraSpawn = 50,    -- really far away, but not as far as you might think
     
-    spacing = 800,
+    spacing = 1000,
     
     -- describe the spawn crop circle
     land = 110,
     trees = 3,  -- included in the land
     moat = 10,   -- additional to land
     size = 120,  -- should be land + moat
+    craterSize = 256,  -- size of impact crater (greater than size)
     
     resources = scenario.config.angelsResources,
 
@@ -382,7 +370,7 @@ scenario.config.fermatSpiralSpawns = {
     -- 'coal-liquefaction',
     },
     
-    startingEvolution=0.7,
+    startingEvolution=0.4,
 
     recipesEnabled = {
 --        "loader",
@@ -395,6 +383,7 @@ scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = false,
     seablock = false,        -- behavior a little like the seablock mod. (well, not really)
+    
     stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
     waterWalls = false,
     firstSpawnPoint = 14,
@@ -561,6 +550,7 @@ ENEMY_DESTROY_FACTOR_DIVISOR = 5
 
 -- SILO_DISTANCE = 4 * HEXSPACING
 SILO_DISTANCE = 0     -- put the silo 1 chunk east of the origin (prevents problems)
+SILO_RECT_SIZE = 512
 SILO_CHUNK_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE);
 SILO_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE)* CHUNK_SIZE + CHUNK_SIZE/2
 SILO_DISTANCE_Y = CHUNK_SIZE/2
@@ -588,10 +578,6 @@ AUTOFILL_FUEL_QUANTITY=50
 AUTOFILL_MACHINEGUN_AMMO_QUANTITY=20
 AUTOFILL_CANNON_AMMO_QUANTITY=20
 AUTOFILL_FLAMETHROWER_AMMO_QUANTITY=20
-
---------------------------------------------------------------------------------
--- Use rso_config and rso_resourece_config for RSO config settings
---------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- DEBUG

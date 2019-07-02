@@ -509,28 +509,8 @@ function SetFixedSiloPosition()
 end
 
 
-RSO_MODE = 1
-VANILLA_MODE = 2
-
-function CreateGameSurface(mode)
+function CreateGameSurface()
     local mapSettings =  game.surfaces["nauvis"].map_gen_settings
-    if (mode == RSO_MODE) then
-        mapSettings.terrain_segmentation=scenario.config.mapSettings.RSO_TERRAIN_SEGMENTATION
-        mapSettings.water=scenario.config.mapSettings.RSO_WATER
-        mapSettings.starting_area=scenario.config.mapSettings.STARTING_AREA
-        mapSettings.peaceful_mode=scenario.config.mapSettings.RSO_PEACEFUL
-        -- mapSettings.seed=math.random(999999999);
-        mapSettings.autoplace_controls = {
-            ["coal"]={ size="none" },
-            ["copper-ore"]={ size="none" },
-            ["iron-ore"]={ size="none" },
-            ["stone"]={ size="none" },
-            ["uranium-ore"]={ size="none" },
-            ["crude-oil"]={ size="none" },
-            ["enemy-base"]={ size="none" }
-        }
-    end
-
     local surface = game.create_surface(GAME_SURFACE_NAME,mapSettings)
     -- surface.set_tiles({{name = "out-of-map",position = {1,1}}})
 end

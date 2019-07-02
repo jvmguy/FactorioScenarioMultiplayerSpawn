@@ -8,7 +8,6 @@
 -- From there, I ended up adding a bunch of other minor/major features
 -- 
 -- Credit:
---  RSO mod to RSO author - Orzelek - I contacted him via the forum
 --  Tags - Taken from WOGs scenario 
 --  Event - Taken from WOGs scenario (looks like original source was 3Ra)
 --  Rocket Silo - Taken from Frontier as an idea
@@ -48,7 +47,6 @@ require("locale/modules/playerlist")
 require("locale/modules/spawnlist")
 require("locale/modules/tag")
 
-require("rso_control")
 require("separate_spawns")
 require("separate_spawns_guis")
 require("frontier_silo")
@@ -61,7 +59,6 @@ spawnGenerator = require("FermatSpiralSpawns");
 
 sharedSpawns = require("shared_spawns");
 
-regrow = require("locale/modules/jvm-regrowth");
 wipespawn = require("locale/modules/jvm-wipespawn");
 
 global.init = ""
@@ -74,6 +71,10 @@ function global.dump()
     for _,val in pairs(global.debug) do
         game.print(val)
     end
+end
+
+function global.clear()
+    global.debug = {}
 end
 
 jvm = {}
@@ -122,11 +123,7 @@ end
 function jvm.on_init(event)
     -- Configures the map settings for enemies
     -- This controls evolution growth factors and enemy expansion settings.
-    if ENABLE_RSO then
-        CreateGameSurface(RSO_MODE)
-    else
-        CreateGameSurface(VANILLA_MODE)
-    end
+    CreateGameSurface(VANILLA_MODE)
     
     if spawnGenerator.ConfigureGameSurface then
         spawnGenerator.ConfigureGameSurface()
@@ -179,9 +176,6 @@ function jvm.on_chunk_generated(event)
     local shouldGenerateResources = true
     if scenario.config.wipespawn.enabled then
         wipespawn.onChunkGenerated(event)
-    elseif scenario.config.regrow.enabled then
-        shouldGenerateResources = regrow.shouldGenerateResources(event);
-        regrow.onChunkGenerated(event)
     end
 
     if spawnGenerator.ChunkGenerated then
@@ -192,28 +186,8 @@ function jvm.on_chunk_generated(event)
         toxicJungle.ChunkGenerated(event);
     end    
 
-    if ENABLE_RSO then
-        if shouldGenerateResources then
-            RSO_ChunkGenerated(event)
-        end
-    end
-
     if FRONTIER_ROCKET_SILO_MODE then
         GenerateRocketSiloChunk(event)
-    end
-
-    if spawnGenerator.ChunkGeneratedAfterRSO then
-        spawnGenerator.ChunkGeneratedAfterRSO(event)
-    else
-        -- This MUST come after RSO generation!
-        -- XXX move this into spawnGenerator
-        if ENABLE_SEPARATE_SPAWNS then
-            SeparateSpawnsGenerateChunk(event)
-        end
-    end
-
-    if scenario.config.regrow.enabled then
-        regrow.afterResourceGeneration(event)
     end
 end
 
@@ -253,9 +227,6 @@ function jvm.on_player_created(event)
     if ENABLE_SPAWN_SURFACE then
         AssignPlayerToStartSurface(game.players[event.player_index])
     end
---    if ENABLE_RSO then
---      RSO_PlayerCreated(event)
---  end
 
     GivePlayerBonuses(game.players[event.player_index])
 

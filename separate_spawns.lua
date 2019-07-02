@@ -25,19 +25,24 @@ function SeparateSpawnsPlayerRespawned(event)
     SendPlayerToSpawn(player)
 end
 
+-- deprecated.
+--function GenerateSpawnChunk( event, spawnPos)
+--    local surface = event.surface
+--    local chunkArea = event.area
+--    DoGenerateSpawnChunk(surface, chunkArea, spawnPos);
+--end
 
-function GenerateSpawnChunk( event, spawnPos)
-    local surface = event.surface
-    local chunkArea = event.area
-
+function DoGenerateSpawnChunk( surface, chunkArea, spawnPos)
     local chunkAreaCenter = {x=chunkArea.left_top.x+(CHUNK_SIZE/2),
                              y=chunkArea.left_top.y+(CHUNK_SIZE/2)}
+                             
     local warningArea = {left_top=
                             {x=spawnPos.x-WARNING_AREA_TILE_DIST,
                              y=spawnPos.y-WARNING_AREA_TILE_DIST},
                         right_bottom=
                             {x=spawnPos.x+WARNING_AREA_TILE_DIST,
                              y=spawnPos.y+WARNING_AREA_TILE_DIST}}
+                             
     if CheckIfChunkIntersects(chunkArea,warningArea) then
         local config = spawnGenerator.GetConfig()
         local landArea = {left_top=
@@ -56,7 +61,6 @@ function GenerateSpawnChunk( event, spawnPos)
 
 
                                  
-
         -- Make chunks near a spawn safe by removing enemies
         if CheckIfChunkIntersects(chunkArea,safeArea) then
             for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
@@ -81,6 +85,9 @@ function GenerateSpawnChunk( event, spawnPos)
                     entity.destroy()
             end
 
+            for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, name = "behemoth-worm-turret"}) do
+                    entity.destroy()
+            end
         end
 
         -- Fill in any water to make sure we have guaranteed land mass at the spawn point.
@@ -92,11 +99,7 @@ function GenerateSpawnChunk( event, spawnPos)
                     entity.destroy()
                 end
             end
-			if (ENABLE_CROP_OCTAGON) then
-	            CreateCropOctagon(surface, spawnPos, chunkArea, config.land, config.trees, config.moat)
-			else
-	            CreateCropCircle(surface, spawnPos, chunkArea, config.land)
-			end
+            spawnGenerator.CreateSpawn(surface, spawnPos, chunkArea);
 
             GenerateStartingResources( surface, chunkArea, spawnPos);
             
@@ -139,21 +142,6 @@ function NearestSpawn( t, p )
 end
 
 
--- This is the main function that creates the spawn area
--- Provides resources, land and a safe zone
-function SeparateSpawnsGenerateChunk(event)
-    local surface = event.surface
-    
-    if surface.name == GAME_SURFACE_NAME then
-        -- Only take into account the nearest spawn when generating resources
-        local chunkArea = event.area
-        local midPoint = {x = (chunkArea.left_top.x + chunkArea.right_bottom.x)/2,
-                            y = (chunkArea.left_top.y + chunkArea.right_bottom.y)/2 } 
-        local spawnPos = NearestSpawn( global.allSpawns, midPoint)
-        GenerateSpawnChunk(event, spawnPos)
-    end
-end
-
 function GetUniqueSpawn(name)
     for _,spawn in pairs(global.allSpawns) do
         if spawn ~= nil and spawn.createdFor == name then
@@ -181,10 +169,6 @@ function RemovePlayer(player)
             logAndBroadcast( player.name, player.name .. " base was reclaimed." )    
             wipespawn.markForRemoval(uniqueSpawn)
             Scheduler.schedule(game.tick+700, MarkUnused, { playerName = player.name, spawn=uniqueSpawn } );
-        elseif scenario.config.regrow.enabled then
-            logAndBroadcast( player.name, player.name .. " base was abandoned." )    
-            uniqueSpawn.used = false;
-            uniqueSpawn.createdFor = nil;
         else
             uniqueSpawn.used = false;
             uniqueSpawn.createdFor = nil;
@@ -372,19 +356,6 @@ function TeleportPlayerCallback(args)
     args.player.teleport(args.spawn, args.surface)
 end
 
--- Clear out enemies around an area with a certain distance
-function ClearEnemies(surface, position, safeDist)
-    local safeArea = {left_top=
-                    {x=position.x-safeDist,
-                     y=position.y-safeDist},
-                  right_bottom=
-                    {x=position.x+safeDist,
-                     y=position.y+safeDist}}
-
-    for _, entity in pairs(surface.find_entities_filtered{area = safeArea, force = "enemy"}) do
-        entity.destroy()
-    end
-end
 
 function SendPlayerToNewSpawnAndCreateIt(player, spawn)
     -- Send the player to that position
@@ -392,19 +363,12 @@ function SendPlayerToNewSpawnAndCreateIt(player, spawn)
       DebugPrint("SendPlayerToNewSpawnAndCreateIt: error. spawn is nil")
       spawn = { x = 0, y = 0 }
     end
-    TeleportPlayerWithDelay({ player=player, spawn=spawn, surface= game.surfaces[GAME_SURFACE_NAME], delay=5*TICKS_PER_SECOND })
-    ChartArea(player.force, spawn, 4)
+    ChartArea(player.force, spawn, 8)
     if spawn.teleport then
-        ChartArea(player.force, spawn.teleport, 4)
+        ChartArea(player.force, spawn.teleport, 8)
     end
 
-    -- If we get a valid spawn point, setup the area
-    if ((spawn.x ~= 0) and (spawn.y ~= 0)) then
-        ClearEnemies(player.surface, spawn, SAFE_AREA_TILE_DIST)
-    else      
-        DebugPrint("THIS SHOULD NOT EVER HAPPEN! Spawn failed!")
-        logAndBroadcast( player.name, "Failed to create spawn point for: " .. player.name )    
-    end
+    TeleportPlayerWithDelay({ player=player, spawn=spawn, surface= game.surfaces[GAME_SURFACE_NAME], delay=5*TICKS_PER_SECOND })
 end
 
 function SendPlayerToSpawn(player)

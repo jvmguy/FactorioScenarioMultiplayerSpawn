@@ -169,9 +169,16 @@ local function NearestTeleport( t, p )
 end
 
 
-function M.ChunkGeneratedAfterRSO(event)
-    SeparateSpawnsGenerateChunk(event)
+function M.ChunkGenerated(event)
     local surface = event.surface
+    if surface.name == GAME_SURFACE_NAME then
+        -- Only take into account the nearest spawn when generating resources
+        local chunkArea = event.area
+        local midPoint = {x = (chunkArea.left_top.x + chunkArea.right_bottom.x)/2,
+                            y = (chunkArea.left_top.y + chunkArea.right_bottom.y)/2 } 
+        local spawnPos = NearestSpawn( global.allSpawns, midPoint)
+        GenerateSpawnChunk(event, spawnPos)
+    end
     if surface.name == GAME_SURFACE_NAME then
         -- generate the bunker area
         local chunkArea = event.area
@@ -199,6 +206,12 @@ function M.ChunkGeneratedAfterRSO(event)
         end
     end
 end
+
+function M.CreateSpawn(surface, spawnPos, chunkArea)
+    local config = M.GetConfig()
+    CreateCropOctagon(surface, spawnPos, chunkArea, config.land, config.trees, config.moat)
+end
+
 
 
 return M;
