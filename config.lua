@@ -88,6 +88,10 @@ scenario.config.bots = {
     worker_robots_speed_modifier = 1.0,
 }
 
+scenario.config.forceBonuses = {
+    character_inventory_slots_bonus = 40,
+}
+
 scenario.config.playerBonus = {
 --    character_crafting_speed_modifier = 1.0/10-1.0,
     character_crafting_speed_modifier = 0,
@@ -346,12 +350,12 @@ scenario.config.separateSpawns = {
 scenario.config.fermatSpiralSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
-    seablock = false,    -- replace land with water except where there are resources
+    seablock = true,    -- replace land with water except where there are resources
     firstSpawnPoint = 1,
-    numSpawnPoints = 24,
-    extraSpawn = 50,    -- really far away, but not as far as you might think
+    numSpawnPoints = 20,
+    extraSpawn = 55,    -- really far away, but not as far as you might think
     
-    spacing = 1000,
+    spacing = 1280,
     
     -- describe the spawn crop circle
     land = 110,

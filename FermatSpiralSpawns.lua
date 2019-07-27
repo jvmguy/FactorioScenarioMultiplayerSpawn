@@ -13,7 +13,7 @@ end
 local function SpawnPoint(n)
     -- Vogel's model. see https://en.wikipedia.org/wiki/Fermat%27s_spiral
     local config = M.GetConfig()
-    local n = config.firstSpawnPoint + n
+    local n = config.firstSpawnPoint - 1 + n
     return PolarToCartesian({ r= config.spacing * math.sqrt(n), theta= (n * 137.508 * math.pi/180) })
 end
 

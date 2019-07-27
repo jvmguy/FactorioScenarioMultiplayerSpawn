@@ -254,6 +254,7 @@ function InitSpawnGlobalsAndForces()
     
     SetCeaseFireBetweenAllForces()
     AntiGriefing(gameForce)
+    ApplyForceBonuses(gameForce)
     SetForceGhostTimeToLive(gameForce)
 end
 

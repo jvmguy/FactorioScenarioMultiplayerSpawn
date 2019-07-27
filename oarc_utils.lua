@@ -368,6 +368,14 @@ function AntiGriefing(force)
     force.friendly_fire=false
 end
 
+function ApplyForceBonuses(force)
+    if (scenario.config.forceBonuses) then
+        for k,v in pairs(scenario.config.forceBonuses) do
+            force[k] = v;
+        end
+    end
+end
+
 function SetForceGhostTimeToLive(force)
     if GHOST_TIME_TO_LIVE ~= 0 then
         force.ghost_time_to_live = GHOST_TIME_TO_LIVE+1
