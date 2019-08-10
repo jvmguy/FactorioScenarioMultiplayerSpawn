@@ -69,14 +69,6 @@ function DoGenerateSpawnChunk( surface, chunkArea, spawnPos)
         
         -- Create a warning area with reduced enemies
         elseif CheckIfChunkIntersects(chunkArea,warningArea) then
-            local counter = 0
-            for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
-                if ((counter % WARN_AREA_REDUCTION_RATIO) ~= 0) then
-                    entity.destroy()
-                end
-                counter = counter + 1
-            end
-
             -- Remove all big and huge worms
             for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, name = "medium-worm-turret"}) do
                     entity.destroy()

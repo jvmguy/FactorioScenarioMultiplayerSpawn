@@ -105,7 +105,7 @@ function CreateTeleporter(surface, teleporterPosition, usage)
     for _,item in pairs(scenario.config.teleporter.startItems) do
         car.insert(item);
     end
-    table.insert(global.portal, { dest=dest, unit_number = car.unit_number, spawn = spawn, usage = usage });
+    table.insert(global.portal, { unit_number = car.unit_number, usage = usage });
     return car.unit_number
 end
 

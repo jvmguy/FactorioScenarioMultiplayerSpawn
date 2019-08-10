@@ -229,15 +229,15 @@ scenario.config.toxicJungle = {
 }    
 
 scenario.config.vanillaResources = {
-        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+--        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-8,  height=1, width=1, contents = { 
             {name = "coal", count=1000 },
             {name = "stone", count=1000 },
             {name = "steel-plate", count=400 },
---            {name = "uranium-235", count=100 },
---            {name = "uranium-238", count=500 },
+            {name = "uranium-235", count=100 },
+            {name = "uranium-238", count=500 },
          }  },
         { shape="rect", name="steel-chest", x=42,   y=0,  height=1, width=1, contents = { 
             -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
@@ -251,15 +251,15 @@ scenario.config.vanillaResources = {
             {name = "assembling-machine-2", count=10},
         },  },
     
-        { shape="rect", type="coal",         x=48,  y=-41, height=14, width=12,  amount=100000,  },
-        { shape="rect", type="stone",        x=48,  y=-24, height=14, width=12,  amount=100000,  },
+        { shape="rect", type="coal",         x=48,  y=-41, height=14, width=12,  amount=10000,  },
+        { shape="rect", type="stone",        x=48,  y=-24, height=14, width=12,  amount=10000,  },
         -- { shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
-        { shape="rect", type="copper-ore",   x=48,  y=-7,  height=21, width=12,  amount=100000,  },
-        { shape="rect", type="iron-ore",     x=48,  y =18, height=21, width=12,  amount=100000,  },
+        { shape="rect", type="copper-ore",   x=48,  y=-7,  height=21, width=12,  amount=10000,  },
+        { shape="rect", type="iron-ore",     x=48,  y =18, height=21, width=12,  amount=10000,  },
         
-        { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=1000000,  },
-        { shape="rect", type="crude-oil", x=66, y= 6, height=1, amount=1000000,  },
+        { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=100000,  },
+        { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=100000,  },
+        { shape="rect", type="crude-oil", x=66, y= 6, height=1, amount=100000,  },
 }
 
 scenario.config.angelsResources = {
@@ -299,9 +299,62 @@ scenario.config.angelsResources = {
         { shape="rect", type="angels-natural-gas", x=80, y= 6, height=1, amount=10000,  },
 }
 
+scenario.config.krastorioResources = {
+        { shape="rect", name="steel-chest", x=42,   y=-50, height=1, width=1, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=45,   y=-50, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=48,   y=-50, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=51,   y=-50,  height=1, width=1, contents = { 
+            {name = "coal", count=2000 },
+            {name = "stone", count=1000 },
+            {name = "wood", count=1000 },
+            {name = "steel-plate", count=400 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
+         }  },
+        { shape="rect", name="steel-chest", x=36,   y=0,  height=1, width=1, contents = { 
+            -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
+            {name = "offshore-pump", count = 1},
+            {name = "boiler", count = 10},
+            {name = "steam-engine", count = 20},
+            {name = "pipe", count=12},
+            {name = "pipe-to-ground", count=2},
+            {name = "small-electric-pole", count = 50},
+            {name = "inserter", count=20},
+            {name = "assembling-machine-2", count=10},
+            {name = "assembling-machine-3", count=1},
+            {name = "electric-mining-drill", count=10},
+        },  },
+    
+        { shape="rect", type="coal",            x=42,  y=-47, height=14, width=24,  amount=40000,  },
+        { shape="rect", type="stone",     x=42,  y=-30, height=14, width=24,  amount=40000,  },
+        -- { shape="rect", type="sand",     x=42,  y=-13,  height=14, width=24,  amount=40000,  },
+        { shape="rect", type="iron-ore",     x=42,  y =4, height=21, width=24,  amount=40000,  },
+        { shape="rect", type="copper-ore",     x=42,  y =28, height=21, width=24,  amount=40000,  },
+        
+        { shape="rect", type="crude-oil", x=80, y=-6, height=1, amount=10000,  },
+        { shape="rect", type="crude-oil", x=80, y= 0, height=1, amount=10000,  },
+        { shape="rect", type="crude-oil", x=80, y= 6, height=1, amount=10000,  },
+}
 -- XXX detech angels ores and auto-configure
--- scenario.config.spawnResources = scenario.config.vanillaResources;
-scenario.config.spawnResources = scenario.config.angelsResources;
+scenario.config.spawnResources = scenario.config.vanillaResources;
+-- scenario.config.spawnResources = scenario.config.angelsResources;
+-- scenario.config.spawnResources = scenario.config.krastorioResources;
+scenario.config.recipesEnabled = {
+--        "loader",
+--        "fast-loader",
+--        "express-loader",
+}
+
+scenario.config.recipesDisabled = {
+--    "locomotive",
+--    "cargo-wagon",
+--    "fluid-wagon",
+--    "rail",
+--    "rail-signal",
+--    "rail-chain-signal",
+--    "train-stop",
+--    "artillery-wagon"
+}
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
@@ -340,11 +393,8 @@ scenario.config.separateSpawns = {
 --        'automation-2',    
 --        'coal-liquefaction',
     },
-    recipesEnabled = {
---        "loader",
---        "fast-loader",
---        "express-loader",
-    },
+    recipesEnabled = scenario.config.recipesEnabled,
+    recipesDisabled = scenario.config.recipesDisabled,
 }
 
 scenario.config.fermatSpiralSpawns = {
@@ -364,7 +414,7 @@ scenario.config.fermatSpiralSpawns = {
     size = 120,  -- should be land + moat
     craterSize = 256,  -- size of impact crater (greater than size)
     
-    resources = scenario.config.angelsResources,
+    resources = scenario.config.spawnResources,
 
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
@@ -376,11 +426,8 @@ scenario.config.fermatSpiralSpawns = {
     
     startingEvolution=0.4,
 
-    recipesEnabled = {
---        "loader",
---        "fast-loader",
---        "express-loader",
-    },
+    recipesEnabled = scenario.config.recipesEnabled,
+    recipesDisabled = scenario.config.recipesDisabled,
 }
 
 scenario.config.riverworld = {
@@ -458,11 +505,8 @@ scenario.config.bunkerSpawns = {
     
     startingEvolution=0.7,
 
-    recipesEnabled = {
---        "loader",
---        "fast-loader",
---        "express-loader",
-    },
+    recipesEnabled = scenario.config.recipesEnabled,
+    recipesDisabled = scenario.config.recipesDisabled,
 }
 
 SPAWN_TREE_DENSITY = 0.3

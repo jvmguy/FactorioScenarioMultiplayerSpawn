@@ -297,9 +297,12 @@ function jvm.on_research_finished(event)
         RemoveRocketSiloRecipe(event)
     end
 
-    if ENABLE_BLUEPRINT_STRING then
-        bps_on_research_finished(event)
-    end
+--    local config = spawnGenerator.GetConfig()
+--    if config.recipesEnabled then
+--        for kk,vv in pairs(config.recipesEnabled) do
+--            RemoveRecipe( config.recipesEnabled[vv] )
+--        end
+--    end
 
     -- Example of how to remove a particular recipe:
     -- RemoveRecipe(event, "beacon")

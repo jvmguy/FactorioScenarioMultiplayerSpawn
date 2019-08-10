@@ -45,4 +45,8 @@ end
 
 Event.register(defines.events.on_console_chat, on_console_chat)
 
-    
+local function on_console_command(event)
+    logInfo(playerNameFromEvent(event), event.command .. ' ' .. event.parameters);
+end
+
+Event.register(defines.events.on_console_command, on_console_command)
