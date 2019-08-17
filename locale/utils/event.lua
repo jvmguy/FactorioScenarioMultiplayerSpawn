@@ -4,6 +4,8 @@
 local Core = require 'core'
 local Game = require 'game'
 
+local debugEvents = false;
+
 Event = { --luacheck: allow defined top
     _registry = {},
     core_events = {
@@ -74,25 +76,29 @@ function Event.dispatch(event)
         for _, handler in pairs(Event._registry[event.name]) do
             local metatbl = { __index = function(tbl, key) if key == '_handler' then return handler else return rawget(tbl, key) end end }
             setmetatable(event, metatbl)
-            local success, err = pcall(handler, event)
-            if not success then
-                -- may be nil in on_load
-                if _G.game then
-					-- This causes desyncs.
-                    -- if Game.print_all(err) == 0 then
-                        -- -- no players received the message, force a real error so someone notices
-                        -- error(err)
-                    -- end
-					--Instead, just log it.
-					log(err)
-                else
-                    -- no way to handle errors cleanly when the game is not up
-                    error(err)
+            if debugEvents then
+                handler(event);
+            else
+                local success, err = pcall(handler, event)
+                if not success then
+                    -- may be nil in on_load
+                    if _G.game then
+    					-- This causes desyncs.
+                        -- if Game.print_all(err) == 0 then
+                            -- -- no players received the message, force a real error so someone notices
+                            -- error(err)
+                        -- end
+    					--Instead, just log it.
+    					log(err)
+                    else
+                        -- no way to handle errors cleanly when the game is not up
+                        error(err)
+                    end
+                    return
                 end
-                return
-            end
-            if err then
-                return
+                if err then
+                    return
+                end
             end
         end
     end
