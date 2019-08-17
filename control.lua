@@ -25,8 +25,12 @@
 
 -- Event manager
 require("config")
+require("util")
 require "locale/utils/event" --This is so all of the modules play nice with each other.
 require("locale/modules/scheduler");
+
+-- redmew's map_gen_settings
+require("lib/map_gen_settings")
 
 -- My Scenario Includes
 require("oarc_utils")
@@ -53,8 +57,8 @@ require("frontier_silo")
 --require("bps")
 toxicJungle = require("ToxicJungle")
 
-spawnGenerator = require("FermatSpiralSpawns");
--- spawnGenerator = require("RiverworldSpawns");
+-- spawnGenerator = require("FermatSpiralSpawns");
+spawnGenerator = require("RiverworldSpawns");
 -- spawnGenerator = require("BunkerSpawns");
 
 sharedSpawns = require("shared_spawns");
@@ -123,7 +127,11 @@ end
 function jvm.on_init(event)
     -- Configures the map settings for enemies
     -- This controls evolution growth factors and enemy expansion settings.
-    CreateGameSurface(VANILLA_MODE)
+    if spawnGenerator.CreateGameSurfaces then
+        spawnGenerator.CreateGameSurfaces()
+    else
+        CreateGameSurface(VANILLA_MODE)
+    end
     
     if spawnGenerator.ConfigureGameSurface then
         spawnGenerator.ConfigureGameSurface()

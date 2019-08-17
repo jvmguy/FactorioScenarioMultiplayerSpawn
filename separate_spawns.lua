@@ -34,51 +34,51 @@ end
 
 function DoGenerateSpawnChunk( surface, chunkArea, spawnPos)
     local chunkAreaCenter = {x=chunkArea.left_top.x+(CHUNK_SIZE/2),
-                             y=chunkArea.left_top.y+(CHUNK_SIZE/2)}
-                             
+        y=chunkArea.left_top.y+(CHUNK_SIZE/2)}
+
     local warningArea = {left_top=
-                            {x=spawnPos.x-WARNING_AREA_TILE_DIST,
-                             y=spawnPos.y-WARNING_AREA_TILE_DIST},
-                        right_bottom=
-                            {x=spawnPos.x+WARNING_AREA_TILE_DIST,
-                             y=spawnPos.y+WARNING_AREA_TILE_DIST}}
-                             
+        {x=spawnPos.x-WARNING_AREA_TILE_DIST,
+            y=spawnPos.y-WARNING_AREA_TILE_DIST},
+        right_bottom=
+        {x=spawnPos.x+WARNING_AREA_TILE_DIST,
+            y=spawnPos.y+WARNING_AREA_TILE_DIST}}
+
     if CheckIfChunkIntersects(chunkArea,warningArea) then
         local config = spawnGenerator.GetConfig()
         local landArea = {left_top=
-                            {x=spawnPos.x-config.size,
-                             y=spawnPos.y-config.size},
-                          right_bottom=
-                            {x=spawnPos.x+config.size,
-                             y=spawnPos.y+config.size}}
+            {x=spawnPos.x-config.size,
+                y=spawnPos.y-config.size},
+            right_bottom=
+            {x=spawnPos.x+config.size,
+                y=spawnPos.y+config.size}}
 
         local safeArea = {left_top=
-                            {x=spawnPos.x-SAFE_AREA_TILE_DIST,
-                             y=spawnPos.y-SAFE_AREA_TILE_DIST},
-                          right_bottom=
-                            {x=spawnPos.x+SAFE_AREA_TILE_DIST,
-                             y=spawnPos.y+SAFE_AREA_TILE_DIST}}
+            {x=spawnPos.x-SAFE_AREA_TILE_DIST,
+                y=spawnPos.y-SAFE_AREA_TILE_DIST},
+            right_bottom=
+            {x=spawnPos.x+SAFE_AREA_TILE_DIST,
+                y=spawnPos.y+SAFE_AREA_TILE_DIST}}
 
 
-                                 
+
         -- Make chunks near a spawn safe by removing enemies
         if CheckIfChunkIntersects(chunkArea,safeArea) then
             for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
                 entity.destroy()
             end
-        
-        -- Create a warning area with reduced enemies
+
+            -- Create a warning area with reduced enemies
         elseif CheckIfChunkIntersects(chunkArea,warningArea) then
             -- Remove all big and huge worms
             for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, name = "medium-worm-turret"}) do
-                    entity.destroy()
+                entity.destroy()
             end
             for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, name = "big-worm-turret"}) do
-                    entity.destroy()
+                entity.destroy()
             end
 
             for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, name = "behemoth-worm-turret"}) do
-                    entity.destroy()
+                entity.destroy()
             end
         end
 
@@ -94,7 +94,7 @@ function DoGenerateSpawnChunk( surface, chunkArea, spawnPos)
             spawnGenerator.CreateSpawn(surface, spawnPos, chunkArea);
 
             GenerateStartingResources( surface, chunkArea, spawnPos);
-            
+
             -- generate a teleport to the silo if enabled
             -- disabled for bunker spawns. need to refactor this, and move to spawn generator
             if scenario.config.teleporter.siloTeleportEnabled then
@@ -102,7 +102,7 @@ function DoGenerateSpawnChunk( surface, chunkArea, spawnPos)
                 if CheckIfInChunk(pos.x, pos.y, chunkArea) then
                     spawnPos.spawnTeleportID = CreateTeleporter(surface, pos, "silo")
                 end
-            end 
+            end
         end
     end
 end
@@ -116,18 +116,18 @@ end
 
 -- return the spawn from table t,  nearest position p
 function NearestSpawns( t, p )
-  local candidates = {}
-  for key, spawnPos in pairs(t) do
-    if spawnPos ~= nil then
-        spawnPos.key = key;
-        spawnPos.dist = DistanceFromPoint(spawnPos, p)
-        table.insert( candidates, spawnPos );
+    local candidates = {}
+    for key, spawnPos in pairs(t) do
+        if spawnPos ~= nil then
+            spawnPos.key = key;
+            spawnPos.dist = DistanceFromPoint(spawnPos, p)
+            table.insert( candidates, spawnPos );
+        end
     end
-  end
-  table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
-  return candidates
+    table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
+    return candidates
 end
-  
+
 function NearestSpawn( t, p )
     local candidates = NearestSpawns(t,p);
     return candidates[1]
@@ -141,7 +141,7 @@ function GetUniqueSpawn(name)
         end
     end
     return nil;
-end 
+end
 
 function RemovePlayer(player)
 
@@ -154,37 +154,37 @@ function RemovePlayer(player)
 
     local uniqueSpawn = GetUniqueSpawn(player.name);
     local sharedSpawn = sharedSpawns.findSharedSpawn(player.name);
-    
+
     -- If a uniqueSpawn was created for the player, mark it as unused.
     if (uniqueSpawn ~= nil and sharedSpawn == nil) then
         if scenario.config.wipespawn.enabled then
-            logAndBroadcast( player.name, player.name .. " base was reclaimed." )    
+            logAndBroadcast( player.name, player.name .. " base was reclaimed." )
             wipespawn.markForRemoval(uniqueSpawn)
             Scheduler.schedule(game.tick+700, MarkUnused, { playerName = player.name, spawn=uniqueSpawn } );
         else
             uniqueSpawn.used = false;
             uniqueSpawn.createdFor = nil;
-            logAndBroadcast( player.name, player.name .. " base was freed up." )    
+            logAndBroadcast( player.name, player.name .. " base was freed up." )
         end
     end
-    
+
     -- remove that player's cooldown setting
     if (global.playerCooldowns[player.name] ~= nil) then
         global.playerCooldowns[player.name] = nil;
     end
 
     sharedSpawns.removePlayer(player.name);
-    
+
     -- Remove the character completely
     game.remove_offline_players({player});
 end
 
 function MarkUnused(args)
     local playerName = args.playerName
-    local uniqueSpawn = args.spawn            
+    local uniqueSpawn = args.spawn
     uniqueSpawn.used = false;
     uniqueSpawn.createdFor = nil;
-    logInfo( playerName, playerName .. "spawn " .. spawn.seq .. " marked as unused." )    
+    logInfo( playerName, playerName .. "spawn " .. spawn.seq .. " marked as unused." )
 end
 
 -- Call this if a player leaves the game
@@ -226,14 +226,14 @@ function InitSpawnGlobalsAndForces()
     -- InitSpawnPoint( 0, 0, 0);
     local config = spawnGenerator.GetConfig()
     for n = 1,config.numSpawnPoints do
-          spawnGenerator.InitSpawnPoint( n )
-          global.lastSpawn = n
+        spawnGenerator.InitSpawnPoint( n )
+        global.lastSpawn = n
     end
     -- another spawn for admin. admin gets the last spawn
-	if config.extraSpawn ~= nil and config.extraSpawn >  config.numSpawnPoints then
+    if config.extraSpawn ~= nil and config.extraSpawn >  config.numSpawnPoints then
         spawnGenerator.InitSpawnPoint( config.extraSpawn);
-	end
-	
+    end
+
     if (global.playerCooldowns == nil) then
         global.playerCooldowns = {}
     end
@@ -243,7 +243,7 @@ function InitSpawnGlobalsAndForces()
     gameForce.set_spawn_position(game.forces["player"].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
     gameForce.worker_robots_storage_bonus=scenario.config.bots.worker_robots_storage_bonus;
     gameForce.worker_robots_speed_modifier=scenario.config.bots.worker_robots_speed_modifier;
-    
+
     SetCeaseFireBetweenAllForces()
     AntiGriefing(gameForce)
     ApplyForceBonuses(gameForce)
@@ -264,7 +264,7 @@ end
 
 function CheckIfInChunk(x, y, chunkArea)
     if x>=chunkArea.left_top.x and x<chunkArea.right_bottom.x
-    and y>=chunkArea.left_top.y and y<chunkArea.right_bottom.y then
+        and y>=chunkArea.left_top.y and y<chunkArea.right_bottom.y then
         return true;
     end
     return false;
@@ -288,7 +288,7 @@ local function CreateResources( surface, tiles, startAmount, resourceName, mixed
         local realResourceName = resourceName
         if mixedOres and math.random() < 0.2 then
             local r = math.random(#mixedResources);
-            realResourceName = mixedResources[r]; 
+            realResourceName = mixedResources[r];
         end
         surface.create_entity({name=realResourceName, amount=startAmount, position=tile})
     end
@@ -296,7 +296,7 @@ end
 
 function GenerateStartingResources(surface, chunkArea, spawnPos)
     --local surface = player.surface
-    local pos = { x=spawnPos.x, y=spawnPos.y } 
+    local pos = { x=spawnPos.x, y=spawnPos.y }
     local config = spawnGenerator.GetConfig()
     for _, res in pairs( config.resources ) do
         -- resource may specify dx,dy or x,y relative to spawn
@@ -318,7 +318,7 @@ function GenerateStartingResources(surface, chunkArea, spawnPos)
         elseif (res.name ~= nil) then
             CreateItems( surface, tiles, res.name, res.contents );
         end
-    end   
+    end
 end
 
 function DoesPlayerHaveCustomSpawn(player)
@@ -350,11 +350,25 @@ function TeleportPlayerCallback(args)
 end
 
 
+-- Clear out enemies around an area with a certain distance
+function ClearEnemies(surface, position, safeDist)
+    local safeArea = {left_top=
+        {x=position.x-safeDist,
+            y=position.y-safeDist},
+        right_bottom=
+        {x=position.x+safeDist,
+            y=position.y+safeDist}}
+
+    for _, entity in pairs(surface.find_entities_filtered{area = safeArea, force = "enemy"}) do
+        entity.destroy()
+    end
+end
+
 function SendPlayerToNewSpawnAndCreateIt(player, spawn)
     -- Send the player to that position
     if spawn == nil then
-      DebugPrint("SendPlayerToNewSpawnAndCreateIt: error. spawn is nil")
-      spawn = { x = 0, y = 0 }
+        DebugPrint("SendPlayerToNewSpawnAndCreateIt: error. spawn is nil")
+        spawn = { x = 0, y = 0 }
     end
     ChartArea(player.force, spawn, 8)
     if spawn.teleport then

@@ -56,7 +56,7 @@ scenario.config.welcomeMessages = {
     "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
 }
 
-scenario.config.gameInfo = {
+scenario.config.gameInfoBunker = {
     "This scenario is a variant of a scenario created by Oarc",
     "",
 --    "You start in a bunker. The car in the bunker is a teleport to and from the wild.",
@@ -70,6 +70,18 @@ scenario.config.gameInfo = {
     "",
 --    "/w Biter expansion is on, so watch out!",
     "",
+    "Discord chat https://discord.gg/q6gfYa9",
+    "",
+    "Good Luck!",
+}
+
+scenario.config.gameInfo = {
+    "This scenario is a variant of a scenario created by Oarc",
+    "",
+    "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
+    "This server is running a custom scenario that changes spawn locations.",
+    "",
+--    "/w Biter expansion is on, so watch out!",
     "Discord chat https://discord.gg/q6gfYa9",
     "",
     "Good Luck!",
@@ -93,8 +105,8 @@ scenario.config.forceBonuses = {
 }
 
 scenario.config.playerBonus = {
---    character_crafting_speed_modifier = 1.0/10-1.0,
-    character_crafting_speed_modifier = 0,
+    character_crafting_speed_modifier = 0.5-1.0,
+--    character_crafting_speed_modifier = 0,
 }
 
 scenario.config.silo = {
@@ -229,15 +241,15 @@ scenario.config.toxicJungle = {
 }    
 
 scenario.config.vanillaResources = {
---        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-8,  height=1, width=1, contents = { 
             {name = "coal", count=1000 },
             {name = "stone", count=1000 },
             {name = "steel-plate", count=400 },
-            {name = "uranium-235", count=100 },
-            {name = "uranium-238", count=500 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
          }  },
         { shape="rect", name="steel-chest", x=42,   y=0,  height=1, width=1, contents = { 
             -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
@@ -335,10 +347,6 @@ scenario.config.krastorioResources = {
         { shape="rect", type="crude-oil", x=80, y= 0, height=1, amount=10000,  },
         { shape="rect", type="crude-oil", x=80, y= 6, height=1, amount=10000,  },
 }
--- XXX detech angels ores and auto-configure
-scenario.config.spawnResources = scenario.config.vanillaResources;
--- scenario.config.spawnResources = scenario.config.angelsResources;
--- scenario.config.spawnResources = scenario.config.krastorioResources;
 scenario.config.recipesEnabled = {
 --        "loader",
 --        "fast-loader",
@@ -355,12 +363,16 @@ scenario.config.recipesDisabled = {
 --    "train-stop",
 --    "artillery-wagon"
 }
+
+-- XXX detect angels ores and auto-configure
+-- scenario.config.spawnResources = scenario.config.vanillaResources;
+scenario.config.spawnResources = scenario.config.angelsResources;
+-- scenario.config.spawnResources = scenario.config.krastorioResources;
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
 -- everyone gets a separate start area
 scenario.config.separateSpawns = {
-    enabled = true,
 --
 --    shape = "octagon",
 --    treeDensity = 0.2,
@@ -399,7 +411,6 @@ scenario.config.separateSpawns = {
 
 scenario.config.fermatSpiralSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
-    enabled = true,
     seablock = true,    -- replace land with water except where there are resources
     firstSpawnPoint = 1,
     numSpawnPoints = 20,
@@ -430,45 +441,8 @@ scenario.config.fermatSpiralSpawns = {
     recipesDisabled = scenario.config.recipesDisabled,
 }
 
-scenario.config.riverworld = {
-    -- this mostly inherits the separateSpawns config, but has a few minor differences
-    enabled = false,
-    seablock = false,        -- behavior a little like the seablock mod. (well, not really)
-    
-    stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
-    waterWalls = false,
-    firstSpawnPoint = 14,
-    numSpawnPoints = 27,
-    extraSpawn = 28,    -- really far away, but not as far as you might think
-
-    spacing = 736,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
-    barrier = 256,	-- width of impenetrable barrier
-    rail = 3*640,	-- generate a north-south railway starting here
-    rail2 = -3*640-32, -- generate a north-south railway starting here
-    freespace = 3*640 + 32, -- no voids after this 
-    
-    land = 74,
-    trees = 3,  -- included in the land
-    moat = 10,   -- additional to land
-    moatWidth = 10,   -- additional to land
-    size = 84,  -- should be land + moat
-
-    resources = scenario.config.spawnResources,
-    -- freeze time of day
-    -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
-	-- 0 is day. 0.5 is night. 0.35 is twilight.
-    recipesEnabled = {
---        "loader",
---        "fast-loader",
---        "express-loader",
-    },
-
-}
-
 scenario.config.bunkerSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
-    enabled = true,
     firstSpawnPoint = 16,
     numSpawnPoints = 27,
     extraSpawn = 28,    -- really far away, but not as far as you might think
@@ -634,3 +608,45 @@ AUTOFILL_FLAMETHROWER_AMMO_QUANTITY=20
 -- DEBUG prints for me
 global.oarcDebugEnabled = false
 global.jvmguyDebugEnabled = false
+
+
+scenario.config.riverworld = {
+    -- this mostly inherits the separateSpawns config, but has a few minor differences
+    enabled = false,
+    seablock = true,        -- behavior a little like the seablock mod. (well, not really)
+    
+    stoneWalls = false,     -- if true, makes a stone wall. if false, generate a void.
+    waterWalls = false,
+    firstSpawnPoint = 14,
+    numSpawnPoints = 27,
+    extraSpawn = 28,    -- really far away, but not as far as you might think
+
+    spacing = 736,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
+    barrier = 256,  -- width of impenetrable barrier
+    rail = 3*640,   -- generate a north-south railway starting here
+    rail2 = -3*640-32, -- generate a north-south railway starting here
+    freespace = 3*640 + 32, -- no voids after this 
+    
+    land = 74,
+    trees = 3,  -- included in the land
+    moat = 10,   -- additional to land
+    moatWidth = 10,   -- additional to land
+    size = 84,  -- should be land + moat
+
+    resources = scenario.config.spawnResources,
+    -- freeze time of day
+    -- you might get night vision at the start, but you have to decide whether it's worth using it.
+    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    -- 0 is day. 0.5 is night. 0.35 is twilight.
+    recipesEnabled = {
+--        "loader",
+--        "fast-loader",
+--        "express-loader",
+    },
+--    surfaces = {
+--        aboveground = {
+--            name = GAME_SURFACE_NAME,
+--        },
+--    }
+}
+
