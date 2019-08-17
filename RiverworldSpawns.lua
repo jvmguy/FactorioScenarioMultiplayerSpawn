@@ -106,6 +106,52 @@ local function GenerateRails(surface, chunkArea, railX, rails)
     end
 end
 
+-- waterways for cargo ships
+local function GenerateRails(surface, chunkArea, railX, rails)
+    if ChunkIntersects(chunkArea, rails) then
+        local rect = ChunkIntersection( chunkArea, rails );
+        local tiles = {};
+        for y = rect.left_top.y, rect.right_bottom.y-1 do
+            for x = rect.left_top.x, rect.right_bottom.x-1 do
+                table.insert(tiles, {name = "water", position = {x,y}});
+            end
+        end
+        surface.set_tiles(tiles)
+
+        for _, entity in pairs (surface.find_entities_filtered{area = rails}) do
+            if entity and entity.valid then
+                entity.destroy()  
+            end
+        end
+        
+
+        for y = rect.left_top.y, rect.right_bottom.y-1 do
+            if math.fmod(y,2)==0 then
+                local pt = { x=railX+2, y=y };                 
+                makeIndestructibleEntity(surface, {name="straight-water-way", position=pt, force=MAIN_FORCE})
+                local pt = { x=railX+10, y=y };
+                makeIndestructibleEntity(surface, {name="straight-water-way", position=pt, force=MAIN_FORCE})
+                local pt = { x=railX+18, y=y };
+                makeIndestructibleEntity(surface, {name="straight-water-way", position=pt, force=MAIN_FORCE})
+                local pt = { x=railX+26, y=y };
+                makeIndestructibleEntity(surface, {name="straight-water-way", position=pt, force=MAIN_FORCE})
+            end
+            if (math.fmod(y,30)==0) then
+                local pt = { x=railX+1, y=y+1 };                 
+                surface.create_entity({name="buoy", position=pt, force=MAIN_FORCE})
+                local pt = { x=railX+9, y=y+1 };                 
+                surface.create_entity({name="buoy", position=pt, force=MAIN_FORCE})
+                local pt = { x=railX+15, y=y+1 };                 
+                surface.create_entity({name="floating-electric-pole", position=pt, force=MAIN_FORCE})
+                local pt = { x=railX+20, y=y };                 
+                surface.create_entity({name="buoy", position=pt, force=MAIN_FORCE, direction=4})
+                local pt = { x=railX+28, y=y };                 
+                surface.create_entity({name="buoy", position=pt, force=MAIN_FORCE, direction=4})
+            end
+        end
+    end
+end
+
 function M.GetConfig()
     return scenario.config.riverworld;  
 end
@@ -145,14 +191,14 @@ local function GenerateWalls(surface, wallRect, railsRect, railsRect2, wantWater
                 table.insert(tiles, {name = "grass-1",position = {x,y}})
 			elseif wantWater then
                 if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
-                        table.insert(tiles, {name = "water",position = {x,y}})
+                    table.insert(tiles, {name = "water",position = {x,y}})
                 end
 			else
-		        if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
-		                table.insert(tiles, {name = "out-of-map",position = {x,y}})
-		        else
-		                table.insert(tiles, {name = "grass-1",position = {x,y}})
-		        end
+                if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
+                    table.insert(tiles, {name = "out-of-map",position = {x,y}})
+                else
+                    table.insert(tiles, {name = "grass-1",position = {x,y}})
+                end
 			end
         end
     end
@@ -197,14 +243,15 @@ local function ReplaceLandWithWater(args)
         return
     end
 
+    local force = game.forces[MAIN_FORCE];
     -- construct a set of tiles that we want to keep as land.
     -- We do that by using the entity bound box, expanded by an extraBox amount
         
     local land = {}
-    local count = 0    
+    local count = 0
     for _, entity in pairs(surface.find_entities_filtered{area = extraArea}) do
             count = count + 1
-        if entity.type == "tree" or entity.type == "fish" then
+        if entity.type == "tree" or entity.type == "fish" or entity.force == force then
         -- ignore trees and fish
         -- entity.destroy();
         else
@@ -212,8 +259,11 @@ local function ReplaceLandWithWater(args)
             local box = entity.bounding_box
             for x = math.floor(box.left_top.x-extraBox), math.ceil(box.right_bottom.x+extraBox)-1 do
                 for y = math.floor(box.left_top.y-extraBox), math.ceil(box.right_bottom.y+extraBox)-1 do
-                    local z = toZCoord( extraArea, { x=x, y=y } )
-                    land[z] = 1
+                    local position = { x=x, y=y };
+                    if DistanceFromPoint(position, entity.position)< extraBox then
+                        local z = toZCoord( extraArea, { x=x, y=y } )
+                        land[z] = 1
+                    end
                 end
             end
 --             game.print("land: " .. z .. " " .. entity.position.x .. " " .. entity.position.y )
@@ -237,78 +287,105 @@ local function ReplaceLandWithWater(args)
         end
     end
     surface.set_tiles(tiles)
-    local force = game.forces[MAIN_FORCE];
     force.unchart_chunk( { x = area.left_top.x / 32, y = area.left_top.y / 32 }, surface )
     -- force.chart( surface, area );
 end
 
-function M.CreateSpawn(surface, spawnPos, chunkArea)
-    local config = M.GetConfig()
-    CreateCropOctagon(surface, spawnPos, chunkArea, config.land, config.trees, config.moat)
+function M.GenerateRailsAndWalls(surface, chunkArea, spawnPos)
+    local midPoint = {x = (chunkArea.left_top.x + chunkArea.right_bottom.x)/2,
+        y = (chunkArea.left_top.y + chunkArea.right_bottom.y)/2 }
+
+    -- Don't touch any chunks outside of freespace
+    if math.abs(midPoint.x) > scenario.config.riverworld.freespace then
+        return
+    end
+
+    local dy = math.abs(midPoint.y - spawnPos.y)
+    local spacing = scenario.config.riverworld.spacing
+    local barrier = scenario.config.riverworld.barrier
+    local w = chunkArea.right_bottom.x - chunkArea.left_top.x
+    local y = spawnPos.y - spacing/2;
+    local wallRect = MakeRect( chunkArea.left_top.x, w, y, barrier/2 )
+    wallRect = ChunkIntersection(chunkArea, wallRect);
+    y = y + barrier/2
+    local waterRect = MakeRect( chunkArea.left_top.x, w, y, 8 )
+    waterRect = ChunkIntersection(chunkArea, waterRect);
+
+    local y = spawnPos.y + spacing/2 - barrier/2 - 8
+    local waterRect2 = MakeRect( chunkArea.left_top.x, w, y, 8 )
+    waterRect2 = ChunkIntersection(chunkArea, waterRect2)
+    y = y + 8        
+    local wallRect2 = MakeRect( chunkArea.left_top.x, w, y, barrier/2 )
+    wallRect2 = ChunkIntersection(chunkArea, wallRect2)
+
+
+    local railsRect = MakeRect( scenario.config.riverworld.rail, 32, -20000, 40000)
+    railsRect = ChunkIntersection( chunkArea, railsRect)
+
+    local railsRect2 = MakeRect( scenario.config.riverworld.rail2, 32, -20000, 40000)
+    railsRect2 = ChunkIntersection( chunkArea, railsRect2)
+
+    if dy < spacing and scenario.config.riverworld.moatRect ~= nil and scenario.config.riverworld.moatWidth>0 then
+        local w = scenario.config.riverworld.moatWidth
+        local h = spacing - barrier
+        -- left moat
+        local moatRect = MakeRect( spawnPos.x-scenario.config.riverworld.moat-w, w, spawnPos.y - h/2, h)        
+        GenerateMoat(surface, chunkArea, moatRect)
+        -- right moat
+        local moatRect2 = MakeRect( spawnPos.x+scenario.config.riverworld.moat, w, spawnPos.y - h/2, h)        
+        GenerateMoat(surface, chunkArea, moatRect2)
+    end
+    -- quick reject
+    if (dy < spacing) then
+        GenerateWalls( surface, wallRect, railsRect, railsRect2, false )
+        GenerateWalls( surface, waterRect, railsRect, railsRect2, true )
+        GenerateWalls( surface, waterRect2, railsRect, railsRect2, true )
+        GenerateWalls( surface, wallRect2, railsRect, railsRect2, false )
+    end
+
+    GenerateRails( surface, chunkArea, scenario.config.riverworld.rail, railsRect)
+    GenerateRails( surface, chunkArea, scenario.config.riverworld.rail2, railsRect2)
 end
 
+function M.ClearEnemiesInRadius(surface, position, safeDist, chunkArea)
+    for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
+        if entity and entity.valid and DistanceFromPoint(position, entity.position) < safeDist then
+            entity.destroy()
+        end
+    end
+end
+
+function M.CreateSpawn(surface, spawnPos, chunkArea)
+    local config = M.GetConfig()
+    M.ClearEnemiesInRadius(surface, spawnPos, SAFE_AREA_TILE_DIST, chunkArea)
+    CreateCropOctagon(surface, spawnPos, chunkArea, config.land, config.trees, config.moat)
+    local force = game.forces[MAIN_FORCE];
+end
+
+function M.DoGenerateSpawnChunk(args) 
+        M.GenerateRailsAndWalls(args.surface, args.area, args.spawnPos );
+        DoGenerateSpawnChunk(args.surface, args.area, args.spawnPos );
+end
+
+-- This is the main function that creates the spawn area
+-- Provides resources, land and a safe zone
 function M.ChunkGenerated(event)
+    local config = M.GetConfig()
     local surface = event.surface
     
     if surface.name == GAME_SURFACE_NAME then
+        -- Only take into account the nearest spawn when generating resources
         local chunkArea = event.area
         local midPoint = {x = (chunkArea.left_top.x + chunkArea.right_bottom.x)/2,
-                            y = (chunkArea.left_top.y + chunkArea.right_bottom.y)/2 }
-                            
-		-- Don't touch any chunks outside of freespace
-        if math.abs(midPoint.x) > scenario.config.riverworld.freespace then
-            return
-        end
-
-        -- to do this correctly, we should really get the *two* closest spawns 
+                            y = (chunkArea.left_top.y + chunkArea.right_bottom.y)/2 } 
         local spawnPos = NearestSpawn( global.allSpawns, midPoint)
-        local dy = math.abs(midPoint.y - spawnPos.y)
-        local spacing = scenario.config.riverworld.spacing
-        local barrier = scenario.config.riverworld.barrier
-        local w = chunkArea.right_bottom.x - chunkArea.left_top.x
-        local y = spawnPos.y - spacing/2;
-        local wallRect = MakeRect( chunkArea.left_top.x, w, y, barrier/2 )
-        wallRect = ChunkIntersection(chunkArea, wallRect);
-        y = y + barrier/2
-        local waterRect = MakeRect( chunkArea.left_top.x, w, y, 8 )
-        waterRect = ChunkIntersection(chunkArea, waterRect);
-
-        local y = spawnPos.y + spacing/2 - barrier/2 - 8
-        local waterRect2 = MakeRect( chunkArea.left_top.x, w, y, 8 )
-        waterRect2 = ChunkIntersection(chunkArea, waterRect2)
-        y = y + 8        
-        local wallRect2 = MakeRect( chunkArea.left_top.x, w, y, barrier/2 )
-        wallRect2 = ChunkIntersection(chunkArea, wallRect2)
         
-                
-        local railsRect = MakeRect( scenario.config.riverworld.rail, 32, -20000, 40000)
-        railsRect = ChunkIntersection( chunkArea, railsRect)
-                
-        local railsRect2 = MakeRect( scenario.config.riverworld.rail2, 32, -20000, 40000)
-        railsRect2 = ChunkIntersection( chunkArea, railsRect2)
-        
-        if dy < spacing and scenario.config.riverworld.moat ~= nil and scenario.config.riverworld.moatWidth>0 then
-            local w = scenario.config.riverworld.moatWidth
-            local h = spacing - barrier
-            -- left moat
-            local moatRect = MakeRect( spawnPos.x-scenario.config.riverworld.moat-w, w, spawnPos.y - h/2, h)        
-            GenerateMoat(surface, chunkArea, moatRect)
-            -- right moat
-            local moatRect2 = MakeRect( spawnPos.x+scenario.config.riverworld.moat, w, spawnPos.y - h/2, h)        
-            GenerateMoat(surface, chunkArea, moatRect2)
+        -- Common spawn generation code.
+        if spawnPos ~= nil then
+            Scheduler.schedule(game.tick+40, M.DoGenerateSpawnChunk, { surface= surface, area = chunkArea, spawnPos=spawnPos } )
         end
-        -- quick reject
-        if (dy < spacing) then
-            GenerateWalls( surface, wallRect, railsRect, railsRect2, false )
-            GenerateWalls( surface, waterRect, railsRect, railsRect2, true )
-            GenerateWalls( surface, waterRect2, railsRect, railsRect2, true )
-            GenerateWalls( surface, wallRect2, railsRect, railsRect2, false )
-        end
-
-        GenerateRails( surface, chunkArea, scenario.config.riverworld.rail, railsRect)
-        GenerateRails( surface, chunkArea, scenario.config.riverworld.rail2, railsRect2)
-        if scenario.config.riverworld.seablock then
-            Scheduler.schedule(game.tick+4, ReplaceLandWithWater, { surface= surface, area = chunkArea, spawnPos=spawnPos } )
+        if config.seablock then
+            Scheduler.schedule(game.tick+42, ReplaceLandWithWater, { surface= surface, area = chunkArea, spawnPos=spawnPos } )
         end
     end
 end
@@ -328,13 +405,25 @@ function M.SeparateSpawnsGenerateChunk(event)
     end
 end
 
+--function M.CreateGameSurfaces()
+--    local config = M.GetConfig()
+--    local surfaces = config.surfaces;
+--    for _,surf in pairs(surfaces) do
+--        local mapSettings = {}
+--        mapSettings = util.merge({
+--            global.MapGenSettings.waterworld,
+--        });
+--        
+--        local surface = game.create_surface(surf.name,mapSettings)
+--        if surf.freezeTime then
+--            surface.freeze_daytime = true;
+--            surface.daytime = surf.freezeTime;
+--        end
+--    end
+--end
+
 function M.ConfigureGameSurface()
-    local config = scenario.config.riverworld;
-    if config.freezeTime ~= nil then
-        local surface = game.surfaces[GAME_SURFACE_NAME]
-        surface.daytime = config.freezeTime
-        surface.freeze_daytime = true
-    end 
+    local config = M.GetConfig()
     if config.startingEvolution ~= nil then
         game.forces['enemy'].evolution_factor = config.startingEvolution;
     end 
