@@ -47,7 +47,7 @@ scenario.config.welcomeMessages = {
 --    "/w around your new spawn area to generate...",
 --    "/w Please wait for 10-20 seconds when you select your first spawn.",
 --    "",
---    "/w Biter expansion is on, so watch out!",
+    "/w Biter expansion is on, so watch out!",
     "Discord chat https://discord.gg/q6gfYa9",
     "",
     "Good Luck!",
@@ -347,6 +347,36 @@ scenario.config.krastorioResources = {
         { shape="rect", type="crude-oil", x=80, y= 0, height=1, amount=10000,  },
         { shape="rect", type="crude-oil", x=80, y= 6, height=1, amount=10000,  },
 }
+
+scenario.config.omniResources = {
+        { shape="rect", type="omnite", x=0,  y=-40, height=80, width=80,  amount=10000,  },
+        { shape="rect", name="steel-chest", x=42,   y=-50, height=1, width=1, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=45,   y=-50, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=48,   y=-50, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=51,   y=-50,  height=1, width=1, contents = { 
+            {name = "coal", count=2000 },
+            {name = "stone", count=1000 },
+            {name = "wood", count=1000 },
+            {name = "steel-plate", count=400 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
+         }  },
+        { shape="rect", name="steel-chest", x=36,   y=0,  height=1, width=1, contents = { 
+            -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
+            {name = "offshore-pump", count = 1},
+            {name = "boiler", count = 10},
+            {name = "steam-engine", count = 20},
+            {name = "pipe", count=12},
+            {name = "pipe-to-ground", count=2},
+            {name = "small-electric-pole", count = 50},
+            {name = "inserter", count=20},
+            {name = "assembling-machine-2", count=10},
+            {name = "assembling-machine-3", count=1},
+            {name = "electric-mining-drill", count=10},
+        },  },
+    
+}
+
 scenario.config.recipesEnabled = {
 --        "loader",
 --        "fast-loader",
@@ -366,8 +396,9 @@ scenario.config.recipesDisabled = {
 
 -- XXX detect angels ores and auto-configure
 -- scenario.config.spawnResources = scenario.config.vanillaResources;
-scenario.config.spawnResources = scenario.config.angelsResources;
+-- scenario.config.spawnResources = scenario.config.angelsResources;
 -- scenario.config.spawnResources = scenario.config.krastorioResources;
+scenario.config.spawnResources = scenario.config.omniResources;
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
@@ -411,7 +442,7 @@ scenario.config.separateSpawns = {
 
 scenario.config.fermatSpiralSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
-    seablock = true,    -- replace land with water except where there are resources
+    seablock = false,    -- replace land with water except where there are resources
     firstSpawnPoint = 1,
     numSpawnPoints = 20,
     extraSpawn = 55,    -- really far away, but not as far as you might think
@@ -521,7 +552,7 @@ ENFORCE_LAND_AREA_TILE_DIST = scenario.config.separateSpawns.size
 
 -- Main force is what default players join
 MAIN_FORCE = "main_force"
-GAME_SURFACE_NAME = "game_surface"
+GAME_SURFACE_NAME = "nauvis"
 
 -- Enable if people can spawn at the main base
 ENABLE_DEFAULT_SPAWN = false
@@ -560,7 +591,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = false
+ENEMY_EXPANSION = true
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
 ENEMY_POLLUTION_FACTOR_DIVISOR = 5

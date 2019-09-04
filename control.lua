@@ -57,8 +57,8 @@ require("frontier_silo")
 --require("bps")
 toxicJungle = require("ToxicJungle")
 
--- spawnGenerator = require("FermatSpiralSpawns");
-spawnGenerator = require("RiverworldSpawns");
+spawnGenerator = require("FermatSpiralSpawns");
+-- spawnGenerator = require("RiverworldSpawns");
 -- spawnGenerator = require("BunkerSpawns");
 
 sharedSpawns = require("shared_spawns");

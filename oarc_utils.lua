@@ -488,7 +488,9 @@ function ConfigureAlienStartingParams()
 end
 
 function GivePlayerBonuses(player)
-    player.character.character_crafting_speed_modifier = scenario.config.playerBonus.character_crafting_speed_modifier;
+    if (scenario.config.playerBonus.character_crafting_speed_modifier~= nil) then
+        player.character.character_crafting_speed_modifier = scenario.config.playerBonus.character_crafting_speed_modifier;
+    end
 end
 
 
@@ -518,9 +520,11 @@ end
 
 
 function CreateGameSurface()
-    local mapSettings =  game.surfaces["nauvis"].map_gen_settings
-    local surface = game.create_surface(GAME_SURFACE_NAME,mapSettings)
-    -- surface.set_tiles({{name = "out-of-map",position = {1,1}}})
+    if GAME_SURFACE_NAME ~= "nauvis" then
+        local mapSettings =  game.surfaces["nauvis"].map_gen_settings
+        local surface = game.create_surface(GAME_SURFACE_NAME,mapSettings)
+        -- surface.set_tiles({{name = "out-of-map",position = {1,1}}})
+    end
 end
 
 --------------------------------------------------------------------------------
