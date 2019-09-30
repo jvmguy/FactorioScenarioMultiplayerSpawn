@@ -47,7 +47,7 @@ scenario.config.welcomeMessages = {
 --    "/w around your new spawn area to generate...",
 --    "/w Please wait for 10-20 seconds when you select your first spawn.",
 --    "",
-    "/w Biter expansion is on, so watch out!",
+--    "/w Biter expansion is on, so watch out!",
     "Discord chat https://discord.gg/q6gfYa9",
     "",
     "Good Luck!",
@@ -101,12 +101,12 @@ scenario.config.bots = {
 }
 
 scenario.config.forceBonuses = {
-    character_inventory_slots_bonus = 40,
+    character_inventory_slots_bonus = 20,
 }
 
 scenario.config.playerBonus = {
-    character_crafting_speed_modifier = 0.5-1.0,
---    character_crafting_speed_modifier = 0,
+--    character_crafting_speed_modifier = 0.5-1.0,
+      character_crafting_speed_modifier = 0,
 }
 
 scenario.config.silo = {
@@ -127,13 +127,15 @@ scenario.config.startKit = {
 --                  {name = "battery-equipment", count=1},
             }
         },
---        {name = "belt-immunity-equipment", count = 4},
+        {name = "belt-immunity-equipment", count = 1},
         {name = "night-vision-equipment", count = 1},
         {name = "construction-robot", count = 20},
         {name = "roboport", count = 2},
         {name = "logistic-chest-storage", count = 2},
---		{name = "burner-mining-drill", count = 1},
---		{name = "stone-furnace", count = 1},
+        {name = "k-dt-fuel", count=20 },
+--        {name = "uranium-fuel-cell", count=50 },
+--		{name = "burner-mining-drill", count = 2},
+--		{name = "stone-age-furnace", count = 2},
 --        {name = "steel-axe", count = 5},
 		{name = "submachine-gun", count=1},
         {name = "iron-plate", count=100},
@@ -218,7 +220,7 @@ ENABLE_STATUS = true
 ENABLE_LONGREACH = true
 
 -- Enable Autofill
-ENABLE_AUTOFILL = true
+ENABLE_AUTOFILL = false
 
 --------------------------------------------------------------------------------
 -- Spawn Options
@@ -312,7 +314,7 @@ scenario.config.angelsResources = {
 }
 
 scenario.config.krastorioResources = {
-        { shape="rect", name="steel-chest", x=42,   y=-50, height=1, width=1, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-50, height=1, width=1, contents = { {name = "landfill", count=1200 } },  },
         { shape="rect", name="steel-chest", x=45,   y=-50, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=48,   y=-50, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=51,   y=-50,  height=1, width=1, contents = { 
@@ -323,7 +325,7 @@ scenario.config.krastorioResources = {
 --            {name = "uranium-235", count=100 },
 --            {name = "uranium-238", count=500 },
          }  },
-        { shape="rect", name="steel-chest", x=36,   y=0,  height=1, width=1, contents = { 
+        { shape="rect", name="steel-chest", x=40,   y=-50,  height=1, width=1, contents = { 
             -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
             {name = "offshore-pump", count = 1},
             {name = "boiler", count = 10},
@@ -337,11 +339,17 @@ scenario.config.krastorioResources = {
             {name = "electric-mining-drill", count=10},
         },  },
     
-        { shape="rect", type="coal",            x=42,  y=-47, height=14, width=24,  amount=40000,  },
-        { shape="rect", type="stone",     x=42,  y=-30, height=14, width=24,  amount=40000,  },
-        -- { shape="rect", type="sand",     x=42,  y=-13,  height=14, width=24,  amount=40000,  },
-        { shape="rect", type="iron-ore",     x=42,  y =4, height=21, width=24,  amount=40000,  },
-        { shape="rect", type="copper-ore",     x=42,  y =28, height=21, width=24,  amount=40000,  },
+        { shape="rect", type="coal",         x=42,  y=-47, height=14, width=24,  amount=40000,  },
+        { shape="rect", type="stone",        x=42,  y=-30, height=14, width=24,  amount=40000,  },
+
+        { shape="rect", type="sand",         x=42,  y=-13,  height=14, width=12,  amount=40000,  },
+        { shape="rect", type="gold-ore",     x=56,  y=-13,  height=14, width=12,  amount=40000,  },
+
+        { shape="rect", type="iron-ore",     x=42,  y =4, height=21, width=12,  amount=40000,  },
+        { shape="rect", type="copper-ore",   x=56,  y =4, height=21, width=12,  amount=40000,  },
+
+        { shape="rect", type="menarite",     x=49,  y =30, height=1, width=1,  amount=400000,  },
+        { shape="rect", type="imersite",     x=60,  y =30, height=1, width=1,  amount=400000,  },
         
         { shape="rect", type="crude-oil", x=80, y=-6, height=1, amount=10000,  },
         { shape="rect", type="crude-oil", x=80, y= 0, height=1, amount=10000,  },
@@ -377,6 +385,20 @@ scenario.config.omniResources = {
     
 }
 
+scenario.config.industrialRevolutionResources = {
+    
+        { shape="rect", type="coal",            x=42,  y=-47, height=14, width=24,  amount=5000,  },
+        { shape="rect", type="stone",     x=42,  y=-30, height=14, width=24,  amount=5000,  },
+        { shape="rect", type="tin-ore",     x=42,  y =4, height=21, width=24,  amount=5000,  },
+        { shape="rect", type="copper-ore",     x=42,  y =28, height=21, width=24,  amount=5000,  },
+        
+        { shape="rect", type="crude-oil", x=80, y= 0, height=1, amount=300000,  },
+        { shape="rect", name="steel-chest", x=51,   y=-50,  height=1, width=1, contents = { 
+            {name = "stone", count=100 },
+            {name = "wood", count=100 },
+         }  },
+}
+
 scenario.config.recipesEnabled = {
 --        "loader",
 --        "fast-loader",
@@ -397,8 +419,9 @@ scenario.config.recipesDisabled = {
 -- XXX detect angels ores and auto-configure
 -- scenario.config.spawnResources = scenario.config.vanillaResources;
 -- scenario.config.spawnResources = scenario.config.angelsResources;
--- scenario.config.spawnResources = scenario.config.krastorioResources;
-scenario.config.spawnResources = scenario.config.omniResources;
+scenario.config.spawnResources = scenario.config.krastorioResources;
+--scenario.config.spawnResources = scenario.config.omniResources;
+--scenario.config.spawnResources = scenario.config.industrialRevolutionResources;
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
@@ -536,7 +559,7 @@ SAFE_AREA_BUNKER_ENTRANCE_TILE_DIST = CHUNK_SIZE * 2
 WARNING_AREA_TILE_DIST = CHUNK_SIZE*10
 
 -- 1 : X (spawners alive : spawners destroyed) in this area
-ARN_AREA_REDUCTION_RATIO = 15
+WARN_AREA_REDUCTION_RATIO = 15
 
 -- Create a circle of land area for the spawn
 -- deprecated
@@ -591,7 +614,7 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 --------------------------------------------------------------------------------
 
 -- Enable/Disable enemy expansion
-ENEMY_EXPANSION = true
+ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
 ENEMY_POLLUTION_FACTOR_DIVISOR = 5

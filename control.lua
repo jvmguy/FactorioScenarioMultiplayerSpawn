@@ -38,7 +38,7 @@ require("jvmguy_utils")
 
 -- Include Mods
 require("locale/modules/longreach")
-require("locale/modules/autofill-jvm")
+-- require("locale/modules/autofill-jvm")
 require("locale/modules/adminlog")
 require("locale/modules/decimatecommand")
 require("locale/modules/itemcommand")
