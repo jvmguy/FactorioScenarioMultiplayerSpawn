@@ -183,7 +183,7 @@ local function MakeSpawnCrater(chunkArea, surface, spawnPos)
             if (dist > config.size) and (dist < config.craterSize) and CraterFunc(x, y, dist, config.size, config.craterSize) then
                 local tile = surface.get_tile(x, y);
                 if (tile.name ~= "out-of-map") then
-                    table.insert(tiles, {name = "water",position = {x,y}})
+                    table.insert(tiles, {name = "deepwater",position = {x,y}})
                 end
             end
         end
