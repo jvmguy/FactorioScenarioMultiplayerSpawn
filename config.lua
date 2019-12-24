@@ -132,13 +132,13 @@ scenario.config.startKit = {
         {name = "construction-robot", count = 20},
         {name = "roboport", count = 2},
         {name = "logistic-chest-storage", count = 2},
-        {name = "k-dt-fuel", count=20 },
+--        {name = "k-dt-fuel", count=20 },
 --        {name = "uranium-fuel-cell", count=50 },
 --		{name = "burner-mining-drill", count = 2},
 --		{name = "stone-age-furnace", count = 2},
 --        {name = "steel-axe", count = 5},
 		{name = "submachine-gun", count=1},
-        {name = "iron-plate", count=100},
+--        {name = "iron-plate", count=100},
 --		{name = "car", count=1},
 --		{name = "wood", count=100},
 		{name = "firearm-magazine", count=100},
@@ -151,7 +151,7 @@ scenario.config.startKit = {
 }
 
 scenario.config.teleporter = {
-    enabled = true,
+    enabled = false,
     -- where in the spawn to place the teleporter
 	spawnPosition = { x=20, y=-47 },
 
@@ -160,7 +160,7 @@ scenario.config.teleporter = {
     siloPosition = { x=16, y=-8 },
 
     -- whether there is a teleporter at the silo to take you back    
-    siloTeleportEnabled = true,
+    siloTeleportEnabled = false,
     -- where in the silo chunk the teleporter takes you
     -- this should be different than the silo position
     siloTeleportPosition = { x=14, y=-8 },
@@ -220,7 +220,7 @@ ENABLE_STATUS = true
 ENABLE_LONGREACH = true
 
 -- Enable Autofill
-ENABLE_AUTOFILL = false
+ENABLE_AUTOFILL = true
 
 --------------------------------------------------------------------------------
 -- Spawn Options
@@ -271,9 +271,9 @@ scenario.config.vanillaResources = {
         { shape="rect", type="copper-ore",   x=48,  y=-7,  height=21, width=12,  amount=10000,  },
         { shape="rect", type="iron-ore",     x=48,  y =18, height=21, width=12,  amount=10000,  },
         
-        { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=100000,  },
-        { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=100000,  },
-        { shape="rect", type="crude-oil", x=66, y= 6, height=1, amount=100000,  },
+        { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=300000,  },
+        { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=300000,  },
+        { shape="rect", type="crude-oil", x=66, y= 6, height=1, amount=300000,  },
 }
 
 scenario.config.angelsResources = {
@@ -357,7 +357,7 @@ scenario.config.krastorioResources = {
 }
 
 scenario.config.omniResources = {
-        { shape="rect", type="omnite", x=0,  y=-40, height=80, width=80,  amount=10000,  },
+        { shape="rect", type="omnite", x=0,  y=-50, height=100, width=100,  amount=1000,  },
         { shape="rect", name="steel-chest", x=42,   y=-50, height=1, width=1, contents = { {name = "landfill", count=4800 } },  },
         { shape="rect", name="steel-chest", x=45,   y=-50, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=48,   y=-50, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
@@ -385,6 +385,28 @@ scenario.config.omniResources = {
     
 }
 
+scenario.config.seaBlockResources = {
+    { shape="rect", name="steel-chest", x=42,   y=-50, height=1, width=1, contents = {
+            {name = "landfill", count=1000},
+            {name = "stone", count=50},
+            {name = "small-electric-pole", count=50},
+            {name = "small-lamp", count=12},
+
+            {name = "iron-plate", count=1200},
+            {name = "basic-circuit-board", count=200},
+            {name = "stone-pipe", count=100},
+            {name = "stone-pipe-to-ground", count=50},
+            {name = "stone-brick", count=500},
+            {name = "pipe", count=27},
+            {name = "copper-pipe", count=5},
+            {name = "iron-gear-wheel", count=25},
+            {name = "iron-stick", count=96},
+            {name = "pipe-to-ground", count=2},
+            {name = "electronic-circuit", count=10},
+            {name = "wind-turbine-2", count=120}
+    },  },
+}
+
 scenario.config.industrialRevolutionResources = {
     
         { shape="rect", type="coal",            x=42,  y=-47, height=14, width=24,  amount=5000,  },
@@ -397,6 +419,52 @@ scenario.config.industrialRevolutionResources = {
             {name = "stone", count=100 },
             {name = "wood", count=100 },
          }  },
+}
+
+scenario.config.industrialPlusKrastorioResources = {
+        { shape="rect", name="steel-chest", x=42,   y=-50, height=1, width=1, contents = { {name = "landfill", count=1200 } },  },
+        { shape="rect", name="steel-chest", x=45,   y=-50, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=48,   y=-50, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=51,   y=-50, height=2, width=2, contents = { {name = "tin-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=54,   y=-50,  height=1, width=1, contents = { 
+            {name = "coal", count=2000 },
+            {name = "stone", count=1000 },
+            {name = "wood", count=1000 },
+            {name = "steel-plate", count=400 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
+         }  },
+--        { shape="rect", name="steel-chest", x=40,   y=-50,  height=1, width=1, contents = { 
+--            -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
+--            {name = "offshore-pump", count = 1},
+--            {name = "boiler", count = 10},
+--            {name = "steam-engine", count = 20},
+--            {name = "pipe", count=12},
+--            {name = "pipe-to-ground", count=2},
+--            {name = "small-electric-pole", count = 50},
+--            {name = "inserter", count=20},
+--            {name = "assembling-machine-2", count=10},
+--            {name = "assembling-machine-3", count=1},
+--            {name = "electric-mining-drill", count=10},
+--        },  },
+    
+        { shape="rect", type="coal",         x=42,  y=-47, height=14, width=24,  amount=40000,  },
+        
+        { shape="rect", type="stone",        x=42,  y=-30, height=14, width=12,  amount=20000,  },
+        { shape="rect", type="sand",         x=56,  y=-30,  height=14, width=12,  amount=20000,  },
+
+        { shape="rect", type="tin-ore",      x=42,  y=-13, height=14, width=12,  amount=20000,  },
+        { shape="rect", type="gold-ore",     x=56,  y=-13,  height=14, width=12,  amount=20000,  },
+
+        { shape="rect", type="iron-ore",     x=42,  y =4, height=21, width=12,  amount=40000,  },
+        { shape="rect", type="copper-ore",   x=56,  y =4, height=21, width=12,  amount=40000,  },
+
+        { shape="rect", type="menarite",     x=49,  y =30, height=1, width=1,  amount=400000,  },
+        { shape="rect", type="imersite",     x=60,  y =30, height=1, width=1,  amount=400000,  },
+        
+        { shape="rect", type="crude-oil", x=80, y=-6, height=1, amount=30000,  },
+        { shape="rect", type="crude-oil", x=80, y= 0, height=1, amount=30000,  },
+        { shape="rect", type="crude-oil", x=80, y= 6, height=1, amount=30000,  },
 }
 
 scenario.config.recipesEnabled = {
@@ -417,11 +485,13 @@ scenario.config.recipesDisabled = {
 }
 
 -- XXX detect angels ores and auto-configure
--- scenario.config.spawnResources = scenario.config.vanillaResources;
+--scenario.config.spawnResources = scenario.config.vanillaResources;
 -- scenario.config.spawnResources = scenario.config.angelsResources;
-scenario.config.spawnResources = scenario.config.krastorioResources;
---scenario.config.spawnResources = scenario.config.omniResources;
+-- scenario.config.spawnResources = scenario.config.krastorioResources;
+scenario.config.spawnResources = scenario.config.omniResources;
 --scenario.config.spawnResources = scenario.config.industrialRevolutionResources;
+-- scenario.config.spawnResources = scenario.config.industrialPlusKrastorioResources;
+-- scenario.config.spawnResources = scenario.config.seaBlockResources;
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
@@ -667,7 +737,7 @@ global.jvmguyDebugEnabled = false
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = false,
-    seablock = true,        -- behavior a little like the seablock mod. (well, not really)
+    seablock = false,        -- behavior a little like the seablock mod. (well, not really)
     
     stoneWalls = false,     -- if true, makes a stone wall. if false, generate a void.
     waterWalls = false,

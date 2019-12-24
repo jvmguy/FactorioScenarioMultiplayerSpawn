@@ -107,7 +107,7 @@ local function GenerateRails(surface, chunkArea, railX, rails)
 end
 
 -- waterways for cargo ships
-local function GenerateRails(surface, chunkArea, railX, rails)
+local function GenerateWaterRails(surface, chunkArea, railX, rails)
     if ChunkIntersects(chunkArea, rails) then
         local rect = ChunkIntersection( chunkArea, rails );
         local tiles = {};
