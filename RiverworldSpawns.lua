@@ -287,8 +287,6 @@ local function ReplaceLandWithWater(args)
         end
     end
     surface.set_tiles(tiles)
-    force.unchart_chunk( { x = area.left_top.x / 32, y = area.left_top.y / 32 }, surface )
-    -- force.chart( surface, area );
 end
 
 function M.GenerateRailsAndWalls(surface, chunkArea, spawnPos)
@@ -359,12 +357,23 @@ function M.CreateSpawn(surface, spawnPos, chunkArea)
     local config = M.GetConfig()
     M.ClearEnemiesInRadius(surface, spawnPos, SAFE_AREA_TILE_DIST, chunkArea)
     CreateCropOctagon(surface, spawnPos, chunkArea, config.land, config.trees, config.moat)
-    local force = game.forces[MAIN_FORCE];
+    if config.concrete then
+        PaveWithConcrete( surface, chunkArea, spawnPos, config.land);
+    end
 end
 
 function M.DoGenerateSpawnChunk(args) 
         M.GenerateRailsAndWalls(args.surface, args.area, args.spawnPos );
         DoGenerateSpawnChunk(args.surface, args.area, args.spawnPos );
+
+        local force = game.forces[MAIN_FORCE];
+        local surface = args.surface;
+        local area = args.area;
+        local wasVisible = force.is_chunk_visible(surface, { x=area.left_top.x, y = area.left_top.y});
+        force.unchart_chunk( { x = area.left_top.x / 32, y = area.left_top.y / 32 }, surface )
+        if (wasVisible) then
+            force.chart( surface, area );
+        end
 end
 
 -- This is the main function that creates the spawn area
@@ -426,7 +435,12 @@ function M.ConfigureGameSurface()
     local config = M.GetConfig()
     if config.startingEvolution ~= nil then
         game.forces['enemy'].evolution_factor = config.startingEvolution;
-    end 
+    end
+    if config.freezeTime ~= nil then
+        local surface = game.surfaces[GAME_SURFACE_NAME];
+        surface.daytime = config.freezeTime;
+        surface.freeze_daytime = true;
+    end
 end
 
 return M;

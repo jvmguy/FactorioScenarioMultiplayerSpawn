@@ -57,9 +57,9 @@ require("frontier_silo")
 --require("bps")
 toxicJungle = require("ToxicJungle")
 
---spawnGenerator = require("FermatSpiralSpawns");
-spawnGenerator = require("RiverworldSpawns");
--- spawnGenerator = require("BunkerSpawns");
+spawnGenerator = require("FermatSpiralSpawns");
+-- spawnGenerator = require("RiverworldSpawns");
+--spawnGenerator = require("BunkerSpawns");
 
 sharedSpawns = require("shared_spawns");
 
@@ -227,6 +227,7 @@ Event.register(defines.events.on_gui_checked_state_changed, jvm.on_gui_checked_s
 ----------------------------------------
 function jvm.on_player_joined_game(event)
     PlayerJoinedMessages(event)
+    GivePlayerBonuses(game.players[event.player_index])
 end
 
 Event.register(defines.events.on_player_joined_game, jvm.on_player_joined_game)
@@ -235,8 +236,6 @@ function jvm.on_player_created(event)
     if ENABLE_SPAWN_SURFACE then
         AssignPlayerToStartSurface(game.players[event.player_index])
     end
-
-    GivePlayerBonuses(game.players[event.player_index])
 
     if not ENABLE_SEPARATE_SPAWNS then
         PlayerSpawnItems(event)

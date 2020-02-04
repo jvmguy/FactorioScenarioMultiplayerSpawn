@@ -144,7 +144,7 @@ local function CraterFunc(x, y, dist, spawnSize, craterSize)
     return c*c > f1;
 end
 
-local function MakeSpawnCrater(chunkArea, surface, spawnPos)
+local function DestroyEnemies(chunkArea, surface, spawnPos)
     local config = M.GetConfig()
     
 
@@ -172,7 +172,25 @@ local function MakeSpawnCrater(chunkArea, surface, spawnPos)
             end
         end
     end
-        
+end
+
+local function MakeSpawnCrater(chunkArea, surface, spawnPos)
+    local config = M.GetConfig()
+    
+
+    -- don't touch chunks near the silo
+    local w = SILO_RECT_SIZE;
+    local siloRect = MakeRect( -w/2, w, -w/2, w);
+    if ChunkIntersects( chunkArea, siloRect ) then
+        return
+    end
+
+    local w = config.craterSize;
+    local craterArea = MakeRect( spawnPos.x-w, 2*w, spawnPos.y-w, 2*w);
+    if not ChunkIntersects(chunkArea, craterArea) then
+        return
+    end    
+
     -- construct a set of tiles that we want to keep as land.
     local tiles = {};
     for y=chunkArea.left_top.y, chunkArea.right_bottom.y-1 do
@@ -190,8 +208,8 @@ local function MakeSpawnCrater(chunkArea, surface, spawnPos)
     end
     surface.set_tiles(tiles)
     
-    local force = game.forces[MAIN_FORCE];
-    force.unchart_chunk( { x = chunkArea.left_top.x / 32, y = chunkArea.left_top.y / 32 }, surface )
+--    local force = game.forces[MAIN_FORCE];
+--    force.unchart_chunk( { x = chunkArea.left_top.x / 32, y = chunkArea.left_top.y / 32 }, surface )
     -- force.chart( surface, chunkArea );
 end
 
@@ -208,9 +226,12 @@ end
 function M.CreateSpawn(surface, spawnPos, chunkArea)
     local config = M.GetConfig()
     CreateCropOctagon(surface, spawnPos, chunkArea, config.land, config.trees, config.moat)
-    local force = game.forces[MAIN_FORCE];
-    force.unchart_chunk( { x = chunkArea.left_top.x / 32, y = chunkArea.left_top.y / 32 }, surface )
-    force.chart(surface, chunkArea);
+    if config.concrete then
+        PaveWithConcrete( surface, chunkArea, spawnPos, config.land);
+    end
+--    local force = game.forces[MAIN_FORCE];
+--    force.unchart_chunk( { x = chunkArea.left_top.x / 32, y = chunkArea.left_top.y / 32 }, surface )
+--    force.chart(surface, chunkArea);
 end
 
 function M.DoGenerateSpawnChunk(args) 
@@ -219,6 +240,14 @@ end
 
 -- This is the main function that creates the spawn area
 -- Provides resources, land and a safe zone
+-- 
+-- Chunk generation seems to be problematic
+--    We want to override the default vanilla generation for specific sections of the map.
+--
+--    We want to remove any enemy in the spawn area
+--    Maybe generate an impact crater (replace land with water)
+--    Call DoGenerateSpawnChunk (common code for all scenarios)
+
 function M.ChunkGenerated(event)
     local config = M.GetConfig()
     local surface = event.surface
@@ -232,8 +261,14 @@ function M.ChunkGenerated(event)
         
         -- Common spawn generation code.
         if spawnPos ~= nil then
-            MakeSpawnCrater(chunkArea, surface, spawnPos);
-            Scheduler.schedule(game.tick+40, M.DoGenerateSpawnChunk, { surface= surface, area = chunkArea, spawnPos=spawnPos } )
+            DestroyEnemies(chunkArea, surface, spawnPos);
+            if config.crater then
+                MakeSpawnCrater(chunkArea, surface, spawnPos);
+            end
+            -- careful... arguments for surface and chunkArea are swapped here.
+            DoGenerateSpawnChunk(surface, chunkArea, spawnPos);
+            
+--            Scheduler.schedule(game.tick+40, M.DoGenerateSpawnChunk, { surface= surface, area = chunkArea, spawnPos=spawnPos } )
         end
         if config.seablock then
             Scheduler.schedule(game.tick+42, ReplaceLandWithWater, { surface= surface, area = chunkArea, spawnPos=spawnPos } )

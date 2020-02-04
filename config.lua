@@ -96,8 +96,8 @@ scenario.config.regrow = {
 }
 
 scenario.config.bots = {
-    worker_robots_storage_bonus = 5,
-    worker_robots_speed_modifier = 1.0,
+    worker_robots_storage_bonus = 0,
+    worker_robots_speed_modifier = 0.0,
 }
 
 scenario.config.forceBonuses = {
@@ -105,8 +105,7 @@ scenario.config.forceBonuses = {
 }
 
 scenario.config.playerBonus = {
---    character_crafting_speed_modifier = 0.5-1.0,
-      character_crafting_speed_modifier = 0,
+      character_crafting_speed_modifier = 1/100-1.0,
 }
 
 scenario.config.silo = {
@@ -114,7 +113,12 @@ scenario.config.silo = {
     addPower = false,
 }
 
-scenario.config.startKit = {
+scenario.config.startKitSmall = {
+        {name = "submachine-gun", count=1},
+        {name = "firearm-magazine", count=100},
+}
+
+scenario.config.startKitMedium = {
         {name = "power-armor", count = 1,
             equipment = {
                   -- the order of these does matter.
@@ -149,6 +153,8 @@ scenario.config.startKit = {
 --        {name = "small-electric-pole", count = 50},
 --        {name = "transport-belt", count=400},
 }
+
+scenario.config.startKit = scenario.config.startKitMedium
 
 scenario.config.teleporter = {
     enabled = false,
@@ -243,7 +249,7 @@ scenario.config.toxicJungle = {
 }    
 
 scenario.config.vanillaResources = {
-        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+--        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=42,   y=-8,  height=1, width=1, contents = { 
@@ -262,18 +268,18 @@ scenario.config.vanillaResources = {
             {name = "pipe-to-ground", count=2},
             {name = "small-electric-pole", count = 20},
             {name = "inserter", count=20},
-            {name = "assembling-machine-2", count=10},
+            {name = "assembling-machine-1", count=10},
         },  },
     
-        { shape="rect", type="coal",         x=48,  y=-41, height=14, width=12,  amount=10000,  },
-        { shape="rect", type="stone",        x=48,  y=-24, height=14, width=12,  amount=10000,  },
+        { shape="rect", type="coal",         x=48,  y=-41, height=14, width=18,  amount=10000,  },
+        { shape="rect", type="stone",        x=48,  y=-24, height=14, width=18,  amount=10000,  },
         -- { shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
-        { shape="rect", type="copper-ore",   x=48,  y=-7,  height=21, width=12,  amount=10000,  },
-        { shape="rect", type="iron-ore",     x=48,  y =18, height=21, width=12,  amount=10000,  },
+        { shape="rect", type="copper-ore",   x=48,  y=-7,  height=21, width=18,  amount=10000,  },
+        { shape="rect", type="iron-ore",     x=48,  y =18, height=21, width=18,  amount=10000,  },
         
-        { shape="rect", type="crude-oil", x=66, y=-6, height=1, amount=300000,  },
-        { shape="rect", type="crude-oil", x=66, y= 0, height=1, amount=300000,  },
-        { shape="rect", type="crude-oil", x=66, y= 6, height=1, amount=300000,  },
+        { shape="rect", type="crude-oil", x=72, y=-6, height=1, amount=100000,  },
+        { shape="rect", type="crude-oil", x=72, y= 0, height=1, amount=10000000,  },
+        { shape="rect", type="crude-oil", x=72, y= 6, height=1, amount=100000,  },
 }
 
 scenario.config.angelsResources = {
@@ -335,7 +341,7 @@ scenario.config.krastorioResources = {
             {name = "small-electric-pole", count = 50},
             {name = "inserter", count=20},
             {name = "assembling-machine-2", count=10},
-            {name = "assembling-machine-3", count=1},
+--            {name = "assembling-machine-3", count=1},
             {name = "electric-mining-drill", count=10},
         },  },
     
@@ -485,127 +491,19 @@ scenario.config.recipesDisabled = {
 }
 
 -- XXX detect angels ores and auto-configure
---scenario.config.spawnResources = scenario.config.vanillaResources;
+scenario.config.spawnResources = scenario.config.vanillaResources;
 -- scenario.config.spawnResources = scenario.config.angelsResources;
 -- scenario.config.spawnResources = scenario.config.krastorioResources;
-scenario.config.spawnResources = scenario.config.omniResources;
+-- scenario.config.spawnResources = scenario.config.omniResources;
 --scenario.config.spawnResources = scenario.config.industrialRevolutionResources;
 -- scenario.config.spawnResources = scenario.config.industrialPlusKrastorioResources;
 -- scenario.config.spawnResources = scenario.config.seaBlockResources;
+
+
 ---------------------------------------
 -- Resource Options
 ---------------------------------------
 -- everyone gets a separate start area
-scenario.config.separateSpawns = {
---
---    shape = "octagon",
---    treeDensity = 0.2,
-
-    -- if we use fermat spirals 
-    --     nearest base is sqrt(25)*spacing = 5000
-    --     most distant base is sqrt(25+42)*spacing = 8000
-    preferFar = false,
-    firstSpawnPoint = 18,
-    numSpawnPoints = 22,
-    extraSpawn = 24,    -- admin spawn really far away
-    spacing = 1000,
-    
--- x = right, left
--- y = up, down
-
-    land = 74,
-    trees = 3,  -- included in the land
-    moat = 10,   -- additional to land
-    size = 84,  -- should be land + moat
-	
-	-- water = { shape="rect", x=-5, y=-50, height=5, width=15 }, 
-	
-    resources = scenario.config.spawnResources,
-        
-    researched = {
---        'automation',
---        'logistics',
---        'electronics',
---        'automation-2',    
---        'coal-liquefaction',
-    },
-    recipesEnabled = scenario.config.recipesEnabled,
-    recipesDisabled = scenario.config.recipesDisabled,
-}
-
-scenario.config.fermatSpiralSpawns = {
-    -- this mostly inherits the separateSpawns config, but has a few minor differences
-    seablock = false,    -- replace land with water except where there are resources
-    firstSpawnPoint = 1,
-    numSpawnPoints = 20,
-    extraSpawn = 55,    -- really far away, but not as far as you might think
-    
-    spacing = 1280,
-    
-    -- describe the spawn crop circle
-    land = 110,
-    trees = 3,  -- included in the land
-    moat = 10,   -- additional to land
-    size = 120,  -- should be land + moat
-    craterSize = 256,  -- size of impact crater (greater than size)
-    
-    resources = scenario.config.spawnResources,
-
-    -- freeze time of day
-    -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
-    -- 0 is day. 0.5 is night. 0.35 is twilight.
-    researched = {
-    -- 'coal-liquefaction',
-    },
-    
-    startingEvolution=0.4,
-
-    recipesEnabled = scenario.config.recipesEnabled,
-    recipesDisabled = scenario.config.recipesDisabled,
-}
-
-scenario.config.bunkerSpawns = {
-    -- this mostly inherits the separateSpawns config, but has a few minor differences
-    firstSpawnPoint = 16,
-    numSpawnPoints = 27,
-    extraSpawn = 28,    -- really far away, but not as far as you might think
-    
-    spacing = 500,
-    
-    -- for the bunker zone
-    bunkerSpacing = 576,
-    bunkerZoneStart = 12*1024,
-    bunkerZoneHeight = 4096,
-    waterRadius = 100,
-    bunkerRadius = 110,
-    -- location within the bunker of the teleport that takes you to wilderness
-    teleport = { x=24, y=-47 },
-        
-    -- The above ground entrance to the bunker. land + water
-    bunkerEntranceLandRadius = 8,
-    bunkerEntranceRadius = 32,
-    
-    land = 80,
-    trees = 3,  -- included in the land
-    moat = 10,   -- additional to land
-    size = 90,  -- should be land + moat
-    
-    resources = scenario.config.spawnResources,
-
-    -- freeze time of day
-    -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
-    -- 0 is day. 0.5 is night. 0.35 is twilight.
-    researched = {
-    -- 'coal-liquefaction',
-    },
-    
-    startingEvolution=0.7,
-
-    recipesEnabled = scenario.config.recipesEnabled,
-    recipesDisabled = scenario.config.recipesDisabled,
-}
 
 SPAWN_TREE_DENSITY = 0.3
 
@@ -633,7 +531,7 @@ WARN_AREA_REDUCTION_RATIO = 15
 
 -- Create a circle of land area for the spawn
 -- deprecated
-ENFORCE_LAND_AREA_TILE_DIST = scenario.config.separateSpawns.size 
+ENFORCE_LAND_AREA_TILE_DIST = 84 
 
 ---------------------------------------
 -- Other Forces/Teams Options
@@ -734,11 +632,88 @@ global.oarcDebugEnabled = false
 global.jvmguyDebugEnabled = false
 
 
+scenario.config.fermatSpiralSpawns = {
+    -- this mostly inherits the separateSpawns config, but has a few minor differences
+    seablock = false,    -- replace land with water except where there are resources
+    crater = false,
+    concrete = true,
+    firstSpawnPoint = 1,
+    numSpawnPoints = 20,
+    extraSpawn = 55,    -- really far away, but not as far as you might think
+    
+    spacing = 1280,
+    
+    -- describe the spawn crop circle
+    land = 80,
+    moat = 10,   -- additional to land
+    trees = 3,  -- included in the land
+    size = 90,  -- should be land + moat
+    craterSize = 256,  -- size of impact crater (greater than size)
+    
+    resources = scenario.config.spawnResources,
+
+    -- freeze time of day
+    -- you might get night vision at the start, but you have to decide whether it's worth using it.
+    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    -- 0 is day. 0.5 is night. 0.35 is twilight.
+    researched = {
+    -- 'coal-liquefaction',
+    },
+    
+    startingEvolution=0.3,
+
+    recipesEnabled = scenario.config.recipesEnabled,
+    recipesDisabled = scenario.config.recipesDisabled,
+}
+
+scenario.config.bunkerSpawns = {
+    -- this mostly inherits the separateSpawns config, but has a few minor differences
+    firstSpawnPoint = 16,
+    numSpawnPoints = 27,
+    extraSpawn = 28,    -- really far away, but not as far as you might think
+    
+    spacing = 500,
+    
+    -- for the bunker zone
+    bunkerSpacing = 576,
+    bunkerZoneStart = 12*1024,
+    bunkerZoneHeight = 4096,
+    waterRadius = 100,
+    bunkerRadius = 110,
+    -- location within the bunker of the teleport that takes you to wilderness
+    teleport = { x=24, y=-47 },
+        
+    -- The above ground entrance to the bunker. land + water
+    bunkerEntranceLandRadius = 8,
+    bunkerEntranceRadius = 32,
+    
+    land = 80,
+    trees = 3,  -- included in the land
+    moat = 10,   -- additional to land
+    size = 90,  -- should be land + moat
+    
+    resources = scenario.config.spawnResources,
+
+    -- freeze time of day
+    -- you might get night vision at the start, but you have to decide whether it's worth using it.
+    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    -- 0 is day. 0.5 is night. 0.35 is twilight.
+    researched = {
+    -- 'coal-liquefaction',
+    },
+    
+    startingEvolution=0.7,
+
+    recipesEnabled = scenario.config.recipesEnabled,
+    recipesDisabled = scenario.config.recipesDisabled,
+}
+
 scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = false,
     seablock = false,        -- behavior a little like the seablock mod. (well, not really)
-    
+
+    concrete = true,        -- pave the spawn with concrete
     stoneWalls = false,     -- if true, makes a stone wall. if false, generate a void.
     waterWalls = false,
     firstSpawnPoint = 14,
@@ -760,7 +735,7 @@ scenario.config.riverworld = {
     resources = scenario.config.spawnResources,
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    -- freezeTime = 0.5,   -- see https://wiki.factorio.com/Game-day
     -- 0 is day. 0.5 is night. 0.35 is twilight.
     recipesEnabled = {
 --        "loader",
