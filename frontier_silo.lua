@@ -221,11 +221,12 @@ function GenerateRocketSiloChunk(event)
         for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
             entity.destroy()
         end
-    end
 
-    -- Create rocket silo
-    CreateCropCircle(surface, global.siloPosition, chunkArea, 70)
-    CreateRocketSilo(surface, chunkArea)
+        -- Create rocket silo
+        CreateCropCircle(surface, global.siloPosition, chunkArea, 70)
+        
+        CreateRocketSilo(surface, chunkArea)
+    end
 end
 
 function ChartRocketSiloArea(force)
