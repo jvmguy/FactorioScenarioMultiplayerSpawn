@@ -105,7 +105,8 @@ scenario.config.forceBonuses = {
 }
 
 scenario.config.playerBonus = {
-      character_crafting_speed_modifier = 1/100-1.0,
+      character_crafting_speed_modifier = 0,
+--      character_crafting_speed_modifier = 1/100-1.0,
 }
 
 scenario.config.silo = {
@@ -157,7 +158,7 @@ scenario.config.startKitMedium = {
 scenario.config.startKit = scenario.config.startKitMedium
 
 scenario.config.teleporter = {
-    enabled = false,
+    enabled = true,
     -- where in the spawn to place the teleporter
 	spawnPosition = { x=20, y=-47 },
 
@@ -166,7 +167,7 @@ scenario.config.teleporter = {
     siloPosition = { x=16, y=-8 },
 
     -- whether there is a teleporter at the silo to take you back    
-    siloTeleportEnabled = false,
+    siloTeleportEnabled = true,
     -- where in the silo chunk the teleporter takes you
     -- this should be different than the silo position
     siloTeleportPosition = { x=14, y=-8 },
@@ -726,11 +727,15 @@ scenario.config.riverworld = {
     rail2 = -3*640-32, -- generate a north-south railway starting here
     freespace = 3*640 + 32, -- no voids after this 
     
-    land = 74,
+    land = 84,
     trees = 3,  -- included in the land
-    moat = 10,   -- additional to land
-    moatWidth = 10,   -- additional to land
+    moat = 0,   -- additional to land
     size = 84,  -- should be land + moat
+
+    -- this is a vertical moat, not the usual one around the spawn.
+    moatWidth = 0,   -- additional to land
+
+    startingEvolution=0.0,
 
     resources = scenario.config.spawnResources,
     -- freeze time of day

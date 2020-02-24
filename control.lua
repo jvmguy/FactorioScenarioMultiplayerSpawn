@@ -57,9 +57,11 @@ require("frontier_silo")
 --require("bps")
 toxicJungle = require("ToxicJungle")
 
-spawnGenerator = require("FermatSpiralSpawns");
--- spawnGenerator = require("RiverworldSpawns");
+-- spawnGenerator = require("FermatSpiralSpawns");
+spawnGenerator = require("RiverworldSpawns");
 --spawnGenerator = require("BunkerSpawns");
+
+terrainGenerator = require("GeometricTerrain");
 
 sharedSpawns = require("shared_spawns");
 
@@ -181,7 +183,10 @@ Event.register(defines.events.on_rocket_launched, jvm.on_rocket_launch)
 -- Chunk Generation
 ----------------------------------------
 function jvm.on_chunk_generated(event)
+
+    global.customChunk = false;
     local shouldGenerateResources = true
+    
     if scenario.config.wipespawn.enabled then
         wipespawn.onChunkGenerated(event)
     end
@@ -196,6 +201,12 @@ function jvm.on_chunk_generated(event)
 
     if FRONTIER_ROCKET_SILO_MODE then
         GenerateRocketSiloChunk(event)
+    end
+    if not global.customChunk then
+        if terrainGenerator ~= nil then
+            terrainGenerator.ChunkGenerated(event);
+        end
+        global.customChunk = false;
     end
 end
 

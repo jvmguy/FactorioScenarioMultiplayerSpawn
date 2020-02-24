@@ -129,7 +129,7 @@ local function ReplaceLandWithWater(args)
             end
         end
     end
-    surface.set_tiles(tiles)
+    SetTiles(surface, tiles, true)
     local force = game.forces[MAIN_FORCE];
     force.unchart_chunk( { x = area.left_top.x / 32, y = area.left_top.y / 32 }, surface )
     -- force.chart( surface, area );
@@ -144,35 +144,6 @@ local function CraterFunc(x, y, dist, spawnSize, craterSize)
     return c*c > f1;
 end
 
-local function DestroyEnemies(chunkArea, surface, spawnPos)
-    local config = M.GetConfig()
-    
-
-    -- don't touch chunks near the silo
-    local w = SILO_RECT_SIZE;
-    local siloRect = MakeRect( -w/2, w, -w/2, w);
-    if ChunkIntersects( chunkArea, siloRect ) then
-        return
-    end
-
-    local w = config.craterSize;
-    local craterArea = MakeRect( spawnPos.x-w, 2*w, spawnPos.y-w, 2*w);
-    if not ChunkIntersects(chunkArea, craterArea) then
-        return
-    end    
-
-    -- destroy any enemy in the crater area
-    for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
-        if entity ~= nil then
-            local dx = entity.position.x - spawnPos.x;
-            local dy = entity.position.y - spawnPos.y;
-            local dist = math.sqrt(dx*dx+dy*dy);
-            if (dist < config.craterSize) then
-                entity.destroy()
-            end
-        end
-    end
-end
 
 local function MakeSpawnCrater(chunkArea, surface, spawnPos)
     local config = M.GetConfig()
@@ -206,7 +177,7 @@ local function MakeSpawnCrater(chunkArea, surface, spawnPos)
             end
         end
     end
-    surface.set_tiles(tiles)
+    SetTiles(surface, tiles, true)
     
 --    local force = game.forces[MAIN_FORCE];
 --    force.unchart_chunk( { x = chunkArea.left_top.x / 32, y = chunkArea.left_top.y / 32 }, surface )
@@ -234,9 +205,10 @@ function M.CreateSpawn(surface, spawnPos, chunkArea)
 --    force.chart(surface, chunkArea);
 end
 
-function M.DoGenerateSpawnChunk(args) 
-        DoGenerateSpawnChunk(args.surface, args.area, args.spawnPos );
-end
+--function M.DoGenerateSpawnChunk(args) 
+--        -- no longer called via scheduler? 
+--        DoGenerateSpawnChunk(args.surface, args.area, args.spawnPos );
+--end
 
 -- This is the main function that creates the spawn area
 -- Provides resources, land and a safe zone
@@ -261,12 +233,13 @@ function M.ChunkGenerated(event)
         
         -- Common spawn generation code.
         if spawnPos ~= nil then
-            DestroyEnemies(chunkArea, surface, spawnPos);
+            DestroyEnemies(chunkArea, surface, spawnPos, config.craterSize);
             if config.crater then
                 MakeSpawnCrater(chunkArea, surface, spawnPos);
             end
             -- careful... arguments for surface and chunkArea are swapped here.
             DoGenerateSpawnChunk(surface, chunkArea, spawnPos);
+            AddSpawnTag(surface, chunkArea, spawnPos);
             
 --            Scheduler.schedule(game.tick+40, M.DoGenerateSpawnChunk, { surface= surface, area = chunkArea, spawnPos=spawnPos } )
         end

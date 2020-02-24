@@ -61,6 +61,14 @@ local function fromZCoord( area, z )
     return { x=area.left_top.x+x, y=area.left_top.y+y }
 end
 
+local function RemoveEntities(surface, area) 
+    for _, entity in pairs (surface.find_entities_filtered{area = area }) do
+        if entity and entity.valid and (entity.force.name == "enemy" or entity.force.name == "neutral") then
+            entity.destroy()  
+        end
+    end
+end
+
 local function GenerateRails(surface, chunkArea, railX, rails)
     if ChunkIntersects(chunkArea, rails) then
         local rect = ChunkIntersection( chunkArea, rails );
@@ -70,15 +78,10 @@ local function GenerateRails(surface, chunkArea, railX, rails)
                 table.insert(tiles, {name = "grass-1", position = {x,y}});
             end
         end
-        surface.set_tiles(tiles)
+        SetTiles(surface, tiles, true)
 
-        for _, entity in pairs (surface.find_entities_filtered{area = rails}) do
-            if entity and entity.valid then
-                entity.destroy()  
-            end
-        end
+        RemoveEntities( surface, rails );
         
-
         for y = rect.left_top.y, rect.right_bottom.y-1 do
             if math.fmod(y,2)==0 then
                 local pt = { x=railX+2, y=y };                 
@@ -109,6 +112,7 @@ end
 -- waterways for cargo ships
 local function GenerateWaterRails(surface, chunkArea, railX, rails)
     if ChunkIntersects(chunkArea, rails) then
+    
         local rect = ChunkIntersection( chunkArea, rails );
         local tiles = {};
         for y = rect.left_top.y, rect.right_bottom.y-1 do
@@ -116,15 +120,10 @@ local function GenerateWaterRails(surface, chunkArea, railX, rails)
                 table.insert(tiles, {name = "water", position = {x,y}});
             end
         end
-        surface.set_tiles(tiles)
+        SetTiles(surface, tiles, true)
 
-        for _, entity in pairs (surface.find_entities_filtered{area = rails}) do
-            if entity and entity.valid then
-                entity.destroy()  
-            end
-        end
+        RemoveEntities(surface, rails);
         
-
         for y = rect.left_top.y, rect.right_bottom.y-1 do
             if math.fmod(y,2)==0 then
                 local pt = { x=railX+2, y=y };                 
@@ -174,7 +173,7 @@ local function GenerateMoat(surface, chunkArea, moatRect)
             table.insert(tiles, {name = "water",position = {x,y}})
         end
     end
-    surface.set_tiles(tiles)
+    SetTiles(surface, tiles, true)
 end
 
 local function GenerateWalls(surface, wallRect, railsRect, railsRect2, wantWater)
@@ -202,11 +201,10 @@ local function GenerateWalls(surface, wallRect, railsRect, railsRect2, wantWater
 			end
         end
     end
-    surface.set_tiles(tiles)
+    
+    SetTiles(surface, tiles, true)
 
-    for _, entity in pairs (surface.find_entities_filtered{area = wallRect}) do
-        entity.destroy()  
-    end
+    RemoveEntities(surface, wallRect);
     
 	if scenario.config.riverworld.stoneWalls then
       for y=wallRect.left_top.y, wallRect.right_bottom.y-1 do
@@ -286,7 +284,8 @@ local function ReplaceLandWithWater(args)
             end
         end
     end
-    surface.set_tiles(tiles)
+    
+    SetTiles(surface, tiles, true)
 end
 
 function M.GenerateRailsAndWalls(surface, chunkArea, spawnPos)
@@ -362,18 +361,26 @@ function M.CreateSpawn(surface, spawnPos, chunkArea)
     end
 end
 
-function M.DoGenerateSpawnChunk(args) 
-        M.GenerateRailsAndWalls(args.surface, args.area, args.spawnPos );
-        DoGenerateSpawnChunk(args.surface, args.area, args.spawnPos );
+--function M.DoGenerateSpawnChunk(args)
+--        -- no longer called via scheduler? 
+--        M.GenerateRailsAndWalls(args.surface, args.area, args.spawnPos );
+--        DoGenerateSpawnChunk(args.surface, args.area, args.spawnPos );
+--
+--        if false then   -- this seems to cause trouble
+--            local force = game.forces[MAIN_FORCE];
+--            local surface = args.surface;
+--            local area = args.area;
+--            local wasVisible = force.is_chunk_visible(surface, { x=area.left_top.x, y = area.left_top.y});
+--            force.unchart_chunk( { x = area.left_top.x / 32, y = area.left_top.y / 32 }, surface )
+--            if (wasVisible) then
+--                force.chart( surface, area );
+--            end
+--        end
+--end
 
-        local force = game.forces[MAIN_FORCE];
-        local surface = args.surface;
-        local area = args.area;
-        local wasVisible = force.is_chunk_visible(surface, { x=area.left_top.x, y = area.left_top.y});
-        force.unchart_chunk( { x = area.left_top.x / 32, y = area.left_top.y / 32 }, surface )
-        if (wasVisible) then
-            force.chart( surface, area );
-        end
+
+function CallbackAddSpawnTag(args)
+    AddSpawnTag(args.surface, args.area, args.spawnPos);
 end
 
 -- This is the main function that creates the spawn area
@@ -381,7 +388,7 @@ end
 function M.ChunkGenerated(event)
     local config = M.GetConfig()
     local surface = event.surface
-    
+
     if surface.name == GAME_SURFACE_NAME then
         -- Only take into account the nearest spawn when generating resources
         local chunkArea = event.area
@@ -391,27 +398,19 @@ function M.ChunkGenerated(event)
         
         -- Common spawn generation code.
         if spawnPos ~= nil then
-            Scheduler.schedule(game.tick+40, M.DoGenerateSpawnChunk, { surface= surface, area = chunkArea, spawnPos=spawnPos } )
+            DestroyEnemies(chunkArea, surface, spawnPos, SAFE_AREA_TILE_DIST);
+            M.GenerateRailsAndWalls(surface, chunkArea, spawnPos );
+ 
+            -- careful... arguments for surface and chunkArea are swapped here.
+            DoGenerateSpawnChunk(surface, chunkArea, spawnPos);
+            
+            -- Adding a tag immediately does not work. why?
+            Scheduler.schedule(game.tick+60, CallbackAddSpawnTag, { surface= surface, area = chunkArea, spawnPos=spawnPos } )
         end
         if config.seablock then
             Scheduler.schedule(game.tick+42, ReplaceLandWithWater, { surface= surface, area = chunkArea, spawnPos=spawnPos } )
         end
-    end
-end
-
--- This is the main function that creates the spawn area
--- Provides resources, land and a safe zone
-function M.SeparateSpawnsGenerateChunk(event)
-    local surface = event.surface
-    
-    if surface.name == GAME_SURFACE_NAME then
-        -- Only take into account the nearest spawn when generating resources
-        local chunkArea = event.area
-        local midPoint = {x = (chunkArea.left_top.x + chunkArea.right_bottom.x)/2,
-                            y = (chunkArea.left_top.y + chunkArea.right_bottom.y)/2 } 
-        local spawnPos = NearestSpawn( global.allSpawns, midPoint)
-        GenerateSpawnChunk(event, spawnPos)
-    end
+     end
 end
 
 --function M.CreateGameSurfaces()

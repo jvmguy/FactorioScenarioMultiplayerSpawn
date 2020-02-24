@@ -22,9 +22,40 @@ function PaveWithConcrete( surface, chunkArea, spawnPos, landRadius)
             end
         end
     end
-    surface.set_tiles(tiles);
+    SetTiles(surface, tiles, true);
 end
 
+local function MakeRect( x, w, y, h )
+    return { left_top = { x=x, y=y }, right_bottom = { x=x+w, y=y+h } }
+end
+
+local function ChunkContains( chunk, pt )
+        return pt.x >= chunk.left_top.x and pt.x < chunk.right_bottom.x and
+            pt.y >= chunk.left_top.y and pt.y < chunk.right_bottom.y;
+end
+
+local function ChunkIntersects( a, b )
+    if a.left_top.x > b.right_bottom.x or b.left_top.x > a.right_bottom.x or
+       a.left_top.y > b.right_bottom.y or b.left_top.y > a.right_bottom.y then
+        return false;
+    end
+    return true;
+end
+
+function SetTiles(surface, tiles, correct)
+    if #tiles >0 then
+        global.customChunk = true;
+        surface.set_tiles(tiles, correct)
+    end
+end
+
+
+function AddSpawnTag(surface, chunkArea, spawnPos)
+    if ChunkContains(chunkArea, spawnPos) then
+        local force = game.forces[MAIN_FORCE];
+        force.add_chart_tag(surface, { position=spawnPos, text="Spawn ".. spawnPos.seq })
+    end
+end
 
 -- Enforce a square of land, with a tree border
 -- this is equivalent to the CreateCropCircle code
@@ -53,7 +84,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
             end
         end
     end
-    surface.set_tiles(dirtTiles)
+    SetTiles(surface, dirtTiles, true)
 
     -- create the moat
     if (moatWidth>0) then
@@ -69,7 +100,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
                 end
             end
         end
-	    surface.set_tiles(waterTiles)
+        SetTiles( surface, waterTiles, true);
     end
     
     local water = config.water;
@@ -79,7 +110,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
         for _,tile in pairs(shapeTiles) do
             table.insert(waterTiles, {name = "water", position ={tile.x,tile.y}})
         end
-        surface.set_tiles(waterTiles)
+        setTiles(surface, waterTiles, true);
     end
 
     -- remove resources in the immediate areas?
@@ -111,7 +142,7 @@ function CreateWaterStrip(surface, spawnPos, width, height)
         end
     end
     -- DebugPrint("Setting water tiles in this chunk! " .. chunkArea.left_top.x .. "," .. chunkArea.left_top.y)
-    surface.set_tiles(waterTiles)
+    setTiles(surface, waterTiles, true);
 end
 
 function CreateTeleporter(surface, teleporterPosition, usage)
@@ -240,6 +271,36 @@ end
 
 function ShowPlayerSpawns(player)
   ShowSpawns( player, global.playerSpawns );
+end
+
+function DestroyEnemies(chunkArea, surface, spawnPos, radius)
+    local config = spawnGenerator.GetConfig()
+
+    -- don't touch chunks near the silo
+    local w = SILO_RECT_SIZE;
+    local siloRect = MakeRect( -w/2, w, -w/2, w);
+    if ChunkIntersects( chunkArea, siloRect ) then
+        -- silo enemies are handled elsewhere?
+        return
+    end
+
+    local w = radius
+    local craterArea = MakeRect( spawnPos.x-w, 2*w, spawnPos.y-w, 2*w);
+    if not ChunkIntersects(chunkArea, craterArea) then
+        return
+    end
+
+    -- destroy any enemy in the crater area
+    for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
+        if entity ~= nil then
+            local dx = entity.position.x - spawnPos.x;
+            local dy = entity.position.y - spawnPos.y;
+            local dist = math.sqrt(dx*dx+dy*dy);
+            if (dist < radius) then
+                entity.destroy()
+            end
+        end
+    end
 end
 
 function EraseArea(position, chunkDist)

@@ -88,7 +88,7 @@ local function GenerateBunker(surface, chunkArea, spawnPos, waterRadius, bunkerR
             end
         end
     end
-    surface.set_tiles(tiles)
+    SetTiles(surface, tiles, true)
 end
 
 local function GenerateBunkerTeleport(surface, chunkArea, spawnPos)
@@ -124,7 +124,7 @@ local function GenerateEntrance(surface, chunkArea, spawnPos)
             end
         end
     end
-    surface.set_tiles(tiles)
+    SetTiles(surface, tiles, true)
     
     ClearEnemies(surface, teleportPos, SAFE_AREA_BUNKER_ENTRANCE_TILE_DIST)
 end

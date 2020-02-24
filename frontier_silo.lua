@@ -22,7 +22,7 @@ local function CreateRocketSilo(surface, chunkArea)
                 i=i+1
             end
         end
-        surface.set_tiles(tiles, false)
+        SetTiles(surface, tiles, false);
         tiles = {}
         i = 1
         for dx = -20,20 do
@@ -31,7 +31,7 @@ local function CreateRocketSilo(surface, chunkArea)
                 i=i+1
             end
         end
-        surface.set_tiles(tiles, true)
+        SetTiles(surface, tiles, true);
 
         -- Create silo and assign to main force
         local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5-8, global.siloPosition.y-8}, force = MAIN_FORCE}

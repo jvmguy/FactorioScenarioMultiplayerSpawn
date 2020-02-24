@@ -49,6 +49,6 @@ Event.register(defines.events.on_chunk_generated, function(event)
         end
       end
     end
-    event.surface.set_tiles(tiles)
+    SetTiles(surface, tiles, true)
 	end
 end)

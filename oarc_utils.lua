@@ -476,7 +476,7 @@ function CreateCropCircle(surface, centerPos, chunkArea, tileRadius)
         entity.destroy()
     end
 
-    surface.set_tiles(dirtTiles)
+    SetTiles(surface, dirtTiles, true)
 end
 
 -- Adjust alien params
