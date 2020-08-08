@@ -270,12 +270,17 @@ function CheckIfInChunk(x, y, chunkArea)
     return false;
 end
 
-local function CreateItems( surface, tiles, itemName, contents )
+local function CreateItems( surface, tiles, itemName, contents, props )
     for _, tile in pairs(tiles) do
         local chest = surface.create_entity({name=itemName, position=tile, force=MAIN_FORCE})
         if contents~=nil then
             for _,item in pairs(contents) do
                 chest.insert(item)
+            end
+        end
+        if props~=nil then
+            for name,prop in pairs(props) do
+                chest[name] = prop
             end
         end
     end
@@ -316,7 +321,7 @@ function GenerateStartingResources(surface, chunkArea, spawnPos)
         if (res.type ~= nil) then
             CreateResources( surface, tiles, res.amount, res.type, res.mixedOres );
         elseif (res.name ~= nil) then
-            CreateItems( surface, tiles, res.name, res.contents );
+            CreateItems( surface, tiles, res.name, res.contents, res.props );
         end
     end
 end
