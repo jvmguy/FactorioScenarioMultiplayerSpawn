@@ -5,6 +5,8 @@ local jvmHeap = require("jvm-chunkheap");
 
 local M = {};
 
+global.jvmHeap = M
+
 local config = {
     -- chunks touched by a player's presence last for a short while if nothing is built on it, there are no resources, and no enemies
     chunkTimeoutTicks = 60 * TICKS_PER_MINUTE,
