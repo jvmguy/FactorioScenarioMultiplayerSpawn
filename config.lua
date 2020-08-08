@@ -97,7 +97,7 @@ scenario.config.regrow = {
 
 scenario.config.bots = {
     worker_robots_storage_bonus = 0,
-    worker_robots_speed_modifier = 0.0,
+    worker_robots_speed_modifier = 1.0,
 }
 
 scenario.config.forceBonuses = {
@@ -137,7 +137,6 @@ scenario.config.startKitMedium = {
         {name = "construction-robot", count = 20},
         {name = "roboport", count = 2},
         {name = "logistic-chest-storage", count = 2},
---        {name = "k-dt-fuel", count=20 },
 --        {name = "uranium-fuel-cell", count=50 },
 --		{name = "burner-mining-drill", count = 2},
 --		{name = "stone-age-furnace", count = 2},
@@ -155,7 +154,42 @@ scenario.config.startKitMedium = {
 --        {name = "transport-belt", count=400},
 }
 
-scenario.config.startKit = scenario.config.startKitMedium
+scenario.config.startKitLarge = {
+        {name = "power-armor-mk2", count = 1,
+            equipment = {
+                  -- the order of these does matter.
+                  {name = "fusion-reactor-equipment", count= 2},
+                  {name = "exoskeleton-equipment", count=6},
+                  {name = "personal-roboport-mk2-equipment", count=3},
+                  {name = "battery-mk2-equipment", count=3},
+--                  {name = "solar-panel-equipment", count = 7 },
+--                  {name = "personal-roboport-equipment", count=1},
+--                  {name = "battery-equipment", count=1},
+            }
+        },
+        {name = "belt-immunity-equipment", count = 1},
+        {name = "night-vision-equipment", count = 1},
+        {name = "construction-robot", count = 100},
+        {name = "roboport", count = 2},
+        {name = "logistic-chest-storage", count = 2},
+--        {name = "uranium-fuel-cell", count=50 },
+--      {name = "burner-mining-drill", count = 2},
+--      {name = "stone-age-furnace", count = 2},
+--        {name = "steel-axe", count = 5},
+        {name = "submachine-gun", count=1},
+--        {name = "iron-plate", count=100},
+--      {name = "car", count=1},
+--      {name = "wood", count=100},
+        {name = "firearm-magazine", count=100},
+--      {name = "landfill", count=200}
+
+        
+--        {name = "electric-mining-drill", count = 8},
+--        {name = "small-electric-pole", count = 50},
+--        {name = "transport-belt", count=400},
+}
+
+scenario.config.startKit = scenario.config.startKitLarge
 
 scenario.config.teleporter = {
     enabled = true,
@@ -272,15 +306,15 @@ scenario.config.vanillaResources = {
             {name = "assembling-machine-1", count=10},
         },  },
     
-        { shape="rect", type="coal",         x=48,  y=-41, height=14, width=18,  amount=10000,  },
-        { shape="rect", type="stone",        x=48,  y=-24, height=14, width=18,  amount=10000,  },
+        { shape="rect", type="coal",         x=32,  y=-41, height=14, width=36,  amount=10000,  },
+        { shape="rect", type="stone",        x=32,  y=-24, height=14, width=36,  amount=10000,  },
         -- { shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
-        { shape="rect", type="copper-ore",   x=48,  y=-7,  height=21, width=18,  amount=10000,  },
-        { shape="rect", type="iron-ore",     x=48,  y =18, height=21, width=18,  amount=10000,  },
+        { shape="rect", type="copper-ore",   x=32,  y=-7,  height=21, width=36,  amount=10000,  },
+        { shape="rect", type="iron-ore",     x=32,  y =18, height=21, width=36, amount=10000,  },
         
-        { shape="rect", type="crude-oil", x=72, y=-6, height=1, amount=100000,  },
+        { shape="rect", type="crude-oil", x=72, y=-6, height=1, amount=10000000,  },
         { shape="rect", type="crude-oil", x=72, y= 0, height=1, amount=10000000,  },
-        { shape="rect", type="crude-oil", x=72, y= 6, height=1, amount=100000,  },
+        { shape="rect", type="crude-oil", x=72, y= 6, height=1, amount=10000000,  },
 }
 
 scenario.config.angelsResources = {
@@ -321,7 +355,7 @@ scenario.config.angelsResources = {
 }
 
 scenario.config.krastorioResources = {
-        { shape="rect", name="steel-chest", x=42,   y=-50, height=1, width=1, contents = { {name = "landfill", count=1200 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-50, height=3, width=3, contents = { {name = "landfill", count=9600 } },  },
         { shape="rect", name="steel-chest", x=45,   y=-50, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=48,   y=-50, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=51,   y=-50,  height=1, width=1, contents = { 
@@ -344,23 +378,23 @@ scenario.config.krastorioResources = {
             {name = "assembling-machine-2", count=10},
 --            {name = "assembling-machine-3", count=1},
             {name = "electric-mining-drill", count=10},
+            {name = "dt-fuel", count=20 },
+            {name = "electronic-circuit", count=100 },
         },  },
     
-        { shape="rect", type="coal",         x=42,  y=-47, height=14, width=24,  amount=40000,  },
-        { shape="rect", type="stone",        x=42,  y=-30, height=14, width=24,  amount=40000,  },
+        { shape="rect", type="coal",         x=32,  y=-47, height=14, width=36,  amount=40000,  },
+        { shape="rect", type="stone",        x=32,  y=-30, height=14, width=24,  amount=40000,  },
 
-        { shape="rect", type="sand",         x=42,  y=-13,  height=14, width=12,  amount=40000,  },
-        { shape="rect", type="gold-ore",     x=56,  y=-13,  height=14, width=12,  amount=40000,  },
+        { shape="rect", type="iron-ore",   x=32,  y =-13, height=14, width=36,  amount=40000,  },
 
-        { shape="rect", type="iron-ore",     x=42,  y =4, height=21, width=12,  amount=40000,  },
-        { shape="rect", type="copper-ore",   x=56,  y =4, height=21, width=12,  amount=40000,  },
+        { shape="rect", type="copper-ore",   x=32,  y =4, height=14, width=36,  amount=40000,  },
 
-        { shape="rect", type="menarite",     x=49,  y =30, height=1, width=1,  amount=400000,  },
-        { shape="rect", type="imersite",     x=60,  y =30, height=1, width=1,  amount=400000,  },
+        { shape="rect", type="rare-metals",     x=32,  y =30, height=12, width=12,  amount=400000,  },
+        { shape="rect", type="imersite",     x=34,  y =47, height=1, width=1,  amount=400000,  },
         
-        { shape="rect", type="crude-oil", x=80, y=-6, height=1, amount=10000,  },
-        { shape="rect", type="crude-oil", x=80, y= 0, height=1, amount=10000,  },
-        { shape="rect", type="crude-oil", x=80, y= 6, height=1, amount=10000,  },
+        { shape="rect", type="crude-oil", x=72, y=-6, height=1, amount=500000,  },
+        { shape="rect", type="crude-oil", x=72, y= 0, height=1, amount=500000,  },
+        { shape="rect", type="mineral-water", x=72, y= 6, height=1, amount=500000,  },
 }
 
 scenario.config.omniResources = {
@@ -474,6 +508,64 @@ scenario.config.industrialPlusKrastorioResources = {
         { shape="rect", type="crude-oil", x=80, y= 6, height=1, amount=30000,  },
 }
 
+scenario.config.pyanodonResources = {
+        { shape="rect", name="steel-chest", x=32,   y=-48, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=34,   y=-48, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=36,   y=-48, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=38,   y=-48,  height=1, width=1, contents = { 
+            {name = "coal", count=1000 },
+            {name = "stone", count=1000 },
+            {name = "steel-plate", count=400 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
+         }  },
+        { shape="rect", name="steel-chest", x=40,   y=-48,  height=1, width=1, contents = { 
+            -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
+            {name = "offshore-pump", count = 1},
+            {name = "boiler", count = 10},
+            {name = "steam-engine", count = 20},
+            {name = "pipe", count=12},
+            {name = "pipe-to-ground", count=2},
+            {name = "small-electric-pole", count = 20},
+            {name = "inserter", count=20},
+            {name = "assembling-machine-1", count=10},
+            {name = "filter-inserter", count=4 },
+        },  },
+
+        -- all the basic building supplies you want    
+        { shape="rect", name="infinity-chest", x=44,   y=-48,  height=1, width=1,
+            props = { minable=false, operable=false, destructible=false, force="neutral", 
+                infinity_container_filters = { 
+                    {index = 1, name = "fast-miniloader", count = 50},
+                    {index = 2, name = "fast-filter-miniloader", count = 50},
+                    {index = 3, name = "fast-transport-belt", count = 50},
+                    {index = 4, name = "fast-underground-belt", count = 50},
+                    {index = 5, name = "fast-splitter", count = 50},
+                    {index = 6, name = "fast-inserter", count=50},
+                    {index = 7, name = "medium-electric-pole", count=50},
+                    {index = 8, name = "big-electric-pole", count=50},
+                    {index = 9, name = "pipe", count=50},
+                    {index = 10, name = "pipe-to-ground", count=50},
+                    {index = 11, name = "assembling-machine-2", count=50},
+                    {index = 12, name = "electric-mining-drill", count=50},
+                    {index = 13, name = "steel-furnace", count=50},
+                    {index = 14, name = "construction-robot", count=50},
+                    {index = 15, name = "roboport", count = 10},
+                    {index = 16, name = "logistic-chest-storage", count = 50},
+                    {index = 17 , name = "electronic-circuit", count=50},
+                    {index = 18, name = "filter-inserter", count=50 },
+        }, },  },
+
+        { shape="rect", type="coal",         x=32,  y=-41, height=14, width=36,  amount=10000,  },
+        { shape="rect", type="stone",        x=32,  y=-24, height=14, width=36,  amount=10000,  },
+        { shape="rect", type="copper-ore",   x=32,  y=-7,  height=21, width=36,  amount=10000,  },
+        { shape="rect", type="iron-ore",     x=32,  y =18, height=21, width=36, amount=10000,  },
+--        
+--        { shape="rect", type="crude-oil", x=72, y=-6, height=1, amount=10000000,  },
+--        { shape="rect", type="crude-oil", x=72, y= 0, height=1, amount=10000000,  },
+--        { shape="rect", type="crude-oil", x=72, y= 6, height=1, amount=10000000,  },
+}
+
 scenario.config.recipesEnabled = {
 --        "loader",
 --        "fast-loader",
@@ -492,13 +584,14 @@ scenario.config.recipesDisabled = {
 }
 
 -- XXX detect angels ores and auto-configure
-scenario.config.spawnResources = scenario.config.vanillaResources;
+-- scenario.config.spawnResources = scenario.config.vanillaResources;
 -- scenario.config.spawnResources = scenario.config.angelsResources;
 -- scenario.config.spawnResources = scenario.config.krastorioResources;
 -- scenario.config.spawnResources = scenario.config.omniResources;
 --scenario.config.spawnResources = scenario.config.industrialRevolutionResources;
 -- scenario.config.spawnResources = scenario.config.industrialPlusKrastorioResources;
 -- scenario.config.spawnResources = scenario.config.seaBlockResources;
+scenario.config.spawnResources = scenario.config.pyanodonResources;
 
 
 ---------------------------------------
@@ -518,7 +611,7 @@ ENABLE_SPAWN_FORCE_GRASS = true
 
 -- Safe area has no aliens
 -- +/- this in x and y direction
-SAFE_AREA_TILE_DIST = CHUNK_SIZE*6
+SAFE_AREA_TILE_DIST = CHUNK_SIZE*8
 
 -- Safe area around bunker entrance that has no aliens 
 SAFE_AREA_BUNKER_ENTRANCE_TILE_DIST = CHUNK_SIZE * 2
@@ -636,7 +729,7 @@ global.jvmguyDebugEnabled = false
 scenario.config.fermatSpiralSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     seablock = false,    -- replace land with water except where there are resources
-    crater = false,
+    crater = true,
     concrete = true,
     firstSpawnPoint = 1,
     numSpawnPoints = 20,
@@ -649,7 +742,7 @@ scenario.config.fermatSpiralSpawns = {
     moat = 10,   -- additional to land
     trees = 3,  -- included in the land
     size = 90,  -- should be land + moat
-    craterSize = 256,  -- size of impact crater (greater than size)
+    craterSize = 320,  -- size of impact crater (greater than size)
     
     resources = scenario.config.spawnResources,
 
@@ -661,7 +754,7 @@ scenario.config.fermatSpiralSpawns = {
     -- 'coal-liquefaction',
     },
     
-    startingEvolution=0.3,
+    startingEvolution=0.0,
 
     recipesEnabled = scenario.config.recipesEnabled,
     recipesDisabled = scenario.config.recipesDisabled,

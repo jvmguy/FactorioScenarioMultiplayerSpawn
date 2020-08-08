@@ -57,11 +57,12 @@ require("frontier_silo")
 --require("bps")
 toxicJungle = require("ToxicJungle")
 
--- spawnGenerator = require("FermatSpiralSpawns");
-spawnGenerator = require("RiverworldSpawns");
+spawnGenerator = require("FermatSpiralSpawns");
+-- spawnGenerator = require("RiverworldSpawns");
 --spawnGenerator = require("BunkerSpawns");
 
-terrainGenerator = require("GeometricTerrain");
+local terrainGenerator = nil;
+-- terrainGenerator = require("GeometricTerrain");
 
 sharedSpawns = require("shared_spawns");
 
