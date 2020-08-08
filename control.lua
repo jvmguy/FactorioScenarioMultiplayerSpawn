@@ -25,48 +25,47 @@
 
 -- Event manager
 require("config")
-require("util")
-require "locale/utils/event" --This is so all of the modules play nice with each other.
-require("locale/modules/scheduler");
+require("lib/event")    --This is so all of the modules play nice with each other.
+require("lib/scheduler");
 
 -- redmew's map_gen_settings
 require("lib/map_gen_settings")
 
 -- My Scenario Includes
-require("oarc_utils")
-require("jvmguy_utils")
+require("lib/oarc_utils")
+require("lib/jvmguy_utils")
 
 -- Include Mods
-require("locale/modules/longreach")
---require("locale/modules/autofill-jvm")
-require("locale/modules/adminlog")
-require("locale/modules/decimatecommand")
-require("locale/modules/itemcommand")
-require("locale/modules/kitcommand")
-require("locale/modules/rgcommand")
-require("locale/modules/gameinfo")
-require("locale/modules/spawnscommand")
-require("locale/modules/statuscommand")
-require("locale/modules/playerlist")
-require("locale/modules/spawnlist")
-require("locale/modules/tag")
+require("lib/longreach")    
+--require("lib/autofill-jvm")   -- enable if you want my softmod version of this
+require("lib/adminlog")
+require("lib/decimatecommand")
+require("lib/itemcommand")
+require("lib/kitcommand")
+require("lib/rgcommand")
+require("lib/gameinfo")
+require("lib/spawnscommand")
+require("lib/statuscommand")
+require("lib/playerlist")
+require("lib/spawnlist")
+require("lib/tag")
 
-require("separate_spawns")
-require("separate_spawns_guis")
-require("frontier_silo")
---require("bps")
-toxicJungle = require("ToxicJungle")
+require("lib/separate_spawns")
+require("lib/separate_spawns_guis")
+require("lib/frontier_silo")
 
-spawnGenerator = require("FermatSpiralSpawns");
+toxicJungle = require("lib/ToxicJungle")
+
+spawnGenerator = require("lib/FermatSpiralSpawns");
 -- spawnGenerator = require("RiverworldSpawns");
 --spawnGenerator = require("BunkerSpawns");
 
 local terrainGenerator = nil;
 -- terrainGenerator = require("GeometricTerrain");
 
-sharedSpawns = require("shared_spawns");
+sharedSpawns = require("lib/shared_spawns");
 
-wipespawn = require("locale/modules/jvm-wipespawn");
+wipespawn = require("lib/jvm-wipespawn");
 
 global.init = ""
 global.debug = {}

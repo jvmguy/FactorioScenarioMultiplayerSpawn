@@ -584,14 +584,14 @@ scenario.config.recipesDisabled = {
 }
 
 -- XXX detect angels ores and auto-configure
--- scenario.config.spawnResources = scenario.config.vanillaResources;
+scenario.config.spawnResources = scenario.config.vanillaResources;
 -- scenario.config.spawnResources = scenario.config.angelsResources;
 -- scenario.config.spawnResources = scenario.config.krastorioResources;
 -- scenario.config.spawnResources = scenario.config.omniResources;
 --scenario.config.spawnResources = scenario.config.industrialRevolutionResources;
 -- scenario.config.spawnResources = scenario.config.industrialPlusKrastorioResources;
 -- scenario.config.spawnResources = scenario.config.seaBlockResources;
-scenario.config.spawnResources = scenario.config.pyanodonResources;
+-- scenario.config.spawnResources = scenario.config.pyanodonResources;
 
 
 ---------------------------------------

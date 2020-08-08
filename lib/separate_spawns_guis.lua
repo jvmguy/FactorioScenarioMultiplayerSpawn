@@ -3,8 +3,6 @@
 
 -- I made a separate file for all the GUI related functions
 
-require("separate_spawns")
-
 local SPAWN_GUI_MAX_WIDTH = 1000
 local SPAWN_GUI_MAX_HEIGHT = 1000
 -- local SPAWN_GUI_MIN_WIDTH = 400
