@@ -344,17 +344,9 @@ function M.GenerateRailsAndWalls(surface, chunkArea, spawnPos)
     GenerateRails( surface, chunkArea, scenario.config.riverworld.rail2, railsRect2)
 end
 
-function M.ClearEnemiesInRadius(surface, position, safeDist, chunkArea)
-    for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
-        if entity and entity.valid and DistanceFromPoint(position, entity.position) < safeDist then
-            entity.destroy()
-        end
-    end
-end
-
 function M.CreateSpawn(surface, spawnPos, chunkArea)
     local config = M.GetConfig()
-    M.ClearEnemiesInRadius(surface, spawnPos, SAFE_AREA_TILE_DIST, chunkArea)
+    ClearNearbyEnemies(surface, chunkArea, spawnPos)
     CreateCropOctagon(surface, spawnPos, chunkArea, config.land, config.trees, config.moat)
     if config.concrete then
         PaveWithConcrete( surface, chunkArea, spawnPos, config.land);
@@ -398,7 +390,7 @@ function M.ChunkGenerated(event)
         
         -- Common spawn generation code.
         if spawnPos ~= nil then
-            DestroyEnemies(chunkArea, surface, spawnPos, SAFE_AREA_TILE_DIST);
+            ClearNearbyEnemies(surface, chunkArea, spawnPos)        
             M.GenerateRailsAndWalls(surface, chunkArea, spawnPos );
  
             -- careful... arguments for surface and chunkArea are swapped here.

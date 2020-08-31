@@ -51,10 +51,10 @@ end
 
 Event.register(defines.events.on_console_command, on_console_command)
 
-local function on_research_completed(event)
+local function on_research_finished(event)
     logInfo( playerNameFromEvent(event), "+++ research completed: " .. event.research.name );
 end
-Event.register(defines.events.on_research_completed, on_research_completed)
+Event.register(defines.events.on_research_finished, on_research_finished)
 
 local function on_research_started(event)
     logInfo( playerNameFromEvent(event), "+++ research started: " .. event.research.name );

@@ -56,12 +56,12 @@ require("lib/frontier_silo")
 
 toxicJungle = require("lib/ToxicJungle")
 
-spawnGenerator = require("lib/FermatSpiralSpawns");
--- spawnGenerator = require("RiverworldSpawns");
---spawnGenerator = require("BunkerSpawns");
+-- spawnGenerator = require("lib/FermatSpiralSpawns");
+spawnGenerator = require("lib/RiverworldSpawns");
+--spawnGenerator = require("lib/BunkerSpawns");
 
 local terrainGenerator = nil;
--- terrainGenerator = require("GeometricTerrain");
+-- terrainGenerator = require("lib/GeometricTerrain");
 
 sharedSpawns = require("lib/shared_spawns");
 
@@ -314,7 +314,6 @@ function jvm.on_research_finished(event)
     if FRONTIER_ROCKET_SILO_MODE then
         RemoveRocketSiloRecipe(event)
     end
-
 --    local config = spawnGenerator.GetConfig()
 --    if config.recipesEnabled then
 --        for kk,vv in pairs(config.recipesEnabled) do
@@ -325,8 +324,22 @@ function jvm.on_research_finished(event)
     -- Example of how to remove a particular recipe:
     -- RemoveRecipe(event, "beacon")
 end
-
 Event.register(defines.events.on_research_finished, jvm.on_research_finished)
+
+function jvm.on_entity_spawned(event)
+    if (scenario.config.modified_enemy_spawning) then
+--        ModifyEnemySpawnsNearPlayerStartingAreas(event)
+    end
+end
+Event.register(defines.events.on_entity_spawned, jvm.on_entity_spawned)
+
+
+function jvm.on_biter_base_built(event)
+    if (scenario.config.modified_enemy_spawning) then
+--        ModifyEnemySpawnsNearPlayerStartingAreas(event)
+    end
+end
+Event.register(defines.events.on_biter_base_built, jvm.on_biter_base_built)
 
 
 ----------------------------------------
@@ -338,7 +351,7 @@ Event.register(defines.events.on_research_finished, jvm.on_research_finished)
 -- debug code from Mylon to detect possible causes for desync
 --Time for the debug code.  If any (not global.) globals are written to at this point, an error will be thrown.
 --eg, x = 2 will throw an error because it's not global.x or local x
-if false then
+if true then
     setmetatable(_G, {
          __newindex = function(_, n, v)
              logInfo("", "Attempt to write to undeclared var " .. n)

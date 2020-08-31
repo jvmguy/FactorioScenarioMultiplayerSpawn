@@ -609,19 +609,12 @@ ENABLE_SPAWN_FORCE_GRASS = true
 -- Safe Spawn Area Options
 ---------------------------------------
 
--- Safe area has no aliens
--- +/- this in x and y direction
-SAFE_AREA_TILE_DIST = CHUNK_SIZE*8
+-- These settings are deprecated, 
+--     replaced by scenario.config.safe_area
+--     but still appear in a few places.
 
 -- Safe area around bunker entrance that has no aliens 
 SAFE_AREA_BUNKER_ENTRANCE_TILE_DIST = CHUNK_SIZE * 2
-
--- Warning area has reduced aliens
--- +/- this in x and y direction
-WARNING_AREA_TILE_DIST = CHUNK_SIZE*10
-
--- 1 : X (spawners alive : spawners destroyed) in this area
-WARN_AREA_REDUCTION_RATIO = 15
 
 -- Create a circle of land area for the spawn
 -- deprecated
@@ -725,6 +718,29 @@ AUTOFILL_FLAMETHROWER_AMMO_QUANTITY=20
 global.oarcDebugEnabled = false
 global.jvmguyDebugEnabled = false
 
+scenario.config.modified_enemy_spawning = true;
+
+scenario.config.safe_area =
+    {
+        -- Safe area has no aliens
+        -- This is the radius in tiles of safe area.
+        safe_radius = CHUNK_SIZE*6,
+
+        -- Warning area has significantly reduced aliens
+        -- This is the radius in tiles of warning area.
+        warn_radius = CHUNK_SIZE*16,
+
+        -- 1 : X (spawners alive : spawners destroyed) in this area
+        warn_reduction_fraction = 0.05,
+
+        -- Danger area has slightly reduce aliens
+        -- This is the radius in tiles of danger area.
+        danger_radius = CHUNK_SIZE*32,
+
+        -- 1 : X (spawners alive : spawners destroyed) in this area
+        danger_reduction_fraction = 0.4,
+    }
+
 
 scenario.config.fermatSpiralSpawns = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
@@ -758,6 +774,7 @@ scenario.config.fermatSpiralSpawns = {
 
     recipesEnabled = scenario.config.recipesEnabled,
     recipesDisabled = scenario.config.recipesDisabled,
+    safe_area = scenario.config.safe_area, 
 }
 
 scenario.config.bunkerSpawns = {
@@ -800,6 +817,7 @@ scenario.config.bunkerSpawns = {
 
     recipesEnabled = scenario.config.recipesEnabled,
     recipesDisabled = scenario.config.recipesDisabled,
+    safe_area = scenario.config.safe_area, 
 }
 
 scenario.config.riverworld = {
@@ -820,9 +838,9 @@ scenario.config.riverworld = {
     rail2 = -3*640-32, -- generate a north-south railway starting here
     freespace = 3*640 + 32, -- no voids after this 
     
-    land = 84,
+    land = 76,
     trees = 3,  -- included in the land
-    moat = 0,   -- additional to land
+    moat = 8,   -- additional to land
     size = 84,  -- should be land + moat
 
     -- this is a vertical moat, not the usual one around the spawn.
@@ -835,15 +853,8 @@ scenario.config.riverworld = {
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
     -- freezeTime = 0.5,   -- see https://wiki.factorio.com/Game-day
     -- 0 is day. 0.5 is night. 0.35 is twilight.
-    recipesEnabled = {
---        "loader",
---        "fast-loader",
---        "express-loader",
-    },
---    surfaces = {
---        aboveground = {
---            name = GAME_SURFACE_NAME,
---        },
---    }
+    recipesEnabled = scenario.config.recipesEnabled,
+    recipesDisabled = scenario.config.recipesDisabled,
+    safe_area = scenario.config.safe_area, 
 }
 

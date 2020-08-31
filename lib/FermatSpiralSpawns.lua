@@ -233,7 +233,7 @@ function M.ChunkGenerated(event)
         
         -- Common spawn generation code.
         if spawnPos ~= nil then
-            DestroyEnemies(chunkArea, surface, spawnPos, config.craterSize);
+            ClearNearbyEnemies(chunkArea, surface, spawnPos);
             if config.crater then
                 MakeSpawnCrater(chunkArea, surface, spawnPos);
             end

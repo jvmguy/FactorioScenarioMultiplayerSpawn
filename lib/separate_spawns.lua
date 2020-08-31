@@ -33,15 +33,17 @@ end
 --end
 
 function DoGenerateSpawnChunk( surface, chunkArea, spawnPos)
+    local config = spawnGenerator.GetConfig()
+    
     local chunkAreaCenter = {x=chunkArea.left_top.x+(CHUNK_SIZE/2),
         y=chunkArea.left_top.y+(CHUNK_SIZE/2)}
 
     local warningArea = {left_top=
-        {x=spawnPos.x-WARNING_AREA_TILE_DIST,
-            y=spawnPos.y-WARNING_AREA_TILE_DIST},
+        {x=spawnPos.x-config.safe_area.warn_radius,
+            y=spawnPos.y-config.safe_area.warn_radius},
         right_bottom=
-        {x=spawnPos.x+WARNING_AREA_TILE_DIST,
-            y=spawnPos.y+WARNING_AREA_TILE_DIST}}
+        {x=spawnPos.x+config.safe_area.warn_radius,
+            y=spawnPos.y+config.safe_area.warn_radius}}
 
     if CheckIfChunkIntersects(chunkArea,warningArea) then
         local config = spawnGenerator.GetConfig()
@@ -53,11 +55,11 @@ function DoGenerateSpawnChunk( surface, chunkArea, spawnPos)
                 y=spawnPos.y+config.size}}
 
         local safeArea = {left_top=
-            {x=spawnPos.x-SAFE_AREA_TILE_DIST,
-                y=spawnPos.y-SAFE_AREA_TILE_DIST},
+            {x=spawnPos.x-config.safe_area.safe_radius,
+                y=spawnPos.y-config.safe_area.safe_radius},
             right_bottom=
-            {x=spawnPos.x+SAFE_AREA_TILE_DIST,
-                y=spawnPos.y+SAFE_AREA_TILE_DIST}}
+            {x=spawnPos.x+config.safe_area.safe_radius,
+                y=spawnPos.y+config.safe_area.safe_radius}}
 
 
 
@@ -355,20 +357,6 @@ function TeleportPlayerCallback(args)
 end
 
 
--- Clear out enemies around an area with a certain distance
-function ClearEnemies(surface, position, safeDist)
-    local safeArea = {left_top=
-        {x=position.x-safeDist,
-            y=position.y-safeDist},
-        right_bottom=
-        {x=position.x+safeDist,
-            y=position.y+safeDist}}
-
-    for _, entity in pairs(surface.find_entities_filtered{area = safeArea, force = "enemy"}) do
-        entity.destroy()
-    end
-end
-
 function SendPlayerToNewSpawnAndCreateIt(player, spawn)
     -- Send the player to that position
     if spawn == nil then
@@ -393,3 +381,12 @@ function SendPlayerToSpawn(player)
     end
     player.teleport(spawn, surface)
 end
+
+function GetClosestUniqueSpawn(surface, position)
+    if surface.name == GAME_SURFACE_NAME then
+        return NearestSpawn( global.allSpawns, position);
+    end
+    return nil;
+end
+
+

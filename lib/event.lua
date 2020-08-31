@@ -4,7 +4,7 @@
 local Core = require 'core'
 local Game = require 'game'
 
-local debugEvents = false;
+local debugEvents = true;
 
 Event = { --luacheck: allow defined top
     _registry = {},

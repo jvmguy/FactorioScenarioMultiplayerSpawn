@@ -10,6 +10,11 @@ function distFunc( cx, cy, ix, iy)
     return distVar
 end
 
+function rangemap( r, from1, from2, to1, to2)
+    local rr = (r-from1)/(from2-from1)
+    return rr*(to2-to1) + to1;
+end
+
 function PaveWithConcrete( surface, chunkArea, spawnPos, landRadius)
     local tiles = {};
     for y=chunkArea.left_top.y, chunkArea.right_bottom.y-1 do
@@ -273,35 +278,105 @@ function ShowPlayerSpawns(player)
   ShowSpawns( player, global.playerSpawns );
 end
 
-function DestroyEnemies(chunkArea, surface, spawnPos, radius)
-    local config = spawnGenerator.GetConfig()
 
-    -- don't touch chunks near the silo
-    local w = SILO_RECT_SIZE;
-    local siloRect = MakeRect( -w/2, w, -w/2, w);
-    if ChunkIntersects( chunkArea, siloRect ) then
-        -- silo enemies are handled elsewhere?
-        return
+-- Clear out enemies around an area with a certain distance
+function ClearEnemies(surface, position, safeDist)
+    local safeArea = {left_top=
+        {x=position.x-safeDist,
+            y=position.y-safeDist},
+        right_bottom=
+        {x=position.x+safeDist,
+            y=position.y+safeDist}}
+
+    for _, entity in pairs(surface.find_entities_filtered{area = safeArea, force = "enemy"}) do
+        entity.destroy()
     end
+end
 
-    local w = radius
-    local craterArea = MakeRect( spawnPos.x-w, 2*w, spawnPos.y-w, 2*w);
-    if not ChunkIntersects(chunkArea, craterArea) then
-        return
-    end
-
-    -- destroy any enemy in the crater area
+function ClearNearbyEnemies(surface, chunkArea, spawnPos)
+    -- spawnPos and safeDist are unused now.
     for _, entity in pairs(surface.find_entities_filtered{area = chunkArea, force = "enemy"}) do
-        if entity ~= nil then
-            local dx = entity.position.x - spawnPos.x;
-            local dy = entity.position.y - spawnPos.y;
-            local dist = math.sqrt(dx*dx+dy*dy);
-            if (dist < radius) then
-                entity.destroy()
-            end
+        if entity ~= nil and entity.valid then
+            local dist =  DistanceFromPoint(spawnPos, entity.position);
+            MaybeDestroyEnemy(entity, dist);
         end
     end
 end
+
+function ModifyEnemySpawnsNearPlayerStartingAreas(event)
+
+    if (not event.entity or not (event.entity.force.name == "enemy") or not event.entity.position) then
+        log("ModifyBiterSpawns - Unexpected use.")
+        return
+    end
+
+    local enemy_pos = event.entity.position
+    local surface = event.entity.surface
+
+    local closest_spawn = GetClosestUniqueSpawn(surface, enemy_pos)
+
+    if (closest_spawn == nil) then
+        -- log("GetClosestUniqueSpawn ERROR - None found?")
+        return
+    end
+    local dist = DistanceFromPoint(enemy_pos, closest_spawn);
+    MaybeDestroyEnemy( event.entity, dist)
+end
+
+function MaybeDestroyEnemy( entity, d)
+    local config = spawnGenerator.GetConfig();
+    if d < config.safe_area.safe_radius then
+        entity.destroy()
+    elseif d < config.safe_area.danger_radius then
+        local p = rangemap( d, config.safe_area.safe_radius, config.safe_area.danger_radius, config.safe_area.warn_reduction_fraction, config.safe_area.warn_reduction_fraction)
+        if math.random() > p then
+            entity.destroy()
+        elseif d < config.safe_area.warn_radius then
+            DowngradeEnemyToSmall( entity )
+        elseif d < config.safe_area.danger_radius then
+            DowngradeEnemyToMedium( entity )
+        end
+    end
+end
+
+function DowngradeEnemyToSmall( entity )
+    local surface = entity.surface;
+    local enemy_name = entity.name;
+    local enemy_pos = entity.position;
+    if ((enemy_name == "big-biter") or (enemy_name == "behemoth-biter") or (enemy_name == "medium-biter")) then
+        entity.destroy()
+        surface.create_entity{name = "small-biter", position = enemy_pos, force = game.forces.enemy}
+        -- log("Downgraded biter close to spawn.")
+    elseif ((enemy_name == "big-spitter") or (enemy_name == "behemoth-spitter") or (enemy_name == "medium-spitter")) then
+        entity.destroy()
+        surface.create_entity{name = "small-spitter", position = enemy_pos, force = game.forces.enemy}
+        -- log("Downgraded spitter close to spawn.")
+    elseif ((enemy_name == "big-worm-turret") or (enemy_name == "behemoth-worm-turret") or (enemy_name == "medium-worm-turret")) then
+        entity.destroy()
+        surface.create_entity{name = "small-worm-turret", position = enemy_pos, force = game.forces.enemy}
+        -- log("Downgraded worm close to spawn.")
+    end
+end        
+
+function DowngradeEnemyToMedium( entity )
+    local surface = entity.surface;
+    local enemy_name = entity.name;
+    local enemy_pos = entity.position;
+    if ((enemy_name == "big-biter") or (enemy_name == "behemoth-biter")) then
+        entity.destroy()
+        surface.create_entity{name = "medium-biter", position = enemy_pos, force = game.forces.enemy}
+        -- log("Downgraded biter further from spawn.")
+    elseif ((enemy_name == "big-spitter") or (enemy_name == "behemoth-spitter")) then
+        entity.destroy()
+        surface.create_entity{name = "medium-spitter", position = enemy_pos, force = game.forces.enemy}
+        -- log("Downgraded spitter further from spawn
+    elseif ((enemy_name == "big-worm-turret") or (enemy_name == "behemoth-worm-turret")) then
+        entity.destroy()
+        surface.create_entity{name = "medium-worm-turret", position = enemy_pos, force = game.forces.enemy}
+        -- log("Downgraded worm further from spawn.")
+    end
+end
+
 
 function EraseArea(position, chunkDist)
     local surface = game.surfaces[GAME_SURFACE_NAME];

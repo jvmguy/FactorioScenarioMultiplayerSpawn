@@ -269,20 +269,6 @@ function IsChunkAreaUngenerated(chunkPos, chunkDist)
     return true
 end
 
--- Clear out enemies around an area with a certain distance
-function ClearNearbyEnemies(player, safeDist)
-    local safeArea = {left_top=
-                    {x=player.position.x-safeDist,
-                     y=player.position.y-safeDist},
-                  right_bottom=
-                    {x=player.position.x+safeDist,
-                     y=player.position.y+safeDist}}
-
-    for _, entity in pairs(player.surface.find_entities_filtered{area = safeArea, force = "enemy"}) do
-        entity.destroy()
-    end
-end
-
 -- Function to find coordinates of ungenerated map area in a given direction
 -- starting from the center of the map
 function FindMapEdge(directionVec)
