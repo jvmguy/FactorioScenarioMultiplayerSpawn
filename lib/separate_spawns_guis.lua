@@ -349,7 +349,7 @@ function PickRandomSpawn( t, far )
   -- player.print("choosing a spawn from " .. ncandidates .. " candidates");
   if ncandidates > 0 then
     local pick = math.random(1,ncandidates)
-    spawnPos = candidates[pick];
+    local spawnPos = candidates[pick];
     -- player.print("chose " .. spawnPos.x .. "," .. spawnPos.y .. " distance " .. spawnPos.dist);
     return spawnPos;
   end
