@@ -32,7 +32,7 @@ end
 local function siftup(heap, nodeIx)
       if (nodeIx ~= 0) then
           local parentIx = math.floor((nodeIx-1)/2)
-          if heap.compare(heap.contents[parentIx], heap.contents[nodeIx])>0 then
+          if compare(heap.contents[parentIx], heap.contents[nodeIx])>0 then
               local temp = heap.contents[parentIx];
               heap.contents[parentIx] = heap.contents[nodeIx];
               heap.contents[parentIx].index = parentIx
@@ -54,13 +54,13 @@ local function siftdown(heap, nodeIx)
             minIx = leftChildIx;
         end
     else
-        if heap.compare(heap.contents[leftChildIx], heap.contents[rightChildIx]) <= 0 then
+        if compare(heap.contents[leftChildIx], heap.contents[rightChildIx]) <= 0 then
             minIx = leftChildIx;
         else
             minIx = rightChildIx;
         end
     end
-    if heap.compare(heap.contents[nodeIx], heap.contents[minIx])> 0 then
+    if compare(heap.contents[nodeIx], heap.contents[minIx])> 0 then
         local tmp = heap.contents[minIx];
         heap.contents[minIx] = heap.contents[nodeIx];
         heap.contents[minIx].index = minIx;
