@@ -156,13 +156,18 @@ end
 
 function M.ChunkGenerated(event)
     local surface = event.surface
+    if surface.name == "lobby" then
+        local chunkArea = event.area
+        local spawnPos = { x=0, y=0 }
+        PaveWithConcrete( surface, chunkArea, spawnPos, 16);
+    end
     if surface.name == GAME_SURFACE_NAME then
         -- Only take into account the nearest spawn when generating resources
         local chunkArea = event.area
         local midPoint = {x = (chunkArea.left_top.x + chunkArea.right_bottom.x)/2,
                             y = (chunkArea.left_top.y + chunkArea.right_bottom.y)/2 } 
         local spawnPos = NearestSpawn( global.allSpawns, midPoint)
-        GenerateSpawnChunk(event, spawnPos)
+        DoGenerateSpawnChunk(surface, chunkArea, spawnPos)
     end
     if surface.name == GAME_SURFACE_NAME then
         -- generate the bunker area
