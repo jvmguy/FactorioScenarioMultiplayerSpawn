@@ -186,7 +186,7 @@ function MarkUnused(args)
     local uniqueSpawn = args.spawn
     uniqueSpawn.used = false;
     uniqueSpawn.createdFor = nil;
-    logInfo( playerName, playerName .. "spawn " .. spawn.seq .. " marked as unused." )
+    logInfo( playerName, playerName .. "spawn " .. uniqueSpawn.seq .. " marked as unused." )
 end
 
 -- Call this if a player leaves the game
@@ -372,8 +372,8 @@ function SendPlayerToNewSpawnAndCreateIt(player, spawn)
 end
 
 function SendPlayerToSpawn(player)
-    local surface = game.surfaces[GAME_SURFACE_NAME]
-    local spawn
+    local surface = game.surfaces[GAME_SURFACE_NAME];
+    local spawn;
     if (DoesPlayerHaveCustomSpawn(player)) then
         spawn = global.playerSpawns[player.name]
     else
