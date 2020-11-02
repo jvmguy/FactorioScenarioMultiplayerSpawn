@@ -381,6 +381,12 @@ function M.ChunkGenerated(event)
     local config = M.GetConfig()
     local surface = event.surface
 
+    if surface.name == "lobby" then
+        local chunkArea = event.area
+        local spawnPos = { x=0, y=0 }
+        PaveWithConcrete( surface, chunkArea, spawnPos, config.land);
+    end
+
     if surface.name == GAME_SURFACE_NAME then
         -- Only take into account the nearest spawn when generating resources
         local chunkArea = event.area
