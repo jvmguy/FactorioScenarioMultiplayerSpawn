@@ -109,9 +109,29 @@ scenario.config.playerBonus = {
 --      character_crafting_speed_modifier = 1/100-1.0,
 }
 
+--------------------------------------------------------------------------------
+-- Frontier Rocket Silo Options
+--------------------------------------------------------------------------------
+
+-- SILO_DISTANCE = 4 * HEXSPACING
+SILO_DISTANCE = 0     -- put the silo 1 chunk east of the origin (prevents problems)
+SILO_RECT_SIZE = 512
+SILO_CHUNK_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE);
+SILO_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE)* CHUNK_SIZE + CHUNK_SIZE/2
+SILO_DISTANCE_Y = CHUNK_SIZE/2
+
 scenario.config.silo = {
-    addBeacons = false,
-    addPower = false,
+    frontierSilo = true,        --
+    chartSiloArea = true,
+    handleLaunch = true,
+    randomSiloPostion = false,    
+    disableSiloRecipe = false,  -- if true, don't allow silos to be manufactured
+    restrictSiloBuild = true,   -- if true, only allow silos to be placed in specific areas
+    prebuildSilo = false,
+    prebuildBeacons = false,
+    prebuildPower = false,
+    -- Should be in the middle of a chunk
+    position = {x = SILO_DISTANCE_X, y = SILO_DISTANCE_Y}
 }
 
 scenario.config.startKitSmall = {
@@ -189,7 +209,7 @@ scenario.config.startKitLarge = {
 --        {name = "transport-belt", count=400},
 }
 
-scenario.config.startKit = scenario.config.startKitLarge
+scenario.config.startKit = scenario.config.startKitMedium
 
 scenario.config.teleporter = {
     enabled = true,
@@ -234,9 +254,6 @@ SPAWN_MSG3 = "Resources are spread out far apart but are quite rich."
 -- will probably break the frontier rocket silo mode
 --------------------------------------------------------------------------------
 
--- Frontier style rocket silo mode
-FRONTIER_ROCKET_SILO_MODE = true
-
 -- put players on a special surface until they've chosen
 ENABLE_SPAWN_SURFACE = true
 
@@ -258,10 +275,10 @@ ENABLE_UNDECORATOR = true
 ENABLE_STATUS = true
 
 -- Enable Long Reach
-ENABLE_LONGREACH = true
+ENABLE_LONGREACH = false
 
 -- Enable Autofill
-ENABLE_AUTOFILL = true
+ENABLE_AUTOFILL = false
 
 --------------------------------------------------------------------------------
 -- Spawn Options
@@ -282,6 +299,31 @@ scenario.config.toxicJungle = {
     enabled = false,
     tree_chance = 0.2
 }    
+
+scenario.config.noResources = {
+--        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=42,   y=-8,  height=1, width=1, contents = { 
+            {name = "coal", count=1000 },
+            {name = "stone", count=1000 },
+            {name = "steel-plate", count=400 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
+         }  },
+        { shape="rect", name="steel-chest", x=42,   y=0,  height=1, width=1, contents = { 
+            -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
+            {name = "offshore-pump", count = 1},
+            {name = "boiler", count = 10},
+            {name = "steam-engine", count = 20},
+            {name = "pipe", count=12},
+            {name = "pipe-to-ground", count=2},
+            {name = "small-electric-pole", count = 20},
+            {name = "inserter", count=20},
+            {name = "assembling-machine-1", count=10},
+        },  },
+    
+}
 
 scenario.config.vanillaResources = {
 --        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
@@ -318,6 +360,39 @@ scenario.config.vanillaResources = {
 }
 
 scenario.config.angelsResources = {
+        { shape="rect", name="infinity-chest", x=44,   y=-52,  height=1, width=1,
+            props = { minable=false, operable=false, destructible=false, force="neutral", 
+                infinity_container_filters = { 
+                    {index = 1, name = "fast-miniloader", count = 50},
+                    {index = 2, name = "fast-filter-miniloader", count = 50},
+                    {index = 3, name = "fast-transport-belt", count = 50},
+                    {index = 4, name = "fast-underground-belt", count = 50},
+                    {index = 5, name = "fast-splitter", count = 50},
+                    {index = 6, name = "fast-inserter", count=50},
+                    {index = 7, name = "medium-electric-pole", count=50},
+                    {index = 8, name = "big-electric-pole", count=50},
+                    {index = 9, name = "pipe", count=50},
+                    {index = 10, name = "pipe-to-ground", count=50},
+                    {index = 11, name = "assembling-machine-2", count=50},
+                    {index = 12, name = "electric-mining-drill", count=50},
+                    {index = 13, name = "steel-furnace", count=50},
+                    {index = 14, name = "construction-robot", count=50},
+                    {index = 15, name = "roboport", count = 10},
+                    {index = 16, name = "logistic-chest-storage", count = 50},
+                    {index = 17, name = "filter-inserter", count=50 },
+                    {index = 18, name = "ore-crusher", count=50 },
+        }, },  },
+
+--        { shape="rect", name="infinity-chest", x=50,   y=-52,  height=1, width=1,
+--            props = { minable=false, operable=false, destructible=false, force="neutral", 
+--                infinity_container_filters = { 
+--                    {index = 1, name = "iron-plate", count = 50},
+--                    {index = 2, name = "copper-plate", count = 50},
+--                    {index = 3, name = "tin-plate", count = 50},
+--                    {index = 4, name = "lead-plate", count = 50},
+--        }, },  },
+
+
         { shape="rect", name="steel-chest", x=42,   y=-50, height=1, width=1, contents = { {name = "landfill", count=4800 } },  },
         { shape="rect", name="steel-chest", x=45,   y=-50, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
         { shape="rect", name="steel-chest", x=48,   y=-50, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
@@ -341,17 +416,20 @@ scenario.config.angelsResources = {
             {name = "assembling-machine-2", count=10},
             {name = "assembling-machine-3", count=1},
             {name = "electric-mining-drill", count=10},
+            {name = "filter-inserter", count=4 },
         },  },
     
-        { shape="rect", type="coal",            x=42,  y=-47, height=14, width=24,  amount=40000,  },
-        { shape="rect", type="angels-ore5",     x=42,  y=-30, height=14, width=24,  amount=40000,  },
-        { shape="rect", type="angels-ore6",     x=42,  y=-13,  height=14, width=24,  amount=40000,  },
-        { shape="rect", type="angels-ore1",     x=42,  y =4, height=21, width=24,  amount=40000,  },
-        { shape="rect", type="angels-ore3",     x=42,  y =28, height=21, width=24,  amount=40000,  },
+        { shape="rect", type="coal",            x=32,  y=-47, height=14, width=24,  amount=400000,  },
+        { shape="rect", type="angels-ore5",     x=32,  y=-30, height=14, width=24,  amount=400000,  },
+        { shape="rect", type="angels-ore6",     x=32,  y=-13,  height=14, width=24,  amount=400000,  },
+        { shape="rect", type="angels-ore1",     x=32,  y =4, height=21, width=24,  amount=400000,  },
+        { shape="rect", type="angels-ore3",     x=32,  y =28, height=21, width=24,  amount=400000,  },
+--        { shape="rect", type="angels-ore2",     x=70,  y =4, height=21, width=24,  amount=40000,  },
+--        { shape="rect", type="angels-ore4",     x=70,  y =28, height=21, width=24,  amount=40000,  },
         
-        { shape="rect", type="angels-natural-gas", x=80, y=-6, height=1, amount=10000,  },
-        { shape="rect", type="angels-natural-gas", x=80, y= 0, height=1, amount=10000,  },
-        { shape="rect", type="angels-natural-gas", x=80, y= 6, height=1, amount=10000,  },
+        { shape="rect", type="angels-natural-gas", x=70, y=-6, height=1, amount=100000,  },
+        { shape="rect", type="angels-natural-gas", x=70, y= 0, height=1, amount=100000,  },
+        { shape="rect", type="angels-natural-gas", x=70, y= 6, height=1, amount=100000,  },
 }
 
 scenario.config.krastorioResources = {
@@ -592,6 +670,7 @@ scenario.config.spawnResources = scenario.config.vanillaResources;
 -- scenario.config.spawnResources = scenario.config.industrialPlusKrastorioResources;
 -- scenario.config.spawnResources = scenario.config.seaBlockResources;
 -- scenario.config.spawnResources = scenario.config.pyanodonResources;
+-- scenario.config.spawnResources = scenario.config.noResources;
 
 
 ---------------------------------------
@@ -644,7 +723,8 @@ MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 3
 -- 
 -- Set this to zero for infinite ghosts
 ---------------------------------------
-GHOST_TIME_TO_LIVE = 20 * TICKS_PER_MINUTE
+GHOST_TIME_TO_LIVE = 0
+-- 20 * TICKS_PER_MINUTE
 
 ---------------------------------------
 -- Special Action Cooldowns
@@ -675,22 +755,6 @@ ENEMY_EXPANSION = false
 ENEMY_POLLUTION_FACTOR_DIVISOR = 5
 ENEMY_DESTROY_FACTOR_DIVISOR = 5
 
---------------------------------------------------------------------------------
--- Frontier Rocket Silo Options
---------------------------------------------------------------------------------
-
--- SILO_DISTANCE = 4 * HEXSPACING
-SILO_DISTANCE = 0     -- put the silo 1 chunk east of the origin (prevents problems)
-SILO_RECT_SIZE = 512
-SILO_CHUNK_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE);
-SILO_DISTANCE_X = math.floor(SILO_DISTANCE/CHUNK_SIZE)* CHUNK_SIZE + CHUNK_SIZE/2
-SILO_DISTANCE_Y = CHUNK_SIZE/2
-
--- Should be in the middle of a chunk
-SILO_POSITION = {x = SILO_DISTANCE_X, y = SILO_DISTANCE_Y}
-
--- If this is enabled, the static position is ignored.
-ENABLE_RANDOM_SILO_POSITION = false
 
 --------------------------------------------------------------------------------
 -- Long Reach Options
@@ -778,6 +842,7 @@ scenario.config.fermatSpiralSpawns = {
 }
 
 scenario.config.bunkerSpawns = {
+    concrete = true,        -- pave the spawn with concrete
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     firstSpawnPoint = 16,
     numSpawnPoints = 27,
@@ -807,7 +872,7 @@ scenario.config.bunkerSpawns = {
 
     -- freeze time of day
     -- you might get night vision at the start, but you have to decide whether it's worth using it.
-    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
     -- 0 is day. 0.5 is night. 0.35 is twilight.
     researched = {
     -- 'coal-liquefaction',

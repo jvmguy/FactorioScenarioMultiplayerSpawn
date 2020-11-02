@@ -480,31 +480,6 @@ function GivePlayerBonuses(player)
 end
 
 
--- This creates a random silo position, stored to global.siloPosition
--- It uses the config setting SILO_CHUNK_DISTANCE and spawns the silo somewhere
--- on a circle edge with radius using that distance.
-function SetRandomSiloPosition()
-    if (global.siloPosition == nil) then
-        -- Get an X,Y on a circle far away.
-        distX = math.random(0,SILO_CHUNK_DISTANCE_X)
-        distY = RandomNegPos() * math.floor(math.sqrt(SILO_CHUNK_DISTANCE_X^2 - distX^2))
-        distX = RandomNegPos() * distX
-
-        -- Set those values.
-        local siloX = distX*CHUNK_SIZE + CHUNK_SIZE/2
-        local siloY = distY*CHUNK_SIZE + CHUNK_SIZE/2
-        global.siloPosition = {x = siloX, y = siloY}
-    end
-end
-
--- Sets the global.siloPosition var to the set in the config file
-function SetFixedSiloPosition()
-    if (global.siloPosition == nil) then
-        global.siloPosition = SILO_POSITION
-    end
-end
-
-
 function CreateGameSurface()
     if GAME_SURFACE_NAME ~= "nauvis" then
         local mapSettings =  game.surfaces["nauvis"].map_gen_settings

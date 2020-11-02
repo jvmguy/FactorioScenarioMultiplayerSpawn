@@ -36,7 +36,7 @@ require("lib/oarc_utils")
 require("lib/jvmguy_utils")
 
 -- Include Mods
-require("lib/longreach")    
+-- require("lib/longreach")    
 --require("lib/autofill-jvm")   -- enable if you want my softmod version of this
 require("lib/adminlog")
 require("lib/decimatecommand")
@@ -57,8 +57,8 @@ require("lib/frontier_silo")
 toxicJungle = require("lib/ToxicJungle")
 
 -- spawnGenerator = require("lib/FermatSpiralSpawns");
-spawnGenerator = require("lib/RiverworldSpawns");
---spawnGenerator = require("lib/BunkerSpawns");
+-- spawnGenerator = require("lib/RiverworldSpawns");
+spawnGenerator = require("lib/BunkerSpawns");
 
 local terrainGenerator = nil;
 -- terrainGenerator = require("lib/GeometricTerrain");
@@ -144,16 +144,10 @@ function jvm.on_init(event)
     if ENABLE_SEPARATE_SPAWNS then
         InitSpawnGlobalsAndForces()
     end
-
-    if ENABLE_RANDOM_SILO_POSITION then
-        SetRandomSiloPosition()
-    else
-        SetFixedSiloPosition()
-    end
-
-    if FRONTIER_ROCKET_SILO_MODE then
-        ChartRocketSiloArea(game.forces[MAIN_FORCE])
-    end
+    
+    -- unfortunately, the order of execution matters
+    -- silo_on_init must not run until after forces have been setup
+    silo_on_init(event);
 
     EnableStartingResearch(game.forces[MAIN_FORCE]);
 
@@ -167,17 +161,6 @@ end
 Event.register(-1, jvm.on_init)
     
 
-----------------------------------------
--- Freeplay rocket launch info
--- Slightly modified for my purposes
-----------------------------------------
-function jvm.on_rocket_launch(event)
-    if FRONTIER_ROCKET_SILO_MODE then
-        RocketLaunchEvent(event)
-    end
-end
-
-Event.register(defines.events.on_rocket_launched, jvm.on_rocket_launch)
 
 ----------------------------------------
 -- Chunk Generation
@@ -199,9 +182,6 @@ function jvm.on_chunk_generated(event)
         toxicJungle.ChunkGenerated(event);
     end    
 
-    if FRONTIER_ROCKET_SILO_MODE then
-        GenerateRocketSiloChunk(event)
-    end
     if not global.customChunk then
         if terrainGenerator ~= nil then
             terrainGenerator.ChunkGenerated(event);
@@ -288,12 +268,14 @@ Event.register(defines.events.on_player_left_game, jvm.on_player_left_game)
 
 
 function jvm.on_built_entity(event)
-    local type = event.created_entity.type    
-    if type == "entity-ghost" or type == "tile-ghost" or type == "item-request-proxy" then
-        if GHOST_TIME_TO_LIVE ~= 0 then
-            event.created_entity.time_to_live = GHOST_TIME_TO_LIVE
+    if event.created_entity.valid then
+        local type = event.created_entity.type    
+        if type == "entity-ghost" or type == "tile-ghost" or type == "item-request-proxy" then
+            if GHOST_TIME_TO_LIVE ~= 0 then
+                event.created_entity.time_to_live = GHOST_TIME_TO_LIVE
+            end
         end
-    end
+    end        
 end
 
 Event.register(defines.events.on_built_entity, jvm.on_built_entity)
@@ -311,7 +293,7 @@ end
 -- On Research Finished
 ----------------------------------------
 function jvm.on_research_finished(event)
-    if FRONTIER_ROCKET_SILO_MODE then
+    if scenario.config.silo.disableSiloRecipe then
         RemoveRocketSiloRecipe(event)
     end
 --    local config = spawnGenerator.GetConfig()
@@ -331,7 +313,7 @@ function jvm.on_entity_spawned(event)
 --        ModifyEnemySpawnsNearPlayerStartingAreas(event)
     end
 end
-Event.register(defines.events.on_entity_spawned, jvm.on_entity_spawned)
+-- Event.register(defines.events.on_entity_spawned, jvm.on_entity_spawned)
 
 
 function jvm.on_biter_base_built(event)
@@ -339,14 +321,16 @@ function jvm.on_biter_base_built(event)
 --        ModifyEnemySpawnsNearPlayerStartingAreas(event)
     end
 end
-Event.register(defines.events.on_biter_base_built, jvm.on_biter_base_built)
+-- Event.register(defines.events.on_biter_base_built, jvm.on_biter_base_built)
 
 
-----------------------------------------
--- BPS Specific Event
-----------------------------------------
---script.on_event(defines.events.on_robot_built_entity, function(event)
---end)
+function jvm.on_robot_built_entity(event)
+    if scenario.config.silo.restrictSiloBuild then
+        BuildSiloAttempt(event)
+    end
+end
+
+Event.register(defines.events.on_robot_built_entity, jvm.on_robot_built_entity)
 
 -- debug code from Mylon to detect possible causes for desync
 --Time for the debug code.  If any (not global.) globals are written to at this point, an error will be thrown.

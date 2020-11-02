@@ -4,6 +4,14 @@
 require("config")
 require("oarc_utils")
 
+local M = {}
+
+local function ChunkContains( chunk, pt )
+        return pt.x >= chunk.left_top.x and pt.x < chunk.right_bottom.x and
+            pt.y >= chunk.left_top.y and pt.y < chunk.right_bottom.y;
+end
+
+
 -- Create a rocket silo
 local function CreateRocketSilo(surface, chunkArea)
     if CheckIfInArea(global.siloPosition, chunkArea) then
@@ -18,8 +26,11 @@ local function CreateRocketSilo(surface, chunkArea)
         local i = 1
         for dx = -20,20 do
             for dy = -20,20 do
-                tiles[i] = {name = "grass-1", position = {global.siloPosition.x+dx, global.siloPosition.y+dy}}
-                i=i+1
+                local position = { x=global.siloPosition.x+dx, y=global.siloPosition.y+dy }
+                if ChunkContains( chunkArea, position) then
+                    tiles[i] = {name = "grass-1", position = position}
+                    i=i+1
+                end
             end
         end
         SetTiles(surface, tiles, false);
@@ -27,30 +38,36 @@ local function CreateRocketSilo(surface, chunkArea)
         i = 1
         for dx = -20,20 do
             for dy = -20,20 do
-                tiles[i] = {name = "concrete", position = {global.siloPosition.x+dx, global.siloPosition.y+dy}}
-                i=i+1
+                local position = { x=global.siloPosition.x+dx, y=global.siloPosition.y+dy }
+                if ChunkContains( chunkArea, position) then
+                    tiles[i] = {name = "concrete", position = position}
+                    i=i+1
+                end
             end
         end
+        
         SetTiles(surface, tiles, true);
 
-        -- Create silo and assign to main force
-        local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5-8, global.siloPosition.y-8}, force = MAIN_FORCE}
-        silo.destructible = false
-        silo.minable = false
+        if scenario.config.silo.prebuildSilo then
+            -- Create silo and assign to main force
+            local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5-8, global.siloPosition.y-8}, force = MAIN_FORCE}
+            silo.destructible = false
+            silo.minable = false
+    
+            local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5+8, global.siloPosition.y-8}, force = MAIN_FORCE}
+            silo.destructible = false
+            silo.minable = false
+    
+            local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5-8, global.siloPosition.y+8}, force = MAIN_FORCE}
+            silo.destructible = false
+            silo.minable = false
+    
+            local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5+8, global.siloPosition.y+8}, force = MAIN_FORCE}
+            silo.destructible = false
+            silo.minable = false
+        end
 
-        local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5+8, global.siloPosition.y-8}, force = MAIN_FORCE}
-        silo.destructible = false
-        silo.minable = false
-
-        local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5-8, global.siloPosition.y+8}, force = MAIN_FORCE}
-        silo.destructible = false
-        silo.minable = false
-
-        local silo = surface.create_entity{name = "rocket-silo", position = {global.siloPosition.x+0.5+8, global.siloPosition.y+8}, force = MAIN_FORCE}
-        silo.destructible = false
-        silo.minable = false
-
-		if scenario.config.silo.addBeacons then
+		if scenario.config.silo.prebuildBeacons then
             -- Add Beacons
             -- x = right, left; y = up, down
             -- top 1 left 1
@@ -145,7 +162,7 @@ local function CreateRocketSilo(surface, chunkArea)
 
             -- end adding beacons
 		end
-		if scenario.config.silo.addPower then
+		if scenario.config.silo.prebuildPower then
             local radar = surface.create_entity{name = "solar-panel", position = {global.siloPosition.x-46, global.siloPosition.y+3}, force = MAIN_FORCE}
             radar.destructible = false
             local radar = surface.create_entity{name = "solar-panel", position = {global.siloPosition.x-46, global.siloPosition.y-3}, force = MAIN_FORCE}
@@ -196,6 +213,56 @@ local function CreateRocketSilo(surface, chunkArea)
     end
 end
 
+-- Validates any attempt to build a silo.
+-- Should be call in on_built_entity and on_robot_built_entity
+function BuildSiloAttempt(event)
+
+    -- Validation
+    if (event.created_entity == nil) then return end
+
+    local e_name = event.created_entity.name
+    if (event.created_entity.name == "entity-ghost") then
+        e_name =event.created_entity.ghost_name
+    end
+
+    -- additional check for Rocket Silo Construction mod
+    if (e_name ~= "rocket-silo" and e_name ~= "rsc-silo-stage1") then
+        return;
+    end
+    
+    -- Check if it's in the right area.
+    local epos = event.created_entity.position
+
+--    from Oarc's code to support multiple silos
+--    for k,v in pairs(global.siloPosition) do
+--        if (getDistance(epos, v) < 5) then
+--            if (event.created_entity.name ~= "entity-ghost") then
+--                SendBroadcastMsg("Rocket silo has been built!")
+--            end
+--            return -- THIS MEANS WE SUCCESFULLY BUILT THE SILO (ghost or actual building.)
+--        end
+--    end
+
+    if DistanceFromPoint( epos, global.siloPosition) < 5 then
+        if (event.created_entity.name ~= "entity-ghost") then
+            SendBroadcastMsg("Rocket silo has been built!")
+        end
+        return -- THIS MEANS WE SUCCESFULLY BUILT THE SILO (ghost or actual building.)
+    end
+
+    -- If we get here, means it wasn't in a valid position. Need to remove it.
+    if (event.created_entity.last_user ~= nil) then
+        FlyingText("Can't build silo here! Check the map!", epos, my_color_red, event.created_entity.surface)
+        if (event.created_entity.name == "entity-ghost") then
+            event.created_entity.destroy()
+        else
+            event.created_entity.last_user.mine_entity(event.created_entity, true)
+        end
+    else
+        log("ERROR! Rocket-silo had no valid last user?!?!")
+    end
+end
+
 -- Remove rocket silo from recipes
 function RemoveRocketSiloRecipe(event)
     RemoveRecipe(event, "rocket-silo")
@@ -230,5 +297,70 @@ function GenerateRocketSiloChunk(event)
 end
 
 function ChartRocketSiloArea(force)
-    force.chart(game.surfaces[GAME_SURFACE_NAME], {{global.siloPosition.x-(CHUNK_SIZE*2), global.siloPosition.y-(CHUNK_SIZE*2)}, {global.siloPosition.x+(CHUNK_SIZE*2), global.siloPosition.y+(CHUNK_SIZE*2)}})
+    if scenario.config.silo.chartSiloArea then
+        force.chart(game.surfaces[GAME_SURFACE_NAME], {{global.siloPosition.x-(CHUNK_SIZE*2), global.siloPosition.y-(CHUNK_SIZE*2)}, {global.siloPosition.x+(CHUNK_SIZE*2), global.siloPosition.y+(CHUNK_SIZE*2)}})
+    end
 end
+
+-- This creates a random silo position, stored to global.siloPosition
+-- It uses the config setting SILO_CHUNK_DISTANCE and spawns the silo somewhere
+-- on a circle edge with radius using that distance.
+function SetRandomSiloPosition()
+    if (global.siloPosition == nil) then
+        -- Get an X,Y on a circle far away.
+        distX = math.random(0,SILO_CHUNK_DISTANCE_X)
+        distY = RandomNegPos() * math.floor(math.sqrt(SILO_CHUNK_DISTANCE_X^2 - distX^2))
+        distX = RandomNegPos() * distX
+
+        -- Set those values.
+        local siloX = distX*CHUNK_SIZE + CHUNK_SIZE/2
+        local siloY = distY*CHUNK_SIZE + CHUNK_SIZE/2
+        global.siloPosition = {x = siloX, y = siloY}
+    end
+end
+
+-- Sets the global.siloPosition var to the set in the config file
+function SetFixedSiloPosition()
+    if (global.siloPosition == nil) then
+        global.siloPosition = scenario.config.silo.position
+    end
+end
+
+function silo_on_init(event)
+    if scenario.config.silo.randomSiloPostion then
+        SetRandomSiloPosition()
+    else
+        SetFixedSiloPosition()
+    end
+    ChartRocketSiloArea(game.forces[MAIN_FORCE])
+end
+
+function silo_on_built_entity(event)
+    game.print("silo_on_built_entity");
+    if scenario.config.silo.restrictSiloBuild then
+        BuildSiloAttempt(event)
+    end
+end
+
+
+function silo_on_chunk_generated(event)
+    if scenario.config.silo.frontierSilo then
+        if event.surface.name == GAME_SURFACE_NAME then
+            GenerateRocketSiloChunk(event)
+        end
+    end
+end
+
+function silo_on_rocket_launch(event)
+    if scenario.config.silo.handleLaunch then
+        RocketLaunchEvent(event)
+    end
+end
+
+-- Event.register(-1, silo_on_init)
+Event.register(defines.events.on_built_entity, silo_on_built_entity)
+Event.register(defines.events.on_chunk_generated, silo_on_chunk_generated)
+Event.register(defines.events.on_rocket_launched, silo_on_rocket_launch)
+
+return M;
+    
