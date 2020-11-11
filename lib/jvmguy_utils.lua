@@ -161,30 +161,46 @@ function CreateTeleporter(surface, teleporterPosition, usage)
     return car.unit_number
 end
 
-function FindTeleportByID( number )
-    local surface = game.surfaces[GAME_SURFACE_NAME];
+function FindTeleportByID( surface, number )
     for _, entity in pairs(surface.find_entities_filtered{ name="car" }) do
         if (entity ~= nil) and (entity.unit_number == number) then
-            return { x=entity.position.x - 2, y=entity.position.y }
+            return { x=entity.position.x - 2, y=entity.position.y, surface=surface }
         end
     end
     return nil
 end
 
-function FindTeleportDest( usage, playerName )
+function AssignedTeleportDest( usage, playerName )
+    local surface = game.surfaces[GAME_SURFACE_NAME];
     local spawnSeq = global.playerSpawns[playerName].seq;
     local spawn = global.allSpawns[spawnSeq];
     if usage == "silo" then
-        return FindTeleportByID( global.siloTeleportID)
+        return FindTeleportByID( surface, global.siloTeleportID)
     end
     if usage == "spawn" then
-        return FindTeleportByID( spawn.spawnTeleportID)
+        return FindTeleportByID( surface, spawn.spawnTeleportID)
     end
     if usage == "bunker" then
-        return FindTeleportByID( spawn.bunkerTeleportID)
+        return FindTeleportByID( surface, spawn.bunkerTeleportID)
     end
     if usage == "bunker entrance" then
-        return FindTeleportByID( spawn.entranceTeleportID )
+        return FindTeleportByID( surface, spawn.entranceTeleportID )
+    end
+    return nil;
+end
+
+function FindTeleportDest( usage, playerName )
+    local dest = AssignedTeleportDest( usage, playerName );
+    
+    if dest ~= nil then
+        local surface = dest.surface;
+        return surface.find_non_colliding_position(
+            "character" -- name
+            , dest -- position
+            , 4 -- radius
+            , 1 -- precision 
+            , true -- precision
+            )
     end
     return nil;
 end
