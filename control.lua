@@ -56,12 +56,13 @@ require("lib/frontier_silo")
 
 toxicJungle = require("lib/ToxicJungle")
 
--- spawnGenerator = require("lib/FermatSpiralSpawns");
+spawnGenerator = require("lib/FermatSpiralSpawns");
 -- spawnGenerator = require("lib/RiverworldSpawns");
-spawnGenerator = require("lib/BunkerSpawns");
+-- spawnGenerator = require("lib/BunkerSpawns");
 
 local terrainGenerator = nil;
 -- terrainGenerator = require("lib/GeometricTerrain");
+-- terrainGenerator = require("lib/OctoTile");
 
 sharedSpawns = require("lib/shared_spawns");
 

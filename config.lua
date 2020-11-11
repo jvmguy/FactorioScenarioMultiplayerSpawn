@@ -106,7 +106,8 @@ scenario.config.forceBonuses = {
 
 scenario.config.playerBonus = {
       character_crafting_speed_modifier = 0,
---      character_crafting_speed_modifier = 1/100-1.0,
+      -- this simulates lazy-bastard
+      -- character_crafting_speed_modifier = 1/100-1.0,
 }
 
 --------------------------------------------------------------------------------
@@ -806,10 +807,10 @@ scenario.config.safe_area =
     }
 
 
-scenario.config.fermatSpiralSpawns = {
+scenario.config.fermatSpiralSpawnsTemplate = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     seablock = false,    -- replace land with water except where there are resources
-    crater = true,
+    crater = false,
     concrete = true,
     firstSpawnPoint = 1,
     numSpawnPoints = 20,
@@ -922,4 +923,78 @@ scenario.config.riverworld = {
     recipesDisabled = scenario.config.recipesDisabled,
     safe_area = scenario.config.safe_area, 
 }
+
+
+----------------------------------------------
+-- This is the specific config for this map
+----------------------------------------------
+
+scenario.config.spawnResources = {
+--        { shape="rect", name="steel-chest", x=42,   y=-24, height=2, width=2, contents = { {name = "landfill", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=2,   y=-18, height=2, width=2, contents = { {name = "iron-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=2,   y=-12, height=2, width=2, contents = { {name = "copper-plate", count=4800 } },  },
+        { shape="rect", name="steel-chest", x=2,   y=-8,  height=1, width=1, contents = { 
+            {name = "coal", count=1000 },
+            {name = "stone", count=1000 },
+            {name = "steel-plate", count=400 },
+--            {name = "uranium-235", count=100 },
+--            {name = "uranium-238", count=500 },
+         }  },
+        { shape="rect", name="steel-chest", x=2,   y=0,  height=1, width=1, contents = { 
+            -- we can simulate no-hand-crafting by making hand crafting really slow, and providing an asm2.
+            {name = "offshore-pump", count = 1},
+            {name = "boiler", count = 10},
+            {name = "steam-engine", count = 20},
+            {name = "pipe", count=12},
+            {name = "pipe-to-ground", count=2},
+            {name = "small-electric-pole", count = 20},
+            {name = "inserter", count=20},
+            {name = "assembling-machine-1", count=10},
+        },  },
+    
+        { shape="rect", type="coal",         x=2,  y=-41, height=14, width=36,  amount=1000,  },
+        { shape="rect", type="stone",        x=2,  y=-24, height=14, width=36,  amount=1000,  },
+        { shape="rect", type="copper-ore",   x=2,  y=-7,  height=21, width=36,  amount=1000,  },
+        { shape="rect", type="iron-ore",     x=2,  y =18, height=21, width=36, amount=1000,  },
+        
+        { shape="rect", type="crude-oil", x=42, y=-6, height=1, amount=10000000,  },
+        { shape="rect", type="crude-oil", x=42, y= 0, height=1, amount=10000000,  },
+        { shape="rect", type="crude-oil", x=42, y= 6, height=1, amount=10000000,  },
+}
+
+scenario.config.fermatSpiralSpawns = {
+    -- this mostly inherits the separateSpawns config, but has a few minor differences
+    seablock = false,    -- replace land with water except where there are resources
+    crater = false,
+    concrete = true,
+    firstSpawnPoint = 1,
+    numSpawnPoints = 20,
+    extraSpawn = 55,    -- really far away, but not as far as you might think
+    
+    spacing = 1280,
+    
+    -- describe the spawn crop circle
+    land = 60,
+    moat = 10,   -- additional to land
+    trees = 3,  -- included in the land
+    size = 70,  -- should be land + moat
+    craterSize = 0,  -- size of impact crater (greater than size)
+    
+    resources = scenario.config.spawnResources,
+
+    -- freeze time of day
+    -- you might get night vision at the start, but you have to decide whether it's worth using it.
+    -- freezeTime = 0.35,   -- see https://wiki.factorio.com/Game-day
+    -- 0 is day. 0.5 is night. 0.35 is twilight.
+    researched = {
+    -- 'coal-liquefaction',
+    },
+    
+    startingEvolution=0.0,
+
+    recipesEnabled = scenario.config.recipesEnabled,
+    recipesDisabled = scenario.config.recipesDisabled,
+    safe_area = scenario.config.safe_area, 
+}
+
 
