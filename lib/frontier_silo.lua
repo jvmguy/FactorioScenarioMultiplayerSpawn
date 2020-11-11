@@ -336,7 +336,6 @@ function silo_on_init(event)
 end
 
 function silo_on_built_entity(event)
-    game.print("silo_on_built_entity");
     if scenario.config.silo.restrictSiloBuild then
         BuildSiloAttempt(event)
     end
